@@ -1,0 +1,23 @@
+{
+  "test_name": "BFI-10",
+  "description": "Big Five Inventory - 10 item short form",
+  "reference": "Rammstedt & John (2007)",
+  "language": "en",
+  "scale_min": 1,
+  "scale_max": 5,
+  "traits": ["Openness", "Conscientiousness", "Extraversion", "Agreeableness", "Neuroticism"],
+  "items": [
+    {
+      "id": 1,
+      "text": "TODO: insert official item text from the manual",
+      "trait": "Extraversion",
+      "reverse": true
+    }
+  ],
+  "scoring": {
+    "Extraversion": {
+      "items": [1, 6],
+      "formula": "mean"
+    }
+  }
+}
