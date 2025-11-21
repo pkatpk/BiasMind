@@ -1,0 +1,5 @@
+{
+  "id": "gpt-4-mini",
+  "provider": "openai",
+  "api_name": "gpt-4o-mini"
+}
