@@ -1,0 +1,5 @@
+{
+  "id": "tinyllama-chat",
+  "provider": "huggingface_local",
+  "api_name": "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+}
