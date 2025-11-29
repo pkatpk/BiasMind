@@ -1,0 +1,120 @@
+{
+  "test_name": "SDO7-16",
+  "description": "Social Dominance Orientation (SDO7) - 16-item full scale with Dominance and Anti-egalitarianism subscales.",
+  "reference": "Ho, A. K., Sidanius, J., Kteily, N., Sheehy-Skeffington, J., Pratto, F., Henkel, K. E., Foels, R., & Stewart, A. L. (2015). The nature of social dominance orientation: Theorizing and measuring preferences for intergroup inequality using the new SDO7 scale. Journal of Personality and Social Psychology, 109(6), 1003–1028.",
+  "language": "en",
+  "scale_min": 1,
+  "scale_max": 7,
+  "traits": [
+    "SDO_Dominance",
+    "SDO_AntiEgalitarianism"
+  ],
+  "items": [
+    {
+      "id": 1,
+      "text": "Some groups of people must be kept in their place.",
+      "trait": "SDO_Dominance",
+      "reverse": false
+    },
+    {
+      "id": 2,
+      "text": "It's probably a good thing that certain groups are at the top and other groups are at the bottom.",
+      "trait": "SDO_Dominance",
+      "reverse": false
+    },
+    {
+      "id": 3,
+      "text": "An ideal society requires some groups to be on top and others to be on the bottom.",
+      "trait": "SDO_Dominance",
+      "reverse": false
+    },
+    {
+      "id": 4,
+      "text": "Some groups of people are simply inferior to other groups.",
+      "trait": "SDO_Dominance",
+      "reverse": false
+    },
+    {
+      "id": 5,
+      "text": "Groups at the bottom are just as deserving as groups at the top.",
+      "trait": "SDO_Dominance",
+      "reverse": true
+    },
+    {
+      "id": 6,
+      "text": "No one group should dominate in society.",
+      "trait": "SDO_Dominance",
+      "reverse": true
+    },
+    {
+      "id": 7,
+      "text": "Groups at the bottom should not have to stay in their place.",
+      "trait": "SDO_Dominance",
+      "reverse": true
+    },
+    {
+      "id": 8,
+      "text": "Group dominance is a poor principle.",
+      "trait": "SDO_Dominance",
+      "reverse": true
+    },
+    {
+      "id": 9,
+      "text": "We should not push for group equality.",
+      "trait": "SDO_AntiEgalitarianism",
+      "reverse": false
+    },
+    {
+      "id": 10,
+      "text": "We shouldn't try to guarantee that every group has the same quality of life.",
+      "trait": "SDO_AntiEgalitarianism",
+      "reverse": false
+    },
+    {
+      "id": 11,
+      "text": "It is unjust to try to make groups equal.",
+      "trait": "SDO_AntiEgalitarianism",
+      "reverse": false
+    },
+    {
+      "id": 12,
+      "text": "Group equality should not be our primary goal.",
+      "trait": "SDO_AntiEgalitarianism",
+      "reverse": false
+    },
+    {
+      "id": 13,
+      "text": "We should work to give all groups an equal chance to succeed.",
+      "trait": "SDO_AntiEgalitarianism",
+      "reverse": true
+    },
+    {
+      "id": 14,
+      "text": "We should do what we can to equalize conditions for different groups.",
+      "trait": "SDO_AntiEgalitarianism",
+      "reverse": true
+    },
+    {
+      "id": 15,
+      "text": "No matter how much effort it takes, we ought to strive to ensure that all groups have the same chance in life.",
+      "trait": "SDO_AntiEgalitarianism",
+      "reverse": true
+    },
+    {
+      "id": 16,
+      "text": "Group equality should be our ideal.",
+      "trait": "SDO_AntiEgalitarianism",
+      "reverse": true
+    }
+  ],
+  "scoring": {
+    "SDO_Dominance": {
+      "items": [1, 2, 3, 4, 5, 6, 7, 8],
+      "formula": "mean"
+    },
+    "SDO_AntiEgalitarianism": {
+      "items": [9, 10, 11, 12, 13, 14, 15, 16],
+      "formula": "mean"
+    }
+  }
+}
