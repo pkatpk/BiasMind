@@ -5,12 +5,7 @@ from ui_personas import build_personas_ui
 
 def build_main_ui():
     with gr.Blocks() as main_ui:
-        gr.Markdown("## BiasMind – Main")
-
-        gr.Markdown(
-            "Αυτό είναι το βασικό UI. Από εδώ θα τρέχουμε experiments.\n\n"
-            "Για διαχείριση personas, πάτησε το κουμπί παρακάτω."
-        )
+        gr.Markdown("## Bias Mind")
 
         go_personas = gr.Button("Manage Personas →")
 
@@ -22,13 +17,11 @@ def build_app():
     personas_ui = build_personas_ui()
 
     with gr.Blocks() as app:
-        # δύο "σελίδες" και απλά κάνουμε show/hide
         with gr.Column(visible=True) as page_main:
             main_ui.render()
 
         with gr.Column(visible=False) as page_personas:
-            gr.Markdown("### ← Back")
-            back_btn = gr.Button("← Back to Main")
+            back_btn = gr.Button("← Back")
             personas_ui.render()
 
         def show_personas():
