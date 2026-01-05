@@ -17,13 +17,13 @@ MODELS_DIR = Path("data/models")
 def _list_persona_ids():
     if not PERSONAS_DIR.exists():
         return []
-    return sorted([p.stem for p in PERSONAS_DIR.glob("*.json")])
+    return sorted({p.stem for p in PERSONAS_DIR.glob("*.json")})
 
 
 def _list_test_files():
     if not TESTS_DIR.exists():
         return []
-    return sorted([str(p) for p in TESTS_DIR.glob("*.json")])
+    return sorted({str(p) for p in TESTS_DIR.glob("*.json")})
 
 
 def _list_model_ids():
@@ -32,16 +32,16 @@ def _list_model_ids():
     """
     if not MODELS_DIR.exists():
         return []
-    ids = []
+    ids = set()
     for p in MODELS_DIR.glob("*.json"):
         try:
             obj = json.loads(p.read_text(encoding="utf-8"))
             mid = obj.get("id", p.stem)
             if isinstance(mid, str) and mid.strip():
-                ids.append(mid.strip())
+                ids.add(mid.strip())
         except Exception:
-            ids.append(p.stem)
-    return sorted(set(ids))
+            ids.add(p.stem)
+    return sorted(ids)
 
 
 def _load_persona_prompt(persona_id: str) -> str:
@@ -77,6 +77,9 @@ def _preview_from_selected(selected):
 
 
 def _build_cmd(test_file, model_ids, memory_between, cfg_dict):
+    if not test_file:
+        raise ValueError("Επίλεξε test file.")
+
     model_ids = [m for m in (model_ids or []) if isinstance(m, str) and m.strip()]
     if not model_ids:
         raise ValueError("Επίλεξε τουλάχιστον ένα model.")
@@ -137,14 +140,13 @@ def build_experiment_ui():
         with gr.Row():
             test_file = gr.Dropdown(
                 choices=test_files,
-                value=test_files[0] if test_files else None,
-                allow_custom_value=True,
+                value=None,                 # ✅ empty on load
                 label="Test file (data/tests/*.json)",
             )
 
             models = gr.Dropdown(
                 choices=model_ids,
-                value=[model_ids[0]] if model_ids else [],
+                value=[],                   # ✅ empty on load
                 multiselect=True,
                 label="Models",
             )
@@ -157,6 +159,7 @@ def build_experiment_ui():
         with gr.Row():
             persona_select = gr.Dropdown(
                 choices=persona_ids,
+                value=[],                   # ✅ empty on load
                 multiselect=True,
                 label="Select personas",
             )
@@ -189,7 +192,10 @@ def build_experiment_ui():
 
             def _set_runs(pid, val, cfg_in):
                 if pid in cfg_in:
-                    cfg_in[pid]["runs"] = max(1, int(val))
+                    try:
+                        cfg_in[pid]["runs"] = max(1, int(val))
+                    except Exception:
+                        cfg_in[pid]["runs"] = 1
                 return cfg_in
 
             def _set_mem(pid, val, cfg_in):
