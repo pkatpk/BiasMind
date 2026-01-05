@@ -80,9 +80,6 @@ def _remove_persona(pid, cfg, order):
 
 
 def _move_persona(pid, direction, order):
-    """
-    direction: -1 for up, +1 for down
-    """
     order = order or []
     if pid not in order:
         return order
@@ -90,7 +87,7 @@ def _move_persona(pid, direction, order):
     i = order.index(pid)
     j = i + int(direction)
     if j < 0 or j >= len(order):
-        return order  # no-op
+        return order
 
     new_order = order[:]
     new_order[i], new_order[j] = new_order[j], new_order[i]
@@ -98,23 +95,19 @@ def _move_persona(pid, direction, order):
 
 
 def _memory_between_ui(order):
-    """
-    Disable memory-between όταν έχεις <2 personas.
-    Όταν είναι disabled, το value γυρίζει σε "reset" για να μη μπερδεύει.
-    """
     n = len(order or [])
     if n < 2:
         return gr.update(value="reset", interactive=False)
     return gr.update(interactive=True)
 
 
-def _build_cmd(test_file, model_ids, memory_between, cfg_dict, order_list):
+def _build_cmd(test_file, model_id, memory_between, cfg_dict, order_list):
     if not test_file:
         raise ValueError("Επίλεξε test file.")
 
-    model_ids = [m for m in (model_ids or []) if isinstance(m, str) and m.strip()]
-    if not model_ids:
-        raise ValueError("Επίλεξε τουλάχιστον ένα model.")
+    model_id = (model_id or "").strip()
+    if not model_id:
+        raise ValueError("Επίλεξε model.")
 
     cfg_dict = cfg_dict or {}
     order_list = order_list or []
@@ -123,14 +116,13 @@ def _build_cmd(test_file, model_ids, memory_between, cfg_dict, order_list):
     if not ordered_personas:
         raise ValueError("Πρόσθεσε τουλάχιστον μία persona (Add).")
 
-    # Αν δεν έχει νόημα, κρατάμε default "reset"
     if len(ordered_personas) < 2:
         memory_between = "reset"
 
     argv = [sys.executable, "src/run_experiment.py", "--test-file", test_file]
 
-    for mid in model_ids:
-        argv += ["--model", mid]
+    # single model
+    argv += ["--model", model_id]
 
     for pid in ordered_personas:
         cfg = cfg_dict[pid]
@@ -148,8 +140,8 @@ def _build_cmd(test_file, model_ids, memory_between, cfg_dict, order_list):
     return argv, pretty
 
 
-def _run_experiment(test_file, model_ids, memory_between, cfg_dict, order_list):
-    argv, pretty = _build_cmd(test_file, model_ids, memory_between, cfg_dict, order_list)
+def _run_experiment(test_file, model_id, memory_between, cfg_dict, order_list):
+    argv, pretty = _build_cmd(test_file, model_id, memory_between, cfg_dict, order_list)
 
     proc = subprocess.run(argv, capture_output=True, text=True)
     out = [f"$ {pretty}\n\n"]
@@ -182,11 +174,12 @@ def build_experiment_ui():
                 value=None,
                 label="Test file (data/tests/*.json)",
             )
-            models = gr.Dropdown(
+
+            # ✅ single-select model (closes like test dropdown)
+            model_id = gr.Dropdown(
                 choices=model_ids,
-                value=[],
-                multiselect=True,
-                label="Models",
+                value=None,
+                label="Model",
             )
 
         gr.Markdown("### Personas")
@@ -302,7 +295,6 @@ def build_experiment_ui():
                     outputs=[cfg_state, order_state],
                 )
 
-        # memory-between: default disabled (page opens empty)
         memory_between = gr.Dropdown(
             choices=["reset", "carry_over"],
             value="reset",
@@ -310,7 +302,6 @@ def build_experiment_ui():
             interactive=False,
         )
 
-        # whenever order changes (add/remove/move), update enable/disable
         order_state.change(
             fn=_memory_between_ui,
             inputs=[order_state],
@@ -325,7 +316,7 @@ def build_experiment_ui():
 
         btn_run.click(
             fn=_run_experiment,
-            inputs=[test_file, models, memory_between, cfg_state, order_state],
+            inputs=[test_file, model_id, memory_between, cfg_state, order_state],
             outputs=[cmd_preview, output],
         )
 
