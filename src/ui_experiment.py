@@ -97,6 +97,17 @@ def _move_persona(pid, direction, order):
     return new_order
 
 
+def _memory_between_ui(order):
+    """
+    Disable memory-between όταν έχεις <2 personas.
+    Όταν είναι disabled, το value γυρίζει σε "reset" για να μη μπερδεύει.
+    """
+    n = len(order or [])
+    if n < 2:
+        return gr.update(value="reset", interactive=False)
+    return gr.update(interactive=True)
+
+
 def _build_cmd(test_file, model_ids, memory_between, cfg_dict, order_list):
     if not test_file:
         raise ValueError("Επίλεξε test file.")
@@ -111,6 +122,10 @@ def _build_cmd(test_file, model_ids, memory_between, cfg_dict, order_list):
 
     if not ordered_personas:
         raise ValueError("Πρόσθεσε τουλάχιστον μία persona (Add).")
+
+    # Αν δεν έχει νόημα, κρατάμε default "reset"
+    if len(ordered_personas) < 2:
+        memory_between = "reset"
 
     argv = [sys.executable, "src/run_experiment.py", "--test-file", test_file]
 
@@ -287,10 +302,19 @@ def build_experiment_ui():
                     outputs=[cfg_state, order_state],
                 )
 
+        # memory-between: default disabled (page opens empty)
         memory_between = gr.Dropdown(
             choices=["reset", "carry_over"],
             value="reset",
             label="memory-between personas",
+            interactive=False,
+        )
+
+        # whenever order changes (add/remove/move), update enable/disable
+        order_state.change(
+            fn=_memory_between_ui,
+            inputs=[order_state],
+            outputs=[memory_between],
         )
 
         with gr.Row():
