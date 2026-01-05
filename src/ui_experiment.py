@@ -17,19 +17,16 @@ MODELS_DIR = Path("data/models")
 def _list_persona_ids():
     if not PERSONAS_DIR.exists():
         return []
-    return sorted({p.stem for p in PERSONAS_DIR.glob("*.json")})
+    return sorted([p.stem for p in PERSONAS_DIR.glob("*.json")])
 
 
 def _list_test_files():
     if not TESTS_DIR.exists():
         return []
-    return sorted({str(p) for p in TESTS_DIR.glob("*.json")})
+    return sorted([str(p) for p in TESTS_DIR.glob("*.json")])
 
 
 def _list_model_ids():
-    """
-    data/models/<model_id>.json
-    """
     if not MODELS_DIR.exists():
         return []
     ids = set()
@@ -57,26 +54,50 @@ def _load_persona_prompt(persona_id: str) -> str:
         return f"(error reading json: {e})"
 
 
-def _merge_selection_into_cfg(selected, cfg):
-    selected = selected or []
+def _add_persona(selected_pid, cfg, order):
     cfg = cfg or {}
+    order = order or []
+    pid = (selected_pid or "").strip()
 
-    new_cfg = {}
-    for pid in selected:
-        if pid in cfg:
-            new_cfg[pid] = cfg[pid]
-        else:
-            new_cfg[pid] = {"runs": 1, "memory_within": "fresh"}
-    return new_cfg
+    if not pid:
+        return cfg, order, "❌ Διάλεξε persona πρώτα."
 
+    if pid in cfg:
+        return cfg, order, f"ℹ️ Η persona **{pid}** είναι ήδη στη λίστα."
 
-def _preview_from_selected(selected):
-    if not selected:
-        return ""
-    return _load_persona_prompt(selected[-1])
+    cfg[pid] = {"runs": 1, "memory_within": "fresh"}
+    order = order + [pid]
+    return cfg, order, f"✅ Προστέθηκε η persona **{pid}**."
 
 
-def _build_cmd(test_file, model_ids, memory_between, cfg_dict):
+def _remove_persona(pid, cfg, order):
+    cfg = cfg or {}
+    order = order or []
+    if pid in cfg:
+        del cfg[pid]
+    order = [x for x in order if x != pid]
+    return cfg, order
+
+
+def _move_persona(pid, direction, order):
+    """
+    direction: -1 for up, +1 for down
+    """
+    order = order or []
+    if pid not in order:
+        return order
+
+    i = order.index(pid)
+    j = i + int(direction)
+    if j < 0 or j >= len(order):
+        return order  # no-op
+
+    new_order = order[:]
+    new_order[i], new_order[j] = new_order[j], new_order[i]
+    return new_order
+
+
+def _build_cmd(test_file, model_ids, memory_between, cfg_dict, order_list):
     if not test_file:
         raise ValueError("Επίλεξε test file.")
 
@@ -85,15 +106,19 @@ def _build_cmd(test_file, model_ids, memory_between, cfg_dict):
         raise ValueError("Επίλεξε τουλάχιστον ένα model.")
 
     cfg_dict = cfg_dict or {}
-    if not cfg_dict:
-        raise ValueError("Επίλεξε τουλάχιστον μία persona.")
+    order_list = order_list or []
+    ordered_personas = [pid for pid in order_list if pid in cfg_dict]
+
+    if not ordered_personas:
+        raise ValueError("Πρόσθεσε τουλάχιστον μία persona (Add).")
 
     argv = [sys.executable, "src/run_experiment.py", "--test-file", test_file]
 
     for mid in model_ids:
         argv += ["--model", mid]
 
-    for pid, cfg in cfg_dict.items():
+    for pid in ordered_personas:
+        cfg = cfg_dict[pid]
         runs = int(cfg.get("runs", 1))
         mem = cfg.get("memory_within", "fresh")
         if mem not in ("fresh", "continuous"):
@@ -108,8 +133,8 @@ def _build_cmd(test_file, model_ids, memory_between, cfg_dict):
     return argv, pretty
 
 
-def _run_experiment(test_file, model_ids, memory_between, cfg_dict):
-    argv, pretty = _build_cmd(test_file, model_ids, memory_between, cfg_dict)
+def _run_experiment(test_file, model_ids, memory_between, cfg_dict, order_list):
+    argv, pretty = _build_cmd(test_file, model_ids, memory_between, cfg_dict, order_list)
 
     proc = subprocess.run(argv, capture_output=True, text=True)
     out = [f"$ {pretty}\n\n"]
@@ -136,61 +161,66 @@ def build_experiment_ui():
     with gr.Blocks() as experiment_ui:
         gr.Markdown("## Experiment Runner")
 
-        # ---- global ----
         with gr.Row():
             test_file = gr.Dropdown(
                 choices=test_files,
-                value=None,                 # ✅ empty on load
+                value=None,
                 label="Test file (data/tests/*.json)",
             )
-
             models = gr.Dropdown(
                 choices=model_ids,
-                value=[],                   # ✅ empty on load
+                value=[],
                 multiselect=True,
                 label="Models",
             )
 
-        # ---- personas ----
         gr.Markdown("### Personas")
 
         cfg_state = gr.State({})
+        order_state = gr.State([])
 
         with gr.Row():
             persona_select = gr.Dropdown(
                 choices=persona_ids,
-                value=[],                   # ✅ empty on load
-                multiselect=True,
-                label="Select personas",
+                value=None,
+                label="Select persona",
             )
             persona_preview = gr.Textbox(
-                label="Prompt prefix preview (last selected)",
+                label="Prompt prefix preview",
                 lines=8,
                 interactive=False,
             )
 
-        persona_select.change(
-            fn=_merge_selection_into_cfg,
-            inputs=[persona_select, cfg_state],
-            outputs=[cfg_state],
-        )
+        with gr.Row():
+            btn_add_persona = gr.Button("Add persona", variant="primary")
+            add_status = gr.Markdown("")
 
         persona_select.change(
-            fn=_preview_from_selected,
+            fn=_load_persona_prompt,
             inputs=[persona_select],
             outputs=[persona_preview],
         )
 
-        @gr.render(inputs=[cfg_state])
-        def _render_persona_rows(cfg):
+        btn_add_persona.click(
+            fn=_add_persona,
+            inputs=[persona_select, cfg_state, order_state],
+            outputs=[cfg_state, order_state, add_status],
+        )
+
+        @gr.render(inputs=[cfg_state, order_state])
+        def _render_persona_rows(cfg, order):
             cfg = cfg or {}
-            if not cfg:
-                gr.Markdown("_No personas selected._")
+            order = order or []
+            ordered = [pid for pid in order if pid in cfg]
+
+            if not ordered:
+                gr.Markdown("_No personas added yet._")
                 return
 
-            gr.Markdown("#### Per-persona settings")
+            gr.Markdown("#### Per-persona settings (ordered)")
 
             def _set_runs(pid, val, cfg_in):
+                cfg_in = cfg_in or {}
                 if pid in cfg_in:
                     try:
                         cfg_in[pid]["runs"] = max(1, int(val))
@@ -199,44 +229,70 @@ def build_experiment_ui():
                 return cfg_in
 
             def _set_mem(pid, val, cfg_in):
+                cfg_in = cfg_in or {}
                 if pid in cfg_in:
                     cfg_in[pid]["memory_within"] = val
                 return cfg_in
 
-            for pid in cfg.keys():
+            for pid in ordered:
                 with gr.Row():
                     gr.Markdown(f"**{pid}**")
+
                     runs = gr.Number(
-                        value=int(cfg[pid]["runs"]),
+                        value=int(cfg[pid].get("runs", 1)),
                         precision=0,
                         minimum=1,
                         label="runs",
                     )
+
                     mem = gr.Dropdown(
                         choices=["fresh", "continuous"],
-                        value=cfg[pid]["memory_within"],
+                        value=str(cfg[pid].get("memory_within", "fresh")),
                         label="memory_within",
                     )
+
+                    with gr.Column(scale=0):
+                        btn_up = gr.Button("↑", size="sm")
+                        btn_down = gr.Button("↓", size="sm")
+
+                    btn_remove = gr.Button("Remove", variant="secondary")
 
                 runs.change(
                     fn=lambda v, s, _pid=pid: _set_runs(_pid, v, s),
                     inputs=[runs, cfg_state],
                     outputs=[cfg_state],
                 )
+
                 mem.change(
                     fn=lambda v, s, _pid=pid: _set_mem(_pid, v, s),
                     inputs=[mem, cfg_state],
                     outputs=[cfg_state],
                 )
 
-        # ---- memory between ----
+                btn_up.click(
+                    fn=lambda s_order, _pid=pid: _move_persona(_pid, -1, s_order),
+                    inputs=[order_state],
+                    outputs=[order_state],
+                )
+
+                btn_down.click(
+                    fn=lambda s_order, _pid=pid: _move_persona(_pid, +1, s_order),
+                    inputs=[order_state],
+                    outputs=[order_state],
+                )
+
+                btn_remove.click(
+                    fn=lambda s_cfg, s_order, _pid=pid: _remove_persona(_pid, s_cfg, s_order),
+                    inputs=[cfg_state, order_state],
+                    outputs=[cfg_state, order_state],
+                )
+
         memory_between = gr.Dropdown(
             choices=["reset", "carry_over"],
             value="reset",
             label="memory-between personas",
         )
 
-        # ---- run ----
         with gr.Row():
             btn_run = gr.Button("Run experiment", variant="primary")
             cmd_preview = gr.Textbox(label="Command preview", interactive=False)
@@ -245,7 +301,7 @@ def build_experiment_ui():
 
         btn_run.click(
             fn=_run_experiment,
-            inputs=[test_file, models, memory_between, cfg_state],
+            inputs=[test_file, models, memory_between, cfg_state, order_state],
             outputs=[cmd_preview, output],
         )
 
