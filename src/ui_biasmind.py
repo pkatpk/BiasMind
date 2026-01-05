@@ -5,40 +5,71 @@ from ui_experiment import build_experiment_ui
 
 
 APP_CSS = """
-/* ---------- App background ---------- */
+/* =========================
+   Cognitive / Bias Theme
+   ========================= */
+
+/* ---- Global background ---- */
 .gradio-container {
-  background: radial-gradient(
-    1200px 800px at 10% 0%,
-    #f3f7ff 0%,
-    #ffffff 55%,
-    #f7f7fb 100%
-  );
+  background:
+    radial-gradient(800px 500px at 15% 10%, rgba(99,102,241,0.10), transparent 40%),
+    radial-gradient(900px 600px at 85% 20%, rgba(139,92,246,0.10), transparent 45%),
+    radial-gradient(700px 500px at 50% 90%, rgba(79,70,229,0.08), transparent 50%),
+    #f7f7fb;
 }
 
-/* ---------- Card look ---------- */
+/* ---- Card containers ---- */
 .bm-card {
   background: rgba(255, 255, 255, 0.88);
-  border: 1px solid rgba(20, 20, 20, 0.08);
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(99, 102, 241, 0.18);
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.06),
+    0 1px 0 rgba(255,255,255,0.6) inset;
 }
 
-/* ---------- Headings ---------- */
+/* ---- Titles ---- */
 .bm-title h1,
 .bm-title h2 {
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
+  color: #1f2937;
 }
 
-/* ---------- Buttons ---------- */
-button.primary,
-.gr-button-primary {
-  border-radius: 12px !important;
+/* Subtle accent line under main title */
+.bm-title h2::after {
+  content: "";
+  display: block;
+  width: 48px;
+  height: 3px;
+  margin-top: 6px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
 }
 
-/* Make secondary buttons a bit softer */
+/* ---- Buttons ---- */
+.gr-button-primary,
+button.primary {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+  border: none !important;
+  color: white !important;
+  border-radius: 14px !important;
+  box-shadow: 0 6px 16px rgba(99,102,241,0.35);
+}
+
+.gr-button-primary:hover {
+  filter: brightness(1.05);
+}
+
+/* Secondary buttons */
 .gr-button {
-  border-radius: 10px;
+  border-radius: 12px;
+}
+
+/* ---- Hide required asterisks ---- */
+label span[aria-hidden="true"] {
+  display: none;
 }
 """
 
@@ -47,7 +78,7 @@ def build_main_ui():
     with gr.Blocks() as main_ui:
         gr.Markdown("## Bias Mind", elem_classes=["bm-title"])
         gr.Markdown(
-            "Demo UI / experiment runner for persona-based bias testing."
+            "Persona-based experiment runner for studying cognitive bias in language models."
         )
 
         go_personas = gr.Button("Manage Personas →")
@@ -84,7 +115,7 @@ def build_app():
             gr.Markdown("## Results")
             gr.Markdown("Results UI will be implemented later.")
 
-        # ---------- Navigation logic ----------
+        # ---------- Navigation ----------
         def show_personas():
             return (
                 gr.Column(visible=False),
