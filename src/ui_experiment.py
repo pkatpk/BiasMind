@@ -1,5 +1,4 @@
 # src/ui_experiment.py
-import os
 import json
 import sys
 import shlex
@@ -37,37 +36,39 @@ def _load_persona_prompt(persona_id: str) -> str:
         return f"(error reading json: {e})"
 
 
-def _rows_from_selection(selected, existing_rows):
+def _merge_selection_into_cfg(selected, cfg):
     """
-    rows: [persona_id, runs, memory_within]
+    cfg: dict[persona_id] = {"runs": int, "memory_within": "fresh|continuous"}
     """
     selected = selected or []
-    existing_rows = existing_rows or []
+    cfg = cfg or {}
 
-    by_id = {}
-    for row in existing_rows:
-        if not row or len(row) < 3:
-            continue
-        pid = str(row[0]).strip()
-        if pid:
-            by_id[pid] = [pid, str(row[1]), str(row[2])]
-
-    rows = []
+    # keep only selected
+    new_cfg = {}
     for pid in selected:
-        if pid in by_id:
-            rows.append(by_id[pid])
+        if pid in cfg:
+            new_cfg[pid] = cfg[pid]
         else:
-            rows.append([pid, "1", "fresh"])
-    return rows
+            new_cfg[pid] = {"runs": 1, "memory_within": "fresh"}
+
+    return new_cfg
 
 
-def _build_cmd(test_file, model_ids_csv, memory_between, persona_rows):
+def _preview_from_selected(selected):
+    if not selected:
+        return ""
+    # last selected for preview
+    pid = selected[-1]
+    return _load_persona_prompt(pid)
+
+
+def _build_cmd(test_file, model_ids_csv, memory_between, cfg_dict):
     model_ids = [m.strip() for m in (model_ids_csv or "").split(",") if m.strip()]
     if not model_ids:
         raise ValueError("Δώσε τουλάχιστον ένα model id (comma-separated), π.χ. tinyllama-chat")
 
-    rows = persona_rows or []
-    if not rows:
+    cfg_dict = cfg_dict or {}
+    if not cfg_dict:
         raise ValueError("Επίλεξε τουλάχιστον μία persona.")
 
     argv = [sys.executable, "src/run_experiment.py", "--test-file", test_file]
@@ -75,37 +76,23 @@ def _build_cmd(test_file, model_ids_csv, memory_between, persona_rows):
     for mid in model_ids:
         argv += ["--model", mid]
 
-    for row in rows:
-        if len(row) < 3:
-            continue
-        pid = str(row[0]).strip()
-        runs = str(row[1]).strip()
-        mem = str(row[2]).strip()
-
-        if not pid:
-            continue
-
-        try:
-            int(runs)
-        except Exception:
-            raise ValueError(f"runs για '{pid}' πρέπει να είναι ακέραιος (π.χ. 1,2,3...).")
-
+    for pid, cfg in cfg_dict.items():
+        runs = int(cfg.get("runs", 1))
+        mem = str(cfg.get("memory_within", "fresh")).strip()
         if mem not in ("fresh", "continuous"):
             raise ValueError(f"memory_within για '{pid}' πρέπει να είναι fresh ή continuous.")
-
         argv += ["--persona", f"{pid}:{runs}:{mem}"]
 
     if memory_between not in ("reset", "carry_over"):
         raise ValueError("memory-between πρέπει να είναι reset ή carry_over.")
-
     argv += ["--memory-between", memory_between]
 
     pretty = " ".join(shlex.quote(a) for a in argv)
     return argv, pretty
 
 
-def _run_experiment(test_file, model_ids_csv, memory_between, persona_rows):
-    argv, pretty = _build_cmd(test_file, model_ids_csv, memory_between, persona_rows)
+def _run_experiment(test_file, model_ids_csv, memory_between, cfg_dict):
+    argv, pretty = _build_cmd(test_file, model_ids_csv, memory_between, cfg_dict)
 
     proc = subprocess.run(argv, capture_output=True, text=True)
     out = [f"$ {pretty}\n\n"]
@@ -141,17 +128,15 @@ def build_experiment_ui():
                 label="Models (comma-separated)",
                 placeholder="π.χ. tinyllama-chat, llama3 ...",
             )
-            memory_between = gr.Dropdown(
-                choices=["reset", "carry_over"],
-                value="reset",
-                label="memory-between personas",
-            )
 
         gr.Markdown("### Personas")
 
+        cfg_state = gr.State({})  # dict config per persona
+
         with gr.Row():
-            persona_select = gr.CheckboxGroup(
+            persona_select = gr.Dropdown(
                 choices=persona_ids,
+                multiselect=True,
                 label="Select personas (multi)",
             )
             persona_preview = gr.Textbox(
@@ -160,13 +145,80 @@ def build_experiment_ui():
                 interactive=False,
             )
 
-        persona_cfg = gr.Dataframe(
-            headers=["persona_id", "runs", "memory_within (fresh|continuous)"],
-            datatype=["str", "str", "str"],
-            row_count=(0, "dynamic"),
-            col_count=(3, "fixed"),
-            label="Per-persona config",
-            interactive=True,
+        # update cfg_state on selection
+        def _on_select(selected, cfg):
+            return _merge_selection_into_cfg(selected, cfg)
+
+        persona_select.change(
+            fn=_on_select,
+            inputs=[persona_select, cfg_state],
+            outputs=[cfg_state],
+        )
+
+        # update preview
+        persona_select.change(
+            fn=_preview_from_selected,
+            inputs=[persona_select],
+            outputs=[persona_preview],
+        )
+
+        # Render per-persona rows
+        @gr.render(inputs=[cfg_state])
+        def _render_rows(cfg):
+            cfg = cfg or {}
+            if not cfg:
+                gr.Markdown("_No personas selected._")
+                return
+
+            gr.Markdown("#### Per-persona settings")
+
+            # Helper: update functions
+            def _set_runs(pid, val, cfg_in):
+                cfg_in = cfg_in or {}
+                if pid in cfg_in:
+                    try:
+                        cfg_in[pid]["runs"] = int(val)
+                    except Exception:
+                        cfg_in[pid]["runs"] = 1
+                return cfg_in
+
+            def _set_mem(pid, val, cfg_in):
+                cfg_in = cfg_in or {}
+                if pid in cfg_in:
+                    cfg_in[pid]["memory_within"] = val
+                return cfg_in
+
+            for pid in cfg.keys():
+                with gr.Row():
+                    gr.Markdown(f"**{pid}**")
+                    runs = gr.Number(
+                        value=int(cfg[pid].get("runs", 1)),
+                        precision=0,
+                        minimum=1,
+                        label="runs",
+                    )
+                    mem = gr.Dropdown(
+                        choices=["fresh", "continuous"],
+                        value=str(cfg[pid].get("memory_within", "fresh")),
+                        label="memory_within",
+                    )
+
+                runs.change(
+                    fn=lambda v, s, _pid=pid: _set_runs(_pid, v, s),
+                    inputs=[runs, cfg_state],
+                    outputs=[cfg_state],
+                )
+                mem.change(
+                    fn=lambda v, s, _pid=pid: _set_mem(_pid, v, s),
+                    inputs=[mem, cfg_state],
+                    outputs=[cfg_state],
+                )
+
+        # ✅ memory-between moved here (after personas, before Run)
+        memory_between = gr.Dropdown(
+            choices=["reset", "carry_over"],
+            value="reset",
+            label="memory-between personas",
         )
 
         with gr.Row():
@@ -175,23 +227,9 @@ def build_experiment_ui():
 
         output = gr.Textbox(label="Output", lines=18, interactive=False)
 
-        # events
-        persona_select.change(
-            fn=_rows_from_selection,
-            inputs=[persona_select, persona_cfg],
-            outputs=[persona_cfg],
-        )
-
-        def _preview(selected):
-            if not selected:
-                return ""
-            return _load_persona_prompt(selected[-1])
-
-        persona_select.change(fn=_preview, inputs=[persona_select], outputs=[persona_preview])
-
         btn_run.click(
             fn=_run_experiment,
-            inputs=[test_file, model_ids_csv, memory_between, persona_cfg],
+            inputs=[test_file, model_ids_csv, memory_between, cfg_state],
             outputs=[cmd_preview, output],
         )
 
