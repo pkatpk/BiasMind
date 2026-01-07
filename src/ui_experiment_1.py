@@ -116,12 +116,11 @@ def _build_cmd(test_file, model_id, memory_between, cfg_dict, order_list):
     if not ordered_personas:
         raise ValueError("Πρόσθεσε τουλάχιστον μία persona (Add).")
 
+    # no meaning with <2 personas
     if len(ordered_personas) < 2:
         memory_between = "reset"
 
     argv = [sys.executable, "src/run_experiment.py", "--test-file", test_file]
-
-    # single model
     argv += ["--model", model_id]
 
     for pid in ordered_personas:
@@ -140,11 +139,23 @@ def _build_cmd(test_file, model_id, memory_between, cfg_dict, order_list):
     return argv, pretty
 
 
+def _preview_command(test_file, model_id, memory_between, cfg_dict, order_list):
+    """
+    Only builds the CLI command (does NOT execute) and formats it multiline for display.
+    """
+    _, pretty = _build_cmd(test_file, model_id, memory_between, cfg_dict, order_list)
+
+    # break before each --flag for readability
+    pretty_ml = pretty.replace(" --", "\n  --")
+
+    return f"$ {pretty_ml}"
+
+
 def _run_experiment(test_file, model_id, memory_between, cfg_dict, order_list):
-    argv, pretty = _build_cmd(test_file, model_id, memory_between, cfg_dict, order_list)
+    argv, _pretty = _build_cmd(test_file, model_id, memory_between, cfg_dict, order_list)
 
     proc = subprocess.run(argv, capture_output=True, text=True)
-    out = [f"$ {pretty}\n\n"]
+    out = []
 
     if proc.stdout:
         out.append("---- STDOUT ----\n")
@@ -154,8 +165,8 @@ def _run_experiment(test_file, model_id, memory_between, cfg_dict, order_list):
         out.append("\n---- STDERR ----\n")
         out.append(proc.stderr)
 
-    out.append(f"\n\n(exit code: {proc.returncode})")
-    return pretty, "".join(out)
+    out.append(f"\n(exit code: {proc.returncode})")
+    return "".join(out)
 
 
 # ---------- UI ----------
@@ -174,8 +185,6 @@ def build_experiment_ui():
                 value=None,
                 label="Test file (data/tests/*.json)",
             )
-
-            # ✅ single-select model (closes like test dropdown)
             model_id = gr.Dropdown(
                 choices=model_ids,
                 value=None,
@@ -308,16 +317,32 @@ def build_experiment_ui():
             outputs=[memory_between],
         )
 
+        gr.Markdown("### Run")
+
+        with gr.Row():
+            btn_preview = gr.Button("Command preview (optional)")
+            cmd_preview = gr.Textbox(
+                label="CLI command",
+                lines=8,
+                interactive=False,
+                placeholder="Press 'Command preview' to generate the CLI command...",
+            )
+
         with gr.Row():
             btn_run = gr.Button("Run experiment", variant="primary")
-            cmd_preview = gr.Textbox(label="Command preview", interactive=False)
 
         output = gr.Textbox(label="Output", lines=18, interactive=False)
+
+        btn_preview.click(
+            fn=_preview_command,
+            inputs=[test_file, model_id, memory_between, cfg_state, order_state],
+            outputs=[cmd_preview],
+        )
 
         btn_run.click(
             fn=_run_experiment,
             inputs=[test_file, model_id, memory_between, cfg_state, order_state],
-            outputs=[cmd_preview, output],
+            outputs=[output],
         )
 
     return experiment_ui
