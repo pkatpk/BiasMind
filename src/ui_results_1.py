@@ -18,8 +18,8 @@ TEXT_EXTS = {".txt", ".md", ".json", ".jsonl", ".csv", ".tsv", ".log", ".yaml", 
 
 @dataclass
 class FileItem:
-    label: str
-    value: str
+    label: str      # what user sees
+    value: str      # full path for download
     path: Path
 
 
@@ -45,6 +45,7 @@ def _list_files(dir_path: Path) -> List[FileItem]:
     if not dir_path.exists():
         return []
     files = [p for p in dir_path.rglob("*") if p.is_file()]
+    # newest first
     files.sort(key=lambda p: p.stat().st_mtime if p.exists() else 0, reverse=True)
 
     items: List[FileItem] = []
@@ -96,10 +97,7 @@ def _preview_file(file_path: Optional[str]) -> str:
         return f"(Could not preview file: {e})"
 
 
-def _as_download_file(file_path: Optional[str]):
-    """
-    Return a path for gr.File so user can click once to download.
-    """
+def _download_selected(file_path: Optional[str]):
     if not file_path:
         return None
     p = Path(file_path)
@@ -109,6 +107,7 @@ def _as_download_file(file_path: Optional[str]):
 
 
 def _refresh_dir(dir_path: Path):
+    # returns: dropdown update, info, preview, download clear
     return (
         gr.update(choices=_choices_for_dir(dir_path), value=None),
         gr.update(value="_No file selected._"),
@@ -132,13 +131,14 @@ def _build_dir_section(title: str, dir_path: Path):
 
     info = gr.Markdown("_No file selected._")
     preview = gr.Textbox(label="Preview", lines=12, interactive=False)
-    dl = gr.File(label="Download")
+
+    with gr.Row():
+        btn_dl = gr.Button("Download selected", variant="primary")
+        dl = gr.File(label="Download")
 
     dd.change(fn=_file_info, inputs=[dd], outputs=[info])
     dd.change(fn=_preview_file, inputs=[dd], outputs=[preview])
-
-    # ✅ auto-fill the download component when a file is selected
-    dd.change(fn=_as_download_file, inputs=[dd], outputs=[dl])
+    btn_dl.click(fn=_download_selected, inputs=[dd], outputs=[dl])
 
     btn_refresh.click(
         fn=lambda: _refresh_dir(dir_path),
@@ -151,6 +151,7 @@ def build_results_ui():
     with gr.Blocks() as results_ui:
         gr.Markdown("## Results")
 
+        # Same page, same order you requested:
         _build_dir_section("metadata", RESULTS_METADATA_DIR)
         gr.Markdown("---")
 
