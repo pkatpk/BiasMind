@@ -141,14 +141,18 @@ def _build_cmd(test_file, model_id, memory_between, cfg_dict, order_list):
 
 def _preview_command(test_file, model_id, memory_between, cfg_dict, order_list):
     """
-    Only builds the CLI command (does NOT execute).
+    Only builds the CLI command (does NOT execute) and formats it multiline for display.
     """
     _, pretty = _build_cmd(test_file, model_id, memory_between, cfg_dict, order_list)
-    return f"$ {pretty}"
+
+    # break before each --flag for readability
+    pretty_ml = pretty.replace(" --", "\n  --")
+
+    return f"$ {pretty_ml}"
 
 
 def _run_experiment(test_file, model_id, memory_between, cfg_dict, order_list):
-    argv, pretty = _build_cmd(test_file, model_id, memory_between, cfg_dict, order_list)
+    argv, _pretty = _build_cmd(test_file, model_id, memory_between, cfg_dict, order_list)
 
     proc = subprocess.run(argv, capture_output=True, text=True)
     out = []
@@ -192,7 +196,6 @@ def build_experiment_ui():
         cfg_state = gr.State({})
         order_state = gr.State([])
 
-        # persona picker + preview (as you already like it)
         with gr.Row():
             persona_select = gr.Dropdown(
                 choices=persona_ids,
@@ -301,7 +304,6 @@ def build_experiment_ui():
                     outputs=[cfg_state, order_state],
                 )
 
-        # memory-between (disabled until 2+ personas)
         memory_between = gr.Dropdown(
             choices=["reset", "carry_over"],
             value="reset",
@@ -315,14 +317,13 @@ def build_experiment_ui():
             outputs=[memory_between],
         )
 
-        # ---- Command preview + Run (command box as big as persona preview) ----
         gr.Markdown("### Run")
 
         with gr.Row():
             btn_preview = gr.Button("Command preview (optional)")
             cmd_preview = gr.Textbox(
                 label="CLI command",
-                lines=8,               # ✅ same height as persona preview
+                lines=8,
                 interactive=False,
                 placeholder="Press 'Command preview' to generate the CLI command...",
             )
