@@ -26,22 +26,21 @@ APP_CSS = r"""
   padding: 22px;
   box-shadow:
     0 10px 30px rgba(0, 0, 0, 0.06),
-    0 1px 0 rgba(255,255,0.6) inset;
-
-  /* ✅ important for embedded dropdowns */
-  overflow: visible !important;
+    0 1px 0 rgba(255,255,255,0.6) inset;
 }
 
-/* ✅ FIX: dropdown popups clipped in Results embed */
+/* ✅ FIX: dropdown popups clipped when Results is embedded */
+.bm-card,
 .gradio-container .block,
 .gradio-container .form,
 .gradio-container .gr-box,
 .gradio-container .gr-panel,
-.gradio-container .gr-box > div {
+.gradio-container .wrap,
+.gradio-container .prose {
   overflow: visible !important;
 }
 
-/* ensure popup above all */
+/* Ensure dropdown menu appears above other elements */
 .gradio-container [role="listbox"],
 .gradio-container .dropdown,
 .gradio-container .dropdown-menu {
@@ -88,43 +87,45 @@ label span[aria-hidden="true"] {
 
 
 def build_main_ui():
-    with gr.Blocks() as main:
+    # IMPORTANT: return the actual button objects (no elem_id tricks)
+    with gr.Blocks() as main_ui:
         gr.Markdown("## Bias Mind", elem_classes=["bm-title"])
         gr.Markdown("Persona-based experiment runner for studying cognitive bias in language models.")
 
-        gr.Button("Manage Personas →", elem_id="btn_personas")
-        gr.Button("Run Experiment →", elem_id="btn_experiment")
-        # ✅ initial only placeholder for later
-        gr.Button("Results →", elem_id="btn_results")
+        go_personas = gr.Button("Manage Personas →")
+        go_experiment = gr.Button("Run Experiment →")
+        go_results = gr.Button("Results →")
 
-    return main
+    return main_ui, go_personas, go_experiment, go_results
 
 
 def build_app():
-    main_ui = build_main_ui()
+    main_ui, go_personas, go_experiment, go_results = build_main_ui()
     personas_ui = build_personas_ui()
-    experiment_ui = build_personas_ui()
+    experiment_ui = build_experiment_ui()
     results_ui = build_results_ui()
 
     with gr.Blocks(theme=gr.themes.Soft(), css=APP_CSS) as app:
-
+        # MAIN
         with gr.Column(visible=True, elem_classes=["bm-card"]) as page_main:
             main_ui.render()
 
+        # PERSONAS
         with gr.Column(visible=False, elem_classes=["bm-card"]) as page_personas:
-            back1 = gr.Button("← Back")
+            back_btn_1 = gr.Button("← Back")
             personas_ui.render()
 
+        # EXPERIMENT
         with gr.Column(visible=False, elem_classes=["bm-card"]) as page_experiment:
-            back2 = gr.Button("← Back")
+            back_btn_2 = gr.Button("← Back")
             experiment_ui.render()
 
+        # RESULTS
         with gr.Column(visible=False, elem_classes=["bm-card"]) as page_results:
-            back3 = gr.Button("← Back")
+            back_btn_3 = gr.Button("← Back")
             results_ui.render()
 
-        # ---------- navigation ----------
-
+        # ---------- Navigation ----------
         def show_personas():
             return (
                 gr.Column(visible=False),
@@ -157,20 +158,13 @@ def build_app():
                 gr.Column(visible=False),
             )
 
-        # buttons
-        btn_personas = gr.Button(visible=False)   # dummy references
-        btn_experiment = gr.Button(visible=False)
-        btn_results = gr.Button(visible=False)
+        go_personas.click(fn=show_personas, outputs=[page_main, page_personas, page_experiment, page_results])
+        go_experiment.click(fn=show_experiment, outputs=[page_main, page_personas, page_experiment, page_results])
+        go_results.click(fn=show_results, outputs=[page_main, page_personas, page_experiment, page_results])
 
-        # main clicks
-        btn_personas.click(fn=show_personas, outputs=[page_main, page_personas, page_experiment, page_results])
-        btn_experiment.click(fn=show_experiment, outputs=[page_main, page_personas, page_experiment, page_results])
-        btn_results.click(fn=show_results, outputs=[page_main, page_personas, page_experiment, page_results])
-
-        # back
-        back1.click(fn=show_main, outputs=[page_main, page_personas, page_experiment, page_results])
-        back2.click(fn=show_main, outputs=[page_main, page_personas, page_results])
-        back3.click(fn=show_main, outputs=[page_main, page_personas, page_experiment, page_results])
+        back_btn_1.click(fn=show_main, outputs=[page_main, page_personas, page_experiment, page_results])
+        back_btn_2.click(fn=show_main, outputs=[page_main, page_personas, page_experiment, page_results])
+        back_btn_3.click(fn=show_main, outputs=[page_main, page_personas, page_experiment, page_results])
 
     return app
 
