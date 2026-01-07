@@ -45,12 +45,11 @@ def _list_files(dir_path: Path) -> List[FileItem]:
     if not dir_path.exists():
         return []
     files = [p for p in dir_path.rglob("*") if p.is_file()]
-    # Sort by modified time (newest first)
+    # newest first
     files.sort(key=lambda p: p.stat().st_mtime if p.exists() else 0, reverse=True)
 
     items: List[FileItem] = []
     for p in files:
-        # Show relative to the results folder for readability
         try:
             rel = p.relative_to(Path("results"))
             label = str(rel).replace("\\", "/")
@@ -86,12 +85,11 @@ def _preview_file(file_path: Optional[str]) -> str:
         return "(Preview not available for this file type.)"
 
     try:
-        # Read a limited amount (safe for large files)
         with p.open("r", encoding="utf-8", errors="replace") as f:
             lines = []
             for i, line in enumerate(f):
                 lines.append(line.rstrip("\n"))
-                if i >= 199:  # 200 lines max
+                if i >= 199:
                     lines.append("… (truncated)")
                     break
         return "\n".join(lines)
@@ -100,7 +98,6 @@ def _preview_file(file_path: Optional[str]) -> str:
 
 
 def _download_selected(file_path: Optional[str]):
-    # gr.File expects a path-like string (or list of strings)
     if not file_path:
         return None
     p = Path(file_path)
@@ -110,7 +107,7 @@ def _download_selected(file_path: Optional[str]):
 
 
 def _refresh_dir(dir_path: Path):
-    # returns: choices, clears selection, clears info, clears preview, clears download
+    # returns: dropdown update, info, preview, download clear
     return (
         gr.update(choices=_choices_for_dir(dir_path), value=None),
         gr.update(value="_No file selected._"),
@@ -119,7 +116,7 @@ def _refresh_dir(dir_path: Path):
     )
 
 
-def _build_dir_tab(title: str, dir_path: Path):
+def _build_dir_section(title: str, dir_path: Path):
     gr.Markdown(f"### {title}")
     if not dir_path.exists():
         gr.Markdown(f"⚠️ Folder not found: `{dir_path.as_posix()}`")
@@ -134,8 +131,10 @@ def _build_dir_tab(title: str, dir_path: Path):
 
     info = gr.Markdown("_No file selected._")
     preview = gr.Textbox(label="Preview", lines=12, interactive=False)
-    btn_dl = gr.Button("Download selected", variant="primary")
-    dl = gr.File(label="Download")
+
+    with gr.Row():
+        btn_dl = gr.Button("Download selected", variant="primary")
+        dl = gr.File(label="Download")
 
     dd.change(fn=_file_info, inputs=[dd], outputs=[info])
     dd.change(fn=_preview_file, inputs=[dd], outputs=[preview])
@@ -152,16 +151,14 @@ def build_results_ui():
     with gr.Blocks() as results_ui:
         gr.Markdown("## Results")
 
-        # Order as requested: metadata -> raw -> scored
-        with gr.Tabs():
-            with gr.Tab("metadata"):
-                _build_dir_tab("Metadata results", RESULTS_METADATA_DIR)
+        # Same page, same order you requested:
+        _build_dir_section("metadata", RESULTS_METADATA_DIR)
+        gr.Markdown("---")
 
-            with gr.Tab("raw"):
-                _build_dir_tab("Raw results", RESULTS_RAW_DIR)
+        _build_dir_section("raw", RESULTS_RAW_DIR)
+        gr.Markdown("---")
 
-            with gr.Tab("scored"):
-                _build_dir_tab("Scored results", RESULTS_SCORED_DIR)
+        _build_dir_section("scored", RESULTS_SCORED_DIR)
 
     return results_ui
 
