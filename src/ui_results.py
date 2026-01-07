@@ -1,10 +1,10 @@
 # src/ui_results.py
 from __future__ import annotations
 
+import datetime
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Tuple, Optional
-import datetime
 
 import gradio as gr
 
@@ -18,8 +18,8 @@ TEXT_EXTS = {".txt", ".md", ".json", ".jsonl", ".csv", ".tsv", ".log", ".yaml", 
 
 @dataclass
 class FileItem:
-    label: str
-    value: str
+    label: str      # what user sees
+    value: str      # full path
     path: Path
 
 
@@ -49,6 +49,7 @@ def _list_files(dir_path: Path) -> List[FileItem]:
 
     items: List[FileItem] = []
     for p in files:
+        # show relative under results/ for clarity
         try:
             rel = p.relative_to(Path("results"))
             label = str(rel).replace("\\", "/")
@@ -96,9 +97,9 @@ def _preview_file(file_path: Optional[str]) -> str:
         return f"(Could not preview file: {e})"
 
 
-def _as_download_file(file_path: Optional[str]):
+def _download_value(file_path: Optional[str]):
     """
-    Return a path for gr.File so user can click once to download.
+    For gr.DownloadButton: return a valid file path (or None).
     """
     if not file_path:
         return None
@@ -108,12 +109,27 @@ def _as_download_file(file_path: Optional[str]):
     return str(p)
 
 
+def _download_label(file_path: Optional[str]) -> str:
+    """
+    Show clear text next to button like: 'Download (438.0 B)'
+    """
+    if not file_path:
+        return "Download (select a file)"
+    p = Path(file_path)
+    if not p.exists() or not p.is_file():
+        return "Download (file not found)"
+    size = _human_bytes(p.stat().st_size)
+    return f"Download ({size})"
+
+
 def _refresh_dir(dir_path: Path):
+    # dropdown update, info, preview, download button text + clear value
     return (
         gr.update(choices=_choices_for_dir(dir_path), value=None),
         gr.update(value="_No file selected._"),
         gr.update(value=""),
-        None,
+        gr.update(value=None),                # download button value
+        gr.update(value="Download (select a file)"),  # size label
     )
 
 
@@ -132,25 +148,38 @@ def _build_dir_section(title: str, dir_path: Path):
 
     info = gr.Markdown("_No file selected._")
     preview = gr.Textbox(label="Preview", lines=12, interactive=False)
-    dl = gr.File(label="Download")
 
+    # Clear, explicit download UX
+    with gr.Row():
+        dl_btn = gr.DownloadButton(
+            label="Download",
+            value=None,          # updated dynamically from dropdown selection
+            variant="primary",
+        )
+        dl_hint = gr.Markdown("Download (select a file)")
+
+    # Update info/preview on select
     dd.change(fn=_file_info, inputs=[dd], outputs=[info])
     dd.change(fn=_preview_file, inputs=[dd], outputs=[preview])
 
-    # ✅ auto-fill the download component when a file is selected
-    dd.change(fn=_as_download_file, inputs=[dd], outputs=[dl])
+    # Update download button target + hint text on select
+    dd.change(fn=_download_value, inputs=[dd], outputs=[dl_btn])
+    dd.change(fn=_download_label, inputs=[dd], outputs=[dl_hint])
 
+    # Refresh
     btn_refresh.click(
         fn=lambda: _refresh_dir(dir_path),
         inputs=[],
-        outputs=[dd, info, preview, dl],
+        outputs=[dd, info, preview, dl_btn, dl_hint],
     )
 
 
 def build_results_ui():
     with gr.Blocks() as results_ui:
         gr.Markdown("## Results")
+        gr.Markdown("Select a file and press **Download**.")
 
+        # Same page, same order you requested:
         _build_dir_section("metadata", RESULTS_METADATA_DIR)
         gr.Markdown("---")
 
