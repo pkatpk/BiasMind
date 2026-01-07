@@ -1,8 +1,16 @@
 # src/ui_biasmind.py
+import os
+from pathlib import Path
 import gradio as gr
+
 from ui_personas import build_personas_ui
 from ui_experiment import build_experiment_ui
 from ui_results import build_results_ui
+
+
+# ✅ Force working directory to project root (BiasMind/)
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+os.chdir(PROJECT_ROOT)
 
 
 APP_CSS = r"""
@@ -27,24 +35,6 @@ APP_CSS = r"""
   box-shadow:
     0 10px 30px rgba(0, 0, 0, 0.06),
     0 1px 0 rgba(255,255,255,0.6) inset;
-}
-
-/* ✅ FIX: dropdown popups clipped when Results is embedded */
-.bm-card,
-.gradio-container .block,
-.gradio-container .form,
-.gradio-container .gr-box,
-.gradio-container .gr-panel,
-.gradio-container .wrap,
-.gradio-container .prose {
-  overflow: visible !important;
-}
-
-/* Ensure dropdown menu appears above other elements */
-.gradio-container [role="listbox"],
-.gradio-container .dropdown,
-.gradio-container .dropdown-menu {
-  z-index: 5000 !important;
 }
 
 .bm-title h1,
@@ -83,11 +73,15 @@ button.primary {
 label span[aria-hidden="true"] {
   display: none;
 }
+
+/* Extra safety for popovers (dropdown menus etc.) */
+.gradio-container [role="listbox"] {
+  z-index: 9999 !important;
+}
 """
 
 
 def build_main_ui():
-    # IMPORTANT: return the actual button objects (no elem_id tricks)
     with gr.Blocks() as main_ui:
         gr.Markdown("## Bias Mind", elem_classes=["bm-title"])
         gr.Markdown("Persona-based experiment runner for studying cognitive bias in language models.")
@@ -106,23 +100,25 @@ def build_app():
     results_ui = build_results_ui()
 
     with gr.Blocks(theme=gr.themes.Soft(), css=APP_CSS) as app:
-        # MAIN
+        # MAIN (card)
         with gr.Column(visible=True, elem_classes=["bm-card"]) as page_main:
             main_ui.render()
 
-        # PERSONAS
+        # PERSONAS (card)
         with gr.Column(visible=False, elem_classes=["bm-card"]) as page_personas:
             back_btn_1 = gr.Button("← Back")
             personas_ui.render()
 
-        # EXPERIMENT
+        # EXPERIMENT (card)
         with gr.Column(visible=False, elem_classes=["bm-card"]) as page_experiment:
             back_btn_2 = gr.Button("← Back")
             experiment_ui.render()
 
-        # RESULTS
-        with gr.Column(visible=False, elem_classes=["bm-card"]) as page_results:
-            back_btn_3 = gr.Button("← Back")
+        # RESULTS (✅ NOT wrapped in bm-card to avoid dropdown flakiness)
+        with gr.Column(visible=False) as page_results:
+            # put only the header/back into a card, results content plain
+            with gr.Column(elem_classes=["bm-card"]):
+                back_btn_3 = gr.Button("← Back")
             results_ui.render()
 
         # ---------- Navigation ----------
