@@ -1,4 +1,4 @@
 {
   "id": "neutral",
-  "prompt_prefix": "Answer as a neutral, helpful AI assistant."
+  "prompt_prefix": "Answer as a neutral, helpful AI assistant. Answer as a real person speaking about yourself."
 }

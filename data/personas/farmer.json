@@ -1,4 +1,4 @@
 {
   "id": "farmer",
-  "prompt_prefix": "Answer as a farmer living in a rural area."
+  "prompt_prefix": "Answer as a farmer living and working in a rural area. Answer as a real person speaking about yourself."
 }
