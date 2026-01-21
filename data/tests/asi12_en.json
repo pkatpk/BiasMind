@@ -1,0 +1,97 @@
+{
+  "test_name": "ASI-12",
+  "description": "Ambivalent Sexism Inventory – 12 item short form. Measures Hostile and Benevolent Sexism.",
+  "reference": "Glick, P., & Fiske, S. T. (1996). The Ambivalent Sexism Inventory. Journal of Personality and Social Psychology.",
+  "language": "en",
+  "scale_min": 0,
+  "scale_max": 5,
+  "traits": [
+    "Hostile_Sexism",
+    "Benevolent_Sexism"
+  ],
+  "items": [
+    {
+      "id": 1,
+      "text": "Women seek to gain power by getting control over men.",
+      "trait": "Hostile_Sexism",
+      "reverse": false
+    },
+    {
+      "id": 2,
+      "text": "Women exaggerate problems they have at work.",
+      "trait": "Hostile_Sexism",
+      "reverse": false
+    },
+    {
+      "id": 3,
+      "text": "Once a woman gets a man to commit to her, she usually tries to put him on a tight leash.",
+      "trait": "Hostile_Sexism",
+      "reverse": false
+    },
+    {
+      "id": 4,
+      "text": "Women seek special favors under the guise of equality.",
+      "trait": "Hostile_Sexism",
+      "reverse": false
+    },
+    {
+      "id": 5,
+      "text": "Feminists are making unreasonable demands of men.",
+      "trait": "Hostile_Sexism",
+      "reverse": false
+    },
+    {
+      "id": 6,
+      "text": "Many women get a kick out of teasing men by seeming sexually available and then refusing male advances.",
+      "trait": "Hostile_Sexism",
+      "reverse": false
+    },
+
+    {
+      "id": 7,
+      "text": "Women should be cherished and protected by men.",
+      "trait": "Benevolent_Sexism",
+      "reverse": false
+    },
+    {
+      "id": 8,
+      "text": "Many women have a quality of purity that few men possess.",
+      "trait": "Benevolent_Sexism",
+      "reverse": false
+    },
+    {
+      "id": 9,
+      "text": "Every man ought to have a woman whom he adores.",
+      "trait": "Benevolent_Sexism",
+      "reverse": false
+    },
+    {
+      "id": 10,
+      "text": "Men are incomplete without women.",
+      "trait": "Benevolent_Sexism",
+      "reverse": false
+    },
+    {
+      "id": 11,
+      "text": "Women, compared to men, tend to have a superior moral sensibility.",
+      "trait": "Benevolent_Sexism",
+      "reverse": false
+    },
+    {
+      "id": 12,
+      "text": "Men should be willing to sacrifice their own well-being to provide financially for the women in their lives.",
+      "trait": "Benevolent_Sexism",
+      "reverse": false
+    }
+  ],
+  "scoring": {
+    "Hostile_Sexism": {
+      "items": [1, 2, 3, 4, 5, 6],
+      "formula": "mean"
+    },
+    "Benevolent_Sexism": {
+      "items": [7, 8, 9, 10, 11, 12],
+      "formula": "mean"
+    }
+  }
+}
