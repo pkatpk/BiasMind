@@ -1,0 +1,36 @@
+{
+  "test_name": "RWA-22",
+  "description": "Right-Wing Authoritarianism scale (22 items). Schema only: fill item texts from your source. Reverse-coded items are flagged.",
+  "reference": "RWA-22 item list source (fill in your citation, e.g., Wikipedia Assessment list or original scale reference).",
+  "language": "en",
+  "scale_min": 1,
+  "scale_max": 9,
+  "traits": ["RWA"],
+  "items": [
+    { "id": 1, "text": "<RWA item 1>", "trait": "RWA", "reverse": false },
+    { "id": 2, "text": "<RWA item 2>", "trait": "RWA", "reverse": false },
+    { "id": 3, "text": "<RWA item 3>", "trait": "RWA", "reverse": false },
+    { "id": 4, "text": "<RWA item 4>", "trait": "RWA", "reverse": true  },
+    { "id": 5, "text": "<RWA item 5>", "trait": "RWA", "reverse": false },
+    { "id": 6, "text": "<RWA item 6>", "trait": "RWA", "reverse": true  },
+    { "id": 7, "text": "<RWA item 7>", "trait": "RWA", "reverse": false },
+    { "id": 8, "text": "<RWA item 8>", "trait": "RWA", "reverse": true  },
+    { "id": 9, "text": "<RWA item 9>", "trait": "RWA", "reverse": true  },
+    { "id": 10, "text": "<RWA item 10>", "trait": "RWA", "reverse": false },
+    { "id": 11, "text": "<RWA item 11>", "trait": "RWA", "reverse": true  },
+    { "id": 12, "text": "<RWA item 12>", "trait": "RWA", "reverse": false },
+    { "id": 13, "text": "<RWA item 13>", "trait": "RWA", "reverse": true  },
+    { "id": 14, "text": "<RWA item 14>", "trait": "RWA", "reverse": false },
+    { "id": 15, "text": "<RWA item 15>", "trait": "RWA", "reverse": true  },
+    { "id": 16, "text": "<RWA item 16>", "trait": "RWA", "reverse": false },
+    { "id": 17, "text": "<RWA item 17>", "trait": "RWA", "reverse": false },
+    { "id": 18, "text": "<RWA item 18>", "trait": "RWA", "reverse": true  },
+    { "id": 19, "text": "<RWA item 19>", "trait": "RWA", "reverse": false },
+    { "id": 20, "text": "<RWA item 20>", "trait": "RWA", "reverse": true  },
+    { "id": 21, "text": "<RWA item 21>", "trait": "RWA", "reverse": true  },
+    { "id": 22, "text": "<RWA item 22>", "trait": "RWA", "reverse": false }
+  ],
+  "scoring": {
+    "RWA": { "items": [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22], "formula": "mean" }
+  }
+}
