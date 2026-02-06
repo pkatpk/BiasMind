@@ -14,13 +14,14 @@ DEBUG = os.getenv("BIASMIND_DEBUG") == "1"
 def _get_pipeline(model_id: str):
     """
     Φορτώνει και κάνει cache ένα text-generation pipeline
-    για το δοσμένο Hugging Face model id (π.χ. TinyLlama, Phi-3-mini).
+    για το δοσμένο Hugging Face model id.
     """
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     model = AutoModelForCausalLM.from_pretrained(
         model_id,
         device_map="auto",
     )
+
     pipe = pipeline(
         "text-generation",
         model=model,
@@ -31,29 +32,25 @@ def _get_pipeline(model_id: str):
 
 def _messages_to_prompt(messages: List[Dict]) -> str:
     """
-    Minimal, NON-chat prompt builder (avoids [USER]/[ASSISTANT] artifacts).
-    Keeps item text untouched.
+    Plain instruction-style prompt.
+    Αποφεύγει chat transcript / role tags.
+    Δεν αλλοιώνει το item text.
     """
-    system_parts = []
-    user_parts = []
+    system_text = ""
+    user_text = ""
 
     for msg in messages:
-        role = msg.get("role", "user")
+        role = msg.get("role")
         content = msg.get("content", "")
         if role == "system":
-            system_parts.append(content)
+            system_text = content
         elif role == "user":
-            user_parts.append(content)
-        # ignore assistant history for now (local HF is single-turn here)
+            user_text = content
 
-    system_text = "\n".join(system_parts).strip()
-    user_text = "\n".join(user_parts).strip()
-
-    # Plain instruction + item text + explicit answer slot
     prompt = (
         f"{system_text}\n\n"
-        f"Statement:\n{user_text}\n\n"
-        f"Answer (single integer only): "
+        f"{user_text}\n\n"
+        f"Answer with a single integer only: "
     )
     return prompt
 
@@ -64,12 +61,13 @@ def call_hf_local_chat(
     temperature: float = 0.7,
 ) -> str:
     """
-    Καλεί ένα τοπικό Hugging Face μοντέλο χρησιμοποιώντας transformers pipeline.
+    Καλεί τοπικό HF μοντέλο.
 
     Fixes:
-    - Avoids fake chat transcript tags that trigger roleplay.
-    - Uses return_full_text=False so we get only the completion (no slicing).
-    - Uses short generation by default to reduce rambling.
+    - No fake chat tags → no roleplay
+    - Deterministic generation
+    - 1-token completion → καθαρό digit
+    - return_full_text=False → no slicing artifacts
     """
     prompt = _messages_to_prompt(messages)
 
@@ -79,13 +77,11 @@ def call_hf_local_chat(
 
     pipe = _get_pipeline(model.api_name)
 
-    # Keep it short; you can tweak max_new_tokens if needed.
-    # If you want fully deterministic outputs, set do_sample=False and temperature=0.0.
     outputs = pipe(
         prompt,
-        do_sample=True,
-        temperature=temperature,
-        max_new_tokens=8,
+        do_sample=False,
+        temperature=0.0,
+        max_new_tokens=1,
         num_return_sequences=1,
         return_full_text=False,
     )
