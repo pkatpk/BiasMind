@@ -17,8 +17,8 @@ def _get_pipeline(model_id: str):
 
 def _extract_scale_from_system(messages: List[Dict]) -> Optional[Tuple[int, int]]:
     """
-    Extracts (min,max) from system prompt like:
-    "Always answer ONLY with a single integer number from 1 to 5."
+    Extract (min,max) from system prompt like:
+    "Always answer ONLY with a single integer number from X to Y."
     Dynamic per test (no hardcoded 1–5).
     """
     sys = ""
@@ -31,7 +31,7 @@ def _extract_scale_from_system(messages: List[Dict]) -> Optional[Tuple[int, int]
     if not matches:
         return None
 
-    a, b = matches[-1]  # last match, in case persona text contains numbers
+    a, b = matches[-1]
     try:
         mn, mx = int(a), int(b)
         if mn > mx:
@@ -68,7 +68,7 @@ def call_hf_local_chat(
     prompt = _messages_to_prompt(messages)
     scale = _extract_scale_from_system(messages)  # (min,max) or None
 
-    # ALWAYS-ON DISPLAYS
+    # ALWAYS-ON DISPLAYS (as you requested)
     print("\n=== HF PROMPT ===", flush=True)
     print(prompt, flush=True)
     print("PROMPT repr:", repr(prompt), flush=True)
@@ -77,12 +77,13 @@ def call_hf_local_chat(
 
     pipe = _get_pipeline(model.api_name)
 
+    # CHANGE: max_new_tokens from 2 -> 4
     outputs = pipe(
         prompt,
         do_sample=True,
         temperature=temperature,
         top_p=0.9,
-        max_new_tokens=2,
+        max_new_tokens=4,            # <-- changed
         num_return_sequences=1,
         return_full_text=False,
     )
@@ -90,10 +91,10 @@ def call_hf_local_chat(
     gen = (outputs[0].get("generated_text") or "")
     print("GEN repr:", repr(gen), flush=True)
 
-    # take first non-space char as the intended digit
+    # keep only the first non-space char as the intended digit
     first = gen.lstrip()[:1].strip()
 
-    # dynamic validation using extracted scale (no hardcoded 1–5)
+    # dynamic validation using extracted scale (no hardcoded values)
     if scale is not None:
         mn, mx = scale
         try:
@@ -104,5 +105,4 @@ def call_hf_local_chat(
             first = ""
 
     print("REPLY (final) repr:", repr(first), flush=True)
-
     return first
