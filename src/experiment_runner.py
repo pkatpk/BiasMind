@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Tuple
 from datetime import datetime
+import re
 
 from input_loader import ModelDef, PersonaDef
 from test_loader import load_test, TestDefinition
@@ -30,25 +31,7 @@ def _now_iso() -> str:
     return datetime.utcnow().isoformat(timespec="seconds")
 
 
-def _parse_likert_answer(text: str, min_val: int = 1, max_val: int = 5) -> int:
-    """
-    Παίρνει την απάντηση του μοντέλου (κείμενο) και προσπαθεί να βγάλει
-    έναν ακέραιο από min_val έως max_val.
-    Αν δεν τα καταφέρει, επιστρέφει την μέση τιμή.
-    """
-    text = text.strip()
-    digits = [ch for ch in text if ch.isdigit()]
-    if digits:
-        try:
-            val = int(digits[0])
-            if min_val <= val <= max_val:
-                return val
-        except ValueError:
-            pass
-    return (min_val + max_val) // 2
-
-
-def _infer_scale_from_test(test_def: TestDefinition) -> tuple[int, int]:
+def _infer_scale_from_test(test_def: TestDefinition) -> Tuple[int, int]:
     """
     Αν το TestDefinition έχει scale_min / scale_max, τα χρησιμοποιούμε.
     Αλλιώς υποθέτουμε 1–5.
@@ -60,22 +43,40 @@ def _infer_scale_from_test(test_def: TestDefinition) -> tuple[int, int]:
     return 1, 5
 
 
+def _parse_likert_answer(text: str, min_val: int, max_val: int) -> int:
+    """
+    Robust parsing:
+    - Βρίσκει ακέραιους αριθμούς μέσα στο κείμενο (όχι "πρώτο digit").
+    - Επιλέγει έναν που είναι εντός [min_val, max_val].
+    - Αν βρει πολλούς, προτιμά τον ΤΕΛΕΥΤΑΙΟ (συχνά είναι η τελική επιλογή).
+    - Αν δεν βρει κανέναν, επιστρέφει midpoint.
+    """
+    text = (text or "").strip()
+
+    # find integers like 1, 5, 10 (if ever needed)
+    ints = [int(m.group(0)) for m in re.finditer(r"-?\d+", text)]
+
+    in_range = [x for x in ints if min_val <= x <= max_val]
+    if in_range:
+        return in_range[-1]  # prefer last in-range integer
+
+    # fallback: midpoint
+    return (min_val + max_val) // 2
+
+
 def _compute_scored_rows(
     test_def: TestDefinition,
     raw_rows: List[Dict],
 ) -> List[Dict]:
     """
     Υπολογίζει scores ανά trait για κάθε (model, persona, run, test_name).
-    Επιστρέφει λίστα από rows συμβατά με το write_scored_csv.
     """
     scored_rows: List[Dict] = []
-
     if not raw_rows:
         return scored_rows
 
     scale_min, scale_max = _infer_scale_from_test(test_def)
 
-    # group by (model, provider, persona_id, run_index, test_name)
     grouped: Dict[tuple, List[Dict]] = {}
     for row in raw_rows:
         key = (
@@ -88,14 +89,13 @@ def _compute_scored_rows(
         grouped.setdefault(key, []).append(row)
 
     for (model, provider, persona_id, run_index, test_name), rows in grouped.items():
-        # trait -> list of adjusted answers
         trait_values: Dict[str, List[float]] = {}
 
         for r in rows:
             trait = r["trait"]
             ans = int(r["answer"])
             rev = r["reverse"]
-            # handle boolean or string
+
             is_rev = (
                 rev is True
                 or rev == "true"
@@ -103,6 +103,7 @@ def _compute_scored_rows(
                 or rev == 1
                 or rev == "1"
             )
+
             if is_rev:
                 adj = scale_min + scale_max - ans
             else:
@@ -110,7 +111,6 @@ def _compute_scored_rows(
 
             trait_values.setdefault(trait, []).append(adj)
 
-        # compute mean per trait
         for trait, vals in trait_values.items():
             mean_val = sum(vals) / len(vals) if vals else 0.0
             scored_rows.append(
@@ -132,18 +132,9 @@ def _compute_scored_rows(
 
 
 def run_experiment(config: ExperimentConfig) -> None:
-    """
-    Πλήρες experiment:
-    - φορτώνει test
-    - γράφει metadata_<experiment_id>.json
-    - κάνει loop: model → persona → runs → items
-    - για κάθε item καλεί LLM μέσω call_model
-    - γράφει raw_<experiment_id>.csv
-    - υπολογίζει trait-level scores και γράφει scored_<experiment_id>.csv
-    """
     test_def: TestDefinition = load_test(config.test_file)
+    scale_min, scale_max = _infer_scale_from_test(test_def)
 
-    # METADATA
     metadata = {
         "experiment_id": config.experiment_id,
         "test": config.test_name,
@@ -161,15 +152,18 @@ def run_experiment(config: ExperimentConfig) -> None:
             for p in config.personas
         ],
         "memory_between_personas": config.memory_between_personas,
+        "scale_min": scale_min,
+        "scale_max": scale_max,
     }
     write_metadata_json(metadata)
 
     raw_rows: List[Dict] = []
 
-    print("=== Running BiasMind experiment ===")
+    print("=== Running BiasMind experiment (DEBUG) ===")
     print(f"Experiment ID: {config.experiment_id}")
     print(f"Test: {config.test_name} ({len(test_def.items)} items)")
     print(f"Memory between personas: {config.memory_between_personas}")
+    print(f"Scale: {scale_min}–{scale_max}")
     print()
 
     for model in config.models:
@@ -205,20 +199,29 @@ def run_experiment(config: ExperimentConfig) -> None:
                 system_prompt = (
                     f"{persona.prompt_prefix} "
                     "You are answering a psychometric questionnaire. "
-                    "Always answer ONLY with a single integer number from 1 to 5."
+                    f"Always answer ONLY with a single integer number from {scale_min} to {scale_max}."
                 )
 
+                # Αν θες λιγότερα logs, κάνε προσωρινά: test_def.items[:2]
                 for item in test_def.items:
-                    messages = []
-                    messages.append(
-                        {"role": "system", "content": system_prompt}
-                    )
-                    messages.append(
-                        {"role": "user", "content": item.text}
-                    )
+                    messages = [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": item.text},
+                    ]
 
                     reply_text = call_model(model, messages, temperature=0.2)
-                    answer_val = _parse_likert_answer(reply_text, 1, 5)
+
+                    # DEBUG prints (πριν γράψουμε το raw row)
+                    print("\n=== DEBUG ===")
+                    print("PERSONA:", persona.id, "RUN:", run_index, "ITEM:", item.id)
+                    print("REPLY repr:", repr(reply_text))
+                    print("REPLY:", reply_text)
+                    print("DIGITS:", [ch for ch in (reply_text or "") if ch.isdigit()])
+
+                    answer_val = _parse_likert_answer(reply_text, scale_min, scale_max)
+                    print("PARSED:", answer_val)
+                    print("=== END DEBUG ===\n")
+
                     timestamp = _now_iso()
 
                     raw_rows.append(
@@ -237,16 +240,12 @@ def run_experiment(config: ExperimentConfig) -> None:
                         }
                     )
 
-                    context_messages.append(
-                        {"role": "assistant", "content": reply_text}
-                    )
+                    context_messages.append({"role": "assistant", "content": reply_text})
 
             previous_persona_id = persona.id
 
-    # RAW CSV
     write_raw_csv(config.experiment_id, raw_rows)
 
-    # SCORED CSV
     scored_rows = _compute_scored_rows(test_def, raw_rows)
     write_scored_csv(config.experiment_id, scored_rows)
 
