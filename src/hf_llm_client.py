@@ -13,15 +13,13 @@ DEBUG = os.getenv("BIASMIND_DEBUG") == "1"
 @lru_cache(maxsize=4)
 def _get_pipeline(model_id: str):
     """
-    Φορτώνει και κάνει cache ένα text-generation pipeline
-    για το δοσμένο Hugging Face model id.
+    Cached HF text-generation pipeline.
     """
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     model = AutoModelForCausalLM.from_pretrained(
         model_id,
         device_map="auto",
     )
-
     pipe = pipeline(
         "text-generation",
         model=model,
@@ -32,9 +30,8 @@ def _get_pipeline(model_id: str):
 
 def _messages_to_prompt(messages: List[Dict]) -> str:
     """
-    Plain instruction-style prompt.
-    Αποφεύγει chat transcript / role tags.
-    Δεν αλλοιώνει το item text.
+    Plain prompt builder (no fake chat tags).
+    Keeps item text untouched.
     """
     system_text = ""
     user_text = ""
@@ -47,10 +44,11 @@ def _messages_to_prompt(messages: List[Dict]) -> str:
         elif role == "user":
             user_text = content
 
+    # Avoid "Statement:" label that the model may echo
     prompt = (
         f"{system_text}\n\n"
         f"{user_text}\n\n"
-        f"Answer with a single integer only: "
+        f"Output: "
     )
     return prompt
 
@@ -61,13 +59,13 @@ def call_hf_local_chat(
     temperature: float = 0.7,
 ) -> str:
     """
-    Καλεί τοπικό HF μοντέλο.
+    Local HF call.
 
-    Fixes:
-    - No fake chat tags → no roleplay
-    - Deterministic generation
-    - 1-token completion → καθαρό digit
-    - return_full_text=False → no slicing artifacts
+    - No fake chat tags → prevents roleplay artifacts
+    - Sampling enabled → avoids collapsing to constant "1"
+    - return_full_text=False → no prompt slicing artifacts
+    - Keep completion tiny → reduces rambling
+    - Post-trim to first char → usually the Likert digit
     """
     prompt = _messages_to_prompt(messages)
 
@@ -79,16 +77,19 @@ def call_hf_local_chat(
 
     outputs = pipe(
         prompt,
-        do_sample=False,
-        temperature=0.0,
-        max_new_tokens=1,
+        do_sample=True,
+        temperature=temperature,  # controlled by caller (experiment_runner uses 0.2)
+        top_p=0.9,
+        max_new_tokens=2,
         num_return_sequences=1,
         return_full_text=False,
     )
 
-    reply = (outputs[0].get("generated_text") or "").strip()
+    gen = (outputs[0].get("generated_text") or "").lstrip()
+    reply = gen[:1].strip()  # keep only first char (expected to be 1-5)
 
     if DEBUG:
+        print("GEN repr:", repr(gen), flush=True)
         print("REPLY repr:", repr(reply), flush=True)
         print("=== END HF DEBUG ===\n", flush=True)
 
