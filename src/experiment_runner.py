@@ -1,3 +1,4 @@
+# experiment_runner.py
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Dict, Optional, Tuple
@@ -32,10 +33,6 @@ def _now_iso() -> str:
 
 
 def _infer_scale_from_test(test_def: TestDefinition) -> Tuple[int, int]:
-    """
-    Αν το TestDefinition έχει scale_min / scale_max, τα χρησιμοποιούμε.
-    Αλλιώς υποθέτουμε 1–5.
-    """
     scale_min = getattr(test_def, "scale_min", None)
     scale_max = getattr(test_def, "scale_max", None)
     if isinstance(scale_min, int) and isinstance(scale_max, int):
@@ -45,22 +42,18 @@ def _infer_scale_from_test(test_def: TestDefinition) -> Tuple[int, int]:
 
 def _parse_likert_answer(text: str, min_val: int, max_val: int) -> int:
     """
-    Robust parsing:
-    - Βρίσκει ακέραιους αριθμούς μέσα στο κείμενο (όχι "πρώτο digit").
-    - Επιλέγει έναν που είναι εντός [min_val, max_val].
-    - Αν βρει πολλούς, προτιμά τον ΤΕΛΕΥΤΑΙΟ (συχνά είναι η τελική επιλογή).
-    - Αν δεν βρει κανέναν, επιστρέφει midpoint.
+    Robust Likert parsing:
+    - βρίσκει όλους τους ακέραιους στο text
+    - κρατά τον τελευταίο εντός scale
+    - fallback στο midpoint
     """
     text = (text or "").strip()
-
-    # find integers like 1, 5, 10 (if ever needed)
     ints = [int(m.group(0)) for m in re.finditer(r"-?\d+", text)]
-
     in_range = [x for x in ints if min_val <= x <= max_val]
-    if in_range:
-        return in_range[-1]  # prefer last in-range integer
 
-    # fallback: midpoint
+    if in_range:
+        return in_range[-1]
+
     return (min_val + max_val) // 2
 
 
@@ -68,9 +61,6 @@ def _compute_scored_rows(
     test_def: TestDefinition,
     raw_rows: List[Dict],
 ) -> List[Dict]:
-    """
-    Υπολογίζει scores ανά trait για κάθε (model, persona, run, test_name).
-    """
     scored_rows: List[Dict] = []
     if not raw_rows:
         return scored_rows
@@ -159,12 +149,10 @@ def run_experiment(config: ExperimentConfig) -> None:
 
     raw_rows: List[Dict] = []
 
-    print("=== Running BiasMind experiment (DEBUG) ===")
+    print("=== Running BiasMind experiment ===")
     print(f"Experiment ID: {config.experiment_id}")
     print(f"Test: {config.test_name} ({len(test_def.items)} items)")
-    print(f"Memory between personas: {config.memory_between_personas}")
     print(f"Scale: {scale_min}–{scale_max}")
-    print()
 
     for model in config.models:
         print(f"\n=== MODEL: {model.id} (provider={model.provider}) ===")
@@ -179,19 +167,13 @@ def run_experiment(config: ExperimentConfig) -> None:
             else:
                 between_reset = (config.memory_between_personas == "reset")
 
-            print(
-                f"\n-- Persona: {persona.id} "
-                f"(runs={persona_cfg.runs}, "
-                f"memory_within={persona_cfg.memory_within_persona})"
-            )
+            print(f"-- Persona: {persona.id} (runs={persona_cfg.runs})")
 
             for run_index in range(1, persona_cfg.runs + 1):
-                if run_index == 1:
-                    reset_context = between_reset
-                else:
-                    reset_context = (persona_cfg.memory_within_persona == "fresh")
-
-                print(f"  Run {run_index}: reset_context={reset_context}")
+                reset_context = (
+                    between_reset if run_index == 1
+                    else persona_cfg.memory_within_persona == "fresh"
+                )
 
                 if reset_context:
                     context_messages = []
@@ -202,7 +184,6 @@ def run_experiment(config: ExperimentConfig) -> None:
                     f"Always answer ONLY with a single integer number from {scale_min} to {scale_max}."
                 )
 
-                # Αν θες λιγότερα logs, κάνε προσωρινά: test_def.items[:2]
                 for item in test_def.items:
                     messages = [
                         {"role": "system", "content": system_prompt},
@@ -210,8 +191,9 @@ def run_experiment(config: ExperimentConfig) -> None:
                     ]
 
                     reply_text = call_model(model, messages, temperature=0.2)
-                  
-                    timestamp = _now_iso()
+                    answer_val = _parse_likert_answer(
+                        reply_text, scale_min, scale_max
+                    )
 
                     raw_rows.append(
                         {
@@ -225,16 +207,17 @@ def run_experiment(config: ExperimentConfig) -> None:
                             "trait": item.trait,
                             "reverse": item.reverse,
                             "answer": answer_val,
-                            "timestamp_run": timestamp,
+                            "timestamp_run": _now_iso(),
                         }
                     )
 
-                    context_messages.append({"role": "assistant", "content": reply_text})
+                    context_messages.append(
+                        {"role": "assistant", "content": reply_text}
+                    )
 
             previous_persona_id = persona.id
 
     write_raw_csv(config.experiment_id, raw_rows)
-
     scored_rows = _compute_scored_rows(test_def, raw_rows)
     write_scored_csv(config.experiment_id, scored_rows)
 
