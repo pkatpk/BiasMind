@@ -1,15 +1,11 @@
 # hf_llm_client.py
 from typing import List, Dict, Optional, Tuple
 from functools import lru_cache
-import os
 import re
 
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 
 from input_loader import ModelDef
-
-DEBUG = os.getenv("BIASMIND_DEBUG") == "1"
-SHOW_PROMPT = os.getenv("BIASMIND_SHOW_PROMPT") == "1"  # αν το θες πάντα on: βάλε "1"
 
 
 @lru_cache(maxsize=4)
@@ -21,8 +17,9 @@ def _get_pipeline(model_id: str):
 
 def _extract_scale_from_system(messages: List[Dict]) -> Optional[Tuple[int, int]]:
     """
-    Βγάζει (min,max) από το system prompt, π.χ.
+    Extracts (min,max) from system prompt like:
     "Always answer ONLY with a single integer number from 1 to 5."
+    Dynamic per test (no hardcoded 1–5).
     """
     sys = ""
     for m in messages:
@@ -30,11 +27,11 @@ def _extract_scale_from_system(messages: List[Dict]) -> Optional[Tuple[int, int]
             sys = m.get("content", "") or ""
             break
 
-    # παίρνουμε το LAST match για να μην μας μπερδέψουν άλλα νούμερα στο persona text
     matches = re.findall(r"from\s+(-?\d+)\s+to\s+(-?\d+)", sys, flags=re.IGNORECASE)
     if not matches:
         return None
-    a, b = matches[-1]
+
+    a, b = matches[-1]  # last match, in case persona text contains numbers
     try:
         mn, mx = int(a), int(b)
         if mn > mx:
@@ -46,8 +43,8 @@ def _extract_scale_from_system(messages: List[Dict]) -> Optional[Tuple[int, int]
 
 def _messages_to_prompt(messages: List[Dict]) -> str:
     """
-    Plain prompt builder (no fake chat tags).
-    Δεν αλλοιώνει το item text.
+    Plain prompt builder (NO [USER]/[ASSISTANT] tags).
+    Keeps item text exactly as-is.
     """
     system_text = ""
     user_text = ""
@@ -60,8 +57,7 @@ def _messages_to_prompt(messages: List[Dict]) -> str:
         elif role == "user":
             user_text = content
 
-    prompt = f"{system_text}\n\n{user_text}\n\nOutput: "
-    return prompt
+    return f"{system_text}\n\n{user_text}\n\nOutput: "
 
 
 def call_hf_local_chat(
@@ -70,14 +66,14 @@ def call_hf_local_chat(
     temperature: float = 0.7,
 ) -> str:
     prompt = _messages_to_prompt(messages)
-    scale = _extract_scale_from_system(messages)  # (min,max) ή None
+    scale = _extract_scale_from_system(messages)  # (min,max) or None
 
-    if DEBUG or SHOW_PROMPT:
-        print("\n=== HF PROMPT ===", flush=True)
-        print(prompt, flush=True)            # human-readable
-        print("PROMPT repr:", repr(prompt), flush=True)
-        print("SCALE:", scale, flush=True)
-        print("=== END HF PROMPT ===\n", flush=True)
+    # ALWAYS-ON DISPLAYS
+    print("\n=== HF PROMPT ===", flush=True)
+    print(prompt, flush=True)
+    print("PROMPT repr:", repr(prompt), flush=True)
+    print("SCALE:", scale, flush=True)
+    print("=== END HF PROMPT ===\n", flush=True)
 
     pipe = _get_pipeline(model.api_name)
 
@@ -91,21 +87,22 @@ def call_hf_local_chat(
         return_full_text=False,
     )
 
-    gen = (outputs[0].get("generated_text") or "").lstrip()
-    reply = (gen[:1] if gen else "").strip()  # παίρνουμε 1 char
+    gen = (outputs[0].get("generated_text") or "")
+    print("GEN repr:", repr(gen), flush=True)
 
-    # dynamic validation με βάση min/max από system prompt
+    # take first non-space char as the intended digit
+    first = gen.lstrip()[:1].strip()
+
+    # dynamic validation using extracted scale (no hardcoded 1–5)
     if scale is not None:
         mn, mx = scale
         try:
-            v = int(reply)
+            v = int(first)
             if not (mn <= v <= mx):
-                reply = ""  # invalid → empty (ή βάλε fallback αν θες)
+                first = ""
         except Exception:
-            reply = ""
+            first = ""
 
-    if DEBUG:
-        print("GEN repr:", repr(gen), flush=True)
-        print("REPLY repr:", repr(reply), flush=True)
+    print("REPLY (final) repr:", repr(first), flush=True)
 
-    return reply
+    return first
