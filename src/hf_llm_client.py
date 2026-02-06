@@ -59,6 +59,10 @@ def call_hf_local_chat(
         - "microsoft/Phi-3-mini-4k-instruct"
     """
     prompt = _messages_to_prompt(messages)
+    
+    print("\n=== HF DEBUG ===")
+    print("PROMPT repr:")
+    print(repr(prompt))
 
     pipe = _get_pipeline(model.api_name)
 
@@ -70,5 +74,10 @@ def call_hf_local_chat(
     )
 
     full_text = outputs[0]["generated_text"]
+    
+    print("FULL_TEXT repr:")
+    print(repr(full_text))
+    print("=== END HF DEBUG ===\n")
+    
     reply = full_text[len(prompt):].strip()
     return reply

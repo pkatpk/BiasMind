@@ -1,0 +1,30 @@
+{
+  "test_name": "BFI-10",
+  "description": "Big Five Inventory - 10 item short form",
+  "reference": "Rammstedt & John (2007). Measuring personality in one minute or less: A 10-item short version of the Big Five Inventory in English and German.",
+  "language": "en",
+  "scale_min": 1,
+  "scale_max": 5,
+  "traits": ["Extraversion", "Agreeableness", "Conscientiousness", "Neuroticism", "Openness"],
+  "items": [
+    {
+      "id": 1,
+      "text": "I see myself as someone who is reserved.",
+      "trait": "Extraversion",
+      "reverse": true
+    },
+    {
+      "id": 2,
+      "text": "I see myself as someone who is generally trusting.",
+      "trait": "Agreeableness",
+      "reverse": false
+    }
+  ],
+  "scoring": {
+    "Extraversion": { "items": [1, 6], "formula": "mean" },
+    "Agreeableness": { "items": [2, 7], "formula": "mean" },
+    "Conscientiousness": { "items": [3, 8], "formula": "mean" },
+    "Neuroticism": { "items": [4, 9], "formula": "mean" },
+    "Openness": { "items": [5, 10], "formula": "mean" }
+  }
+}
