@@ -210,18 +210,7 @@ def run_experiment(config: ExperimentConfig) -> None:
                     ]
 
                     reply_text = call_model(model, messages, temperature=0.2)
-
-                    # DEBUG prints (πριν γράψουμε το raw row)
-                    print("\n=== DEBUG ===")
-                    print("PERSONA:", persona.id, "RUN:", run_index, "ITEM:", item.id)
-                    print("REPLY repr:", repr(reply_text))
-                    print("REPLY:", reply_text)
-                    print("DIGITS:", [ch for ch in (reply_text or "") if ch.isdigit()])
-
-                    answer_val = _parse_likert_answer(reply_text, scale_min, scale_max)
-                    print("PARSED:", answer_val)
-                    print("=== END DEBUG ===\n")
-
+                  
                     timestamp = _now_iso()
 
                     raw_rows.append(
