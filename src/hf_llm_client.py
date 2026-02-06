@@ -1,9 +1,13 @@
+# hf_llm_client.py
 from typing import List, Dict
 from functools import lru_cache
+import os
 
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 
 from input_loader import ModelDef
+
+DEBUG = os.getenv("BIASMIND_DEBUG") == "1"
 
 
 @lru_cache(maxsize=4)
@@ -21,28 +25,37 @@ def _get_pipeline(model_id: str):
         "text-generation",
         model=model,
         tokenizer=tokenizer,
-        max_new_tokens=64,
     )
     return pipe
 
 
 def _messages_to_prompt(messages: List[Dict]) -> str:
     """
-    Πολύ απλή μετατροπή chat-messages -> plain prompt.
-    Δεν είναι τέλειο, αλλά αρκεί για το BiasMind prototype.
+    Minimal, NON-chat prompt builder (avoids [USER]/[ASSISTANT] artifacts).
+    Keeps item text untouched.
     """
-    parts = []
+    system_parts = []
+    user_parts = []
+
     for msg in messages:
         role = msg.get("role", "user")
         content = msg.get("content", "")
         if role == "system":
-            parts.append(f"[SYSTEM] {content}\n")
-        elif role == "assistant":
-            parts.append(f"[ASSISTANT] {content}\n")
-        else:
-            parts.append(f"[USER] {content}\n")
-    parts.append("[ASSISTANT] ")
-    return "".join(parts)
+            system_parts.append(content)
+        elif role == "user":
+            user_parts.append(content)
+        # ignore assistant history for now (local HF is single-turn here)
+
+    system_text = "\n".join(system_parts).strip()
+    user_text = "\n".join(user_parts).strip()
+
+    # Plain instruction + item text + explicit answer slot
+    prompt = (
+        f"{system_text}\n\n"
+        f"Statement:\n{user_text}\n\n"
+        f"Answer (single integer only): "
+    )
+    return prompt
 
 
 def call_hf_local_chat(
@@ -51,33 +64,36 @@ def call_hf_local_chat(
     temperature: float = 0.7,
 ) -> str:
     """
-    Καλεί ένα τοπικό Hugging Face μοντέλο (π.χ. TinyLlama, Phi-3-mini)
-    χρησιμοποιώντας transformers.
+    Καλεί ένα τοπικό Hugging Face μοντέλο χρησιμοποιώντας transformers pipeline.
 
-    - model.api_name: HF model id, π.χ.
-        - "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
-        - "microsoft/Phi-3-mini-4k-instruct"
+    Fixes:
+    - Avoids fake chat transcript tags that trigger roleplay.
+    - Uses return_full_text=False so we get only the completion (no slicing).
+    - Uses short generation by default to reduce rambling.
     """
     prompt = _messages_to_prompt(messages)
-    
-    print("\n=== HF DEBUG ===")
-    print("PROMPT repr:")
-    print(repr(prompt))
+
+    if DEBUG:
+        print("\n=== HF DEBUG ===", flush=True)
+        print("PROMPT repr:", repr(prompt), flush=True)
 
     pipe = _get_pipeline(model.api_name)
 
+    # Keep it short; you can tweak max_new_tokens if needed.
+    # If you want fully deterministic outputs, set do_sample=False and temperature=0.0.
     outputs = pipe(
         prompt,
         do_sample=True,
         temperature=temperature,
+        max_new_tokens=8,
         num_return_sequences=1,
+        return_full_text=False,
     )
 
-    full_text = outputs[0]["generated_text"]
-    
-    print("FULL_TEXT repr:")
-    print(repr(full_text))
-    print("=== END HF DEBUG ===\n")
-    
-    reply = full_text[len(prompt):].strip()
+    reply = (outputs[0].get("generated_text") or "").strip()
+
+    if DEBUG:
+        print("REPLY repr:", repr(reply), flush=True)
+        print("=== END HF DEBUG ===\n", flush=True)
+
     return reply
