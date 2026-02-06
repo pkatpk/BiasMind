@@ -17,8 +17,9 @@ def _get_pipeline(model_id: str):
 
 def _extract_scale_from_system(messages: List[Dict]) -> Optional[Tuple[int, int]]:
     """
-    Extract (min,max) dynamically from system prompt:
-    'Always answer ONLY with a single integer number from X to Y.'
+    Extract (min,max) from system prompt like:
+    "Always answer ONLY with a single integer number from X to Y."
+    Dynamic per test (no hardcoded 1–5).
     """
     sys = ""
     for m in messages:
@@ -42,8 +43,8 @@ def _extract_scale_from_system(messages: List[Dict]) -> Optional[Tuple[int, int]
 
 def _messages_to_prompt(messages: List[Dict]) -> str:
     """
-    Plain prompt builder (NO chat tags).
-    Item text is passed untouched.
+    Plain prompt builder (NO [USER]/[ASSISTANT] tags).
+    Keeps item text exactly as-is.
     """
     system_text = ""
     user_text = ""
@@ -65,31 +66,43 @@ def call_hf_local_chat(
     temperature: float = 0.7,
 ) -> str:
     prompt = _messages_to_prompt(messages)
-    scale = _extract_scale_from_system(messages)
+    scale = _extract_scale_from_system(messages)  # (min,max) or None
+
+    # ALWAYS-ON DISPLAYS (as you requested)
+    print("\n=== HF PROMPT ===", flush=True)
+    print(prompt, flush=True)
+    print("PROMPT repr:", repr(prompt), flush=True)
+    print("SCALE:", scale, flush=True)
+    print("=== END HF PROMPT ===\n", flush=True)
 
     pipe = _get_pipeline(model.api_name)
 
+    # CHANGE: max_new_tokens from 2 -> 4
     outputs = pipe(
         prompt,
         do_sample=True,
         temperature=temperature,
         top_p=0.9,
-        max_new_tokens=4,
+        max_new_tokens=4,            # <-- changed
         num_return_sequences=1,
         return_full_text=False,
     )
 
     gen = (outputs[0].get("generated_text") or "")
+    print("GEN repr:", repr(gen), flush=True)
+
+    # keep only the first non-space char as the intended digit
     first = gen.lstrip()[:1].strip()
 
-    # dynamic validation using test scale
+    # dynamic validation using extracted scale (no hardcoded values)
     if scale is not None:
         mn, mx = scale
         try:
             v = int(first)
             if not (mn <= v <= mx):
-                return ""
+                first = ""
         except Exception:
-            return ""
+            first = ""
 
+    print("REPLY (final) repr:", repr(first), flush=True)
     return first
