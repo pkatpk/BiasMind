@@ -2,31 +2,23 @@
 from typing import List, Dict, Optional, Tuple
 from functools import lru_cache
 import re
-import math
 
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
-from transformers.utils import logging as hf_logging
 
 from input_loader import ModelDef
-
-# ✅ Silence HF/Transformers warnings like:
-# "Both `max_new_tokens` and `max_length` seem to have been set..."
-hf_logging.set_verbosity_error()
 
 
 @lru_cache(maxsize=4)
 def _get_pipeline(model_id: str):
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     model = AutoModelForCausalLM.from_pretrained(model_id, device_map="auto")
-
-    # Important: we do NOT pass max_length anywhere.
     return pipeline("text-generation", model=model, tokenizer=tokenizer)
 
 
 def _extract_scale_from_system(messages: List[Dict]) -> Optional[Tuple[int, int]]:
     """
-    Extract (min,max) from system prompt like:
-    "Always answer ONLY with a single integer number from X to Y."
+    Extract (min,max) dynamically from system prompt:
+    'Always answer ONLY with a single integer number from X to Y.'
     """
     sys = ""
     for m in messages:
@@ -50,8 +42,8 @@ def _extract_scale_from_system(messages: List[Dict]) -> Optional[Tuple[int, int]
 
 def _messages_to_prompt(messages: List[Dict]) -> str:
     """
-    Plain prompt builder (NO [USER]/[ASSISTANT] tags).
-    Keeps item text unchanged.
+    Plain prompt builder (NO chat tags).
+    Item text is passed untouched.
     """
     system_text = ""
     user_text = ""
@@ -77,7 +69,6 @@ def call_hf_local_chat(
 
     pipe = _get_pipeline(model.api_name)
 
-    # ✅ Only max_new_tokens (no max_length)
     outputs = pipe(
         prompt,
         do_sample=True,
@@ -91,7 +82,7 @@ def call_hf_local_chat(
     gen = (outputs[0].get("generated_text") or "")
     first = gen.lstrip()[:1].strip()
 
-    # dynamic validation using extracted scale (no hardcoded values)
+    # dynamic validation using test scale
     if scale is not None:
         mn, mx = scale
         try:
