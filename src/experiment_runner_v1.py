@@ -41,12 +41,84 @@ def _infer_scale_from_test(test_def: TestDefinition) -> Tuple[int, int]:
 
 
 def _parse_likert_answer(text: str, min_val: int, max_val: int) -> int:
+    """
+    Robust Likert parsing:
+    - βρίσκει όλους τους ακέραιους στο text
+    - κρατά τον τελευταίο εντός scale
+    - fallback στο midpoint
+    """
     text = (text or "").strip()
     ints = [int(m.group(0)) for m in re.finditer(r"-?\d+", text)]
     in_range = [x for x in ints if min_val <= x <= max_val]
+
     if in_range:
         return in_range[-1]
+
     return (min_val + max_val) // 2
+
+
+def _compute_scored_rows(
+    test_def: TestDefinition,
+    raw_rows: List[Dict],
+) -> List[Dict]:
+    scored_rows: List[Dict] = []
+    if not raw_rows:
+        return scored_rows
+
+    scale_min, scale_max = _infer_scale_from_test(test_def)
+
+    grouped: Dict[tuple, List[Dict]] = {}
+    for row in raw_rows:
+        key = (
+            row["model"],
+            row["provider"],
+            row["persona_id"],
+            row["run_index"],
+            row["test_name"],
+        )
+        grouped.setdefault(key, []).append(row)
+
+    for (model, provider, persona_id, run_index, test_name), rows in grouped.items():
+        trait_values: Dict[str, List[float]] = {}
+
+        for r in rows:
+            trait = r["trait"]
+            ans = int(r["answer"])
+            rev = r["reverse"]
+
+            is_rev = (
+                rev is True
+                or rev == "true"
+                or rev == "True"
+                or rev == 1
+                or rev == "1"
+            )
+
+            if is_rev:
+                adj = scale_min + scale_max - ans
+            else:
+                adj = ans
+
+            trait_values.setdefault(trait, []).append(adj)
+
+        for trait, vals in trait_values.items():
+            mean_val = sum(vals) / len(vals) if vals else 0.0
+            scored_rows.append(
+                {
+                    "model": model,
+                    "provider": provider,
+                    "persona_id": persona_id,
+                    "run_index": run_index,
+                    "test_name": test_name,
+                    "score_name": trait,
+                    "score_kind": "trait",
+                    "score_value": round(mean_val, 3),
+                    "score_normalized": "",
+                    "summary_label": "",
+                }
+            )
+
+    return scored_rows
 
 
 def run_experiment(config: ExperimentConfig) -> None:
@@ -56,6 +128,19 @@ def run_experiment(config: ExperimentConfig) -> None:
     metadata = {
         "experiment_id": config.experiment_id,
         "test": config.test_name,
+        "models": [
+            {"id": m.id, "provider": m.provider, "api_name": m.api_name}
+            for m in config.models
+        ],
+        "personas": [
+            {
+                "id": p.persona.id,
+                "prompt_prefix": p.persona.prompt_prefix,
+                "runs": p.runs,
+                "memory_within_persona": p.memory_within_persona,
+            }
+            for p in config.personas
+        ],
         "memory_between_personas": config.memory_between_personas,
         "scale_min": scale_min,
         "scale_max": scale_max,
@@ -71,34 +156,27 @@ def run_experiment(config: ExperimentConfig) -> None:
 
     for model in config.models:
         print(f"\n=== MODEL: {model.id} (provider={model.provider}) ===")
-
-        carry_over_seed: List[Dict] = []
         previous_persona_id: Optional[str] = None
+        context_messages: List[Dict] = []
 
         for persona_cfg in config.personas:
             persona = persona_cfg.persona
 
+            if previous_persona_id is None:
+                between_reset = True
+            else:
+                between_reset = (config.memory_between_personas == "reset")
+
             print(f"-- Persona: {persona.id} (runs={persona_cfg.runs})")
 
-            # μεταξύ personas
-            if previous_persona_id is None:
-                base_context = []
-            elif config.memory_between_personas == "carry_over":
-                base_context = carry_over_seed.copy()
-            else:
-                base_context = []
-
-            persona_final_context: List[Dict] = []
-
             for run_index in range(1, persona_cfg.runs + 1):
+                reset_context = (
+                    between_reset if run_index == 1
+                    else persona_cfg.memory_within_persona == "fresh"
+                )
 
-                if run_index == 1:
-                    run_context = base_context.copy()
-                else:
-                    if persona_cfg.memory_within_persona == "continuous":
-                        run_context = run_context
-                    else:
-                        run_context = base_context.copy()
+                if reset_context:
+                    context_messages = []
 
                 system_prompt = (
                     f"{persona.prompt_prefix} "
@@ -107,15 +185,12 @@ def run_experiment(config: ExperimentConfig) -> None:
                 )
 
                 for item in test_def.items:
-
-                    messages = (
-                        [{"role": "system", "content": system_prompt}]
-                        + run_context
-                        + [{"role": "user", "content": item.text}]
-                    )
+                    messages = [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": item.text},
+                    ]
 
                     reply_text = call_model(model, messages, temperature=0.2)
-
                     answer_val = _parse_likert_answer(
                         reply_text, scale_min, scale_max
                     )
@@ -136,13 +211,10 @@ def run_experiment(config: ExperimentConfig) -> None:
                         }
                     )
 
-                    # real conversation history
-                    run_context.append({"role": "user", "content": item.text})
-                    run_context.append({"role": "assistant", "content": reply_text})
+                    context_messages.append(
+                        {"role": "assistant", "content": reply_text}
+                    )
 
-                persona_final_context = run_context.copy()
-
-            carry_over_seed = persona_final_context
             previous_persona_id = persona.id
 
     write_raw_csv(config.experiment_id, raw_rows)

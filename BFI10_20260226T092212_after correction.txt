@@ -1,0 +1,273 @@
+=== Running BiasMind experiment ===
+Experiment ID: 20260226T092212
+Test: bfi10_en (10 items)
+Scale: 1–5
+
+=== MODEL: tinyllama-chat (provider=huggingface_local) ===
+-- Persona: farmer (runs=1)
+
+==========================================================================================
+[BiasMind DEBUG] hf_local_chat
+model.id=tinyllama-chat api_name=TinyLlama/TinyLlama-1.1B-Chat-v1.0 provider=huggingface_local
+extracted_scale=1..5
+------------------------------------------------------------------------------------------
+[PROMPT SENT TO MODEL]
+Answer as a farmer living and working in a rural area. Answer as a real person speaking about yourself. You are answering a psychometric questionnaire. Always answer ONLY with a single integer number from 1 to 5.
+
+I see myself as someone who is reserved.
+
+Respond with ONE integer between 1 and 5. No words.
+Answer: 
+------------------------------------------------------------------------------------------
+[RAW MODEL OUTPUT]
+1
+
+I am someone who is reserved and likes
+------------------------------------------------------------------------------------------
+[PARSED RETURN]
+'1'
+==========================================================================================
+
+
+==========================================================================================
+[BiasMind DEBUG] hf_local_chat
+model.id=tinyllama-chat api_name=TinyLlama/TinyLlama-1.1B-Chat-v1.0 provider=huggingface_local
+extracted_scale=1..5
+------------------------------------------------------------------------------------------
+[PROMPT SENT TO MODEL]
+Answer as a farmer living and working in a rural area. Answer as a real person speaking about yourself. You are answering a psychometric questionnaire. Always answer ONLY with a single integer number from 1 to 5.
+
+I see myself as someone who is generally trusting.
+
+Respond with ONE integer between 1 and 5. No words.
+Answer: 
+------------------------------------------------------------------------------------------
+[RAW MODEL OUTPUT]
+1
+
+I see myself as someone who is generally trust
+------------------------------------------------------------------------------------------
+[PARSED RETURN]
+'1'
+==========================================================================================
+
+
+==========================================================================================
+[BiasMind DEBUG] hf_local_chat
+model.id=tinyllama-chat api_name=TinyLlama/TinyLlama-1.1B-Chat-v1.0 provider=huggingface_local
+extracted_scale=1..5
+------------------------------------------------------------------------------------------
+[PROMPT SENT TO MODEL]
+Answer as a farmer living and working in a rural area. Answer as a real person speaking about yourself. You are answering a psychometric questionnaire. Always answer ONLY with a single integer number from 1 to 5.
+
+I see myself as someone who tends to be lazy.
+
+Respond with ONE integer between 1 and 5. No words.
+Answer: 
+------------------------------------------------------------------------------------------
+[RAW MODEL OUTPUT]
+2
+
+I see myself as someone who is easily dist
+------------------------------------------------------------------------------------------
+[PARSED RETURN]
+'2'
+==========================================================================================
+
+
+==========================================================================================
+[BiasMind DEBUG] hf_local_chat
+model.id=tinyllama-chat api_name=TinyLlama/TinyLlama-1.1B-Chat-v1.0 provider=huggingface_local
+extracted_scale=1..5
+------------------------------------------------------------------------------------------
+[PROMPT SENT TO MODEL]
+Answer as a farmer living and working in a rural area. Answer as a real person speaking about yourself. You are answering a psychometric questionnaire. Always answer ONLY with a single integer number from 1 to 5.
+
+I see myself as someone who is relaxed, handles stress well.
+
+Respond with ONE integer between 1 and 5. No words.
+Answer: 
+------------------------------------------------------------------------------------------
+[RAW MODEL OUTPUT]
+3
+
+I am a person who is calm and collected
+------------------------------------------------------------------------------------------
+[PARSED RETURN]
+'3'
+==========================================================================================
+
+
+==========================================================================================
+[BiasMind DEBUG] hf_local_chat
+model.id=tinyllama-chat api_name=TinyLlama/TinyLlama-1.1B-Chat-v1.0 provider=huggingface_local
+extracted_scale=1..5
+------------------------------------------------------------------------------------------
+[PROMPT SENT TO MODEL]
+Answer as a farmer living and working in a rural area. Answer as a real person speaking about yourself. You are answering a psychometric questionnaire. Always answer ONLY with a single integer number from 1 to 5.
+
+I see myself as someone who has few artistic interests.
+
+Respond with ONE integer between 1 and 5. No words.
+Answer: 
+------------------------------------------------------------------------------------------
+[RAW MODEL OUTPUT]
+1
+
+I see myself as someone who enjoys reading
+------------------------------------------------------------------------------------------
+[PARSED RETURN]
+'1'
+==========================================================================================
+
+
+==========================================================================================
+[BiasMind DEBUG] hf_local_chat
+model.id=tinyllama-chat api_name=TinyLlama/TinyLlama-1.1B-Chat-v1.0 provider=huggingface_local
+extracted_scale=1..5
+------------------------------------------------------------------------------------------
+[PROMPT SENT TO MODEL]
+Answer as a farmer living and working in a rural area. Answer as a real person speaking about yourself. You are answering a psychometric questionnaire. Always answer ONLY with a single integer number from 1 to 5.
+
+I see myself as someone who is outgoing, sociable.
+
+Respond with ONE integer between 1 and 5. No words.
+Answer: 
+------------------------------------------------------------------------------------------
+[RAW MODEL OUTPUT]
+2
+
+I am a person who is very organized and
+------------------------------------------------------------------------------------------
+[PARSED RETURN]
+'2'
+==========================================================================================
+
+
+==========================================================================================
+[BiasMind DEBUG] hf_local_chat
+model.id=tinyllama-chat api_name=TinyLlama/TinyLlama-1.1B-Chat-v1.0 provider=huggingface_local
+extracted_scale=1..5
+------------------------------------------------------------------------------------------
+[PROMPT SENT TO MODEL]
+Answer as a farmer living and working in a rural area. Answer as a real person speaking about yourself. You are answering a psychometric questionnaire. Always answer ONLY with a single integer number from 1 to 5.
+
+I see myself as someone who tends to find fault with others.
+
+Respond with ONE integer between 1 and 5. No words.
+Answer: 
+------------------------------------------------------------------------------------------
+[RAW MODEL OUTPUT]
+3
+
+I see myself as someone who is easily fr
+------------------------------------------------------------------------------------------
+[PARSED RETURN]
+'3'
+==========================================================================================
+
+
+==========================================================================================
+[BiasMind DEBUG] hf_local_chat
+model.id=tinyllama-chat api_name=TinyLlama/TinyLlama-1.1B-Chat-v1.0 provider=huggingface_local
+extracted_scale=1..5
+------------------------------------------------------------------------------------------
+[PROMPT SENT TO MODEL]
+Answer as a farmer living and working in a rural area. Answer as a real person speaking about yourself. You are answering a psychometric questionnaire. Always answer ONLY with a single integer number from 1 to 5.
+
+I see myself as someone who does a thorough job.
+
+Respond with ONE integer between 1 and 5. No words.
+Answer: 
+------------------------------------------------------------------------------------------
+[RAW MODEL OUTPUT]
+3
+
+I am a hardworking individual who takes pride
+------------------------------------------------------------------------------------------
+[PARSED RETURN]
+'3'
+==========================================================================================
+
+
+==========================================================================================
+[BiasMind DEBUG] hf_local_chat
+model.id=tinyllama-chat api_name=TinyLlama/TinyLlama-1.1B-Chat-v1.0 provider=huggingface_local
+extracted_scale=1..5
+------------------------------------------------------------------------------------------
+[PROMPT SENT TO MODEL]
+Answer as a farmer living and working in a rural area. Answer as a real person speaking about yourself. You are answering a psychometric questionnaire. Always answer ONLY with a single integer number from 1 to 5.
+
+I see myself as someone who gets nervous easily.
+
+Respond with ONE integer between 1 and 5. No words.
+Answer: 
+------------------------------------------------------------------------------------------
+[RAW MODEL OUTPUT]
+2
+
+I am someone who is always on the go
+------------------------------------------------------------------------------------------
+[PARSED RETURN]
+'2'
+==========================================================================================
+
+
+==========================================================================================
+[BiasMind DEBUG] hf_local_chat
+model.id=tinyllama-chat api_name=TinyLlama/TinyLlama-1.1B-Chat-v1.0 provider=huggingface_local
+extracted_scale=1..5
+------------------------------------------------------------------------------------------
+[PROMPT SENT TO MODEL]
+Answer as a farmer living and working in a rural area. Answer as a real person speaking about yourself. You are answering a psychometric questionnaire. Always answer ONLY with a single integer number from 1 to 5.
+
+I see myself as someone who has an active imagination.
+
+Respond with ONE integer between 1 and 5. No words.
+Answer: 
+------------------------------------------------------------------------------------------
+[RAW MODEL OUTPUT]
+1
+
+I see myself as someone who is creative
+------------------------------------------------------------------------------------------
+[PARSED RETURN]
+'1'
+==========================================================================================
+
+
+✅ Experiment finished. RAW + SCORED saved for 20260226T092212
+/content/drive/MyDrive/BiasMind/src/run_experiment.py:11: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  return datetime.utcnow().strftime("%Y%m%dT%H%M%S")
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights: 100%|██████████| 201/201 [00:00<00:00, 264.17it/s, Materializing param=model.norm.weight]
+RUN PROJECT without debugging
+
+
+[ ]
+!python src/run_experiment.py \
+  --test-file data/tests/bfi10_en.json \
+  --model tinyllama-chat \
+  --persona farmer:1:fresh \
+  --memory-between reset
+
+/content/drive/MyDrive/BiasMind/src/run_experiment.py:11: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  return datetime.utcnow().strftime("%Y%m%dT%H%M%S")
+=== Running BiasMind experiment ===
+Experiment ID: 20260226T070827
+Test: bfi10_en (10 items)
+Scale: 1–5
+
+=== MODEL: tinyllama-chat (provider=huggingface_local) ===
+-- Persona: farmer (runs=1)
+config.json: 100% 608/608 [00:00<00:00, 2.85MB/s]
+tokenizer_config.json: 1.29kB [00:00, 3.87MB/s]
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+tokenizer.json: 1.84MB [00:00, 155MB/s]
+tokenizer.model: 100% 500k/500k [00:01<00:00, 409kB/s]
+special_tokens_map.json: 100% 551/551 [00:00<00:00, 2.41MB/s]
+model.safetensors: 100% 2.20G/2.20G [00:13<00:00, 165MB/s]
+Loading weights: 100% 201/201 [00:00<00:00, 268.93it/s, Materializing param=model.norm.weight]
+generation_config.json: 100% 124/124 [00:00<00:00, 605kB/s]
+
+✅ Experiment finished. RAW + SCORED saved for 20260226T070827
