@@ -3,7 +3,6 @@ from typing import List, Dict, Optional, Tuple
 from functools import lru_cache
 import re
 import math
-import os
 
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 from transformers.utils import logging as hf_logging
@@ -73,8 +72,6 @@ def call_hf_local_chat(
     messages: List[Dict],
     temperature: float = 0.7,
 ) -> str:
-    debug = (os.getenv("BIASMIND_DEBUG_LLM") or "").strip().lower() in ("1", "true", "yes", "on")
-
     prompt = _messages_to_prompt(messages)
     scale = _extract_scale_from_system(messages)
 
@@ -92,30 +89,7 @@ def call_hf_local_chat(
     )
 
     gen = (outputs[0].get("generated_text") or "")
-
-    # --- What we currently "take" (legacy behavior) ---
-    first_raw = gen.lstrip()[:1]
-    first = first_raw.strip()
-
-    if debug:
-        print("\n" + "=" * 90)
-        print("[BiasMind DEBUG] hf_local_chat")
-        print(f"model.id={getattr(model, 'id', None)} api_name={getattr(model, 'api_name', None)} provider={getattr(model, 'provider', None)}")
-        if scale is not None:
-            print(f"extracted_scale={scale[0]}..{scale[1]}")
-        else:
-            print("extracted_scale=None")
-        print("-" * 90)
-        print("[PROMPT SENT TO MODEL]")
-        print(prompt)
-        print("-" * 90)
-        print("[RAW MODEL OUTPUT]")
-        print(gen)
-        print("-" * 90)
-        print("[PARSE STEP]")
-        print(f"gen.lstrip()[:1] -> {repr(first_raw)}")
-        print(f"strip() -> {repr(first)}")
-        print("-" * 90)
+    first = gen.lstrip()[:1].strip()
 
     # dynamic validation using extracted scale (no hardcoded values)
     if scale is not None:
@@ -123,18 +97,8 @@ def call_hf_local_chat(
         try:
             v = int(first)
             if not (mn <= v <= mx):
-                if debug:
-                    print(f"[VALIDATION FAIL] int(first)={v} not in [{mn},{mx}] -> returning ''")
-                    print("=" * 90 + "\n")
                 return ""
-        except Exception as e:
-            if debug:
-                print(f"[VALIDATION FAIL] int(first) raised {type(e).__name__}: {e} -> returning ''")
-                print("=" * 90 + "\n")
+        except Exception:
             return ""
-
-    if debug:
-        print(f"[FINAL RETURN] {repr(first)}")
-        print("=" * 90 + "\n")
 
     return first
