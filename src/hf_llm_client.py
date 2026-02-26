@@ -1,17 +1,15 @@
 # hf_llm_client.py
 from typing import List, Dict, Optional, Tuple
 from functools import lru_cache
-import re
-import math
 import os
+import re
 
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 from transformers.utils import logging as hf_logging
 
 from input_loader import ModelDef
 
-# ✅ Silence HF/Transformers warnings like:
-# "Both `max_new_tokens` and `max_length` seem to have been set..."
+# Silence HF/Transformers warnings
 hf_logging.set_verbosity_error()
 
 
@@ -19,8 +17,6 @@ hf_logging.set_verbosity_error()
 def _get_pipeline(model_id: str):
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     model = AutoModelForCausalLM.from_pretrained(model_id, device_map="auto")
-
-    # Important: we do NOT pass max_length anywhere.
     return pipeline("text-generation", model=model, tokenizer=tokenizer)
 
 
@@ -51,8 +47,8 @@ def _extract_scale_from_system(messages: List[Dict]) -> Optional[Tuple[int, int]
 
 def _messages_to_prompt(messages: List[Dict]) -> str:
     """
-    Plain prompt builder (NO [USER]/[ASSISTANT] tags).
-    Keeps item text unchanged.
+    Plain text prompt builder (NO chat tags).
+    Adds a strict output anchor at the end to encourage numeric-only responses.
     """
     system_text = ""
     user_text = ""
@@ -65,7 +61,29 @@ def _messages_to_prompt(messages: List[Dict]) -> str:
         elif role == "user":
             user_text = content
 
-    return f"{system_text}\n\n{user_text}\n\nOutput: "
+    scale = _extract_scale_from_system(messages)
+    if scale is not None:
+        mn, mx = scale
+        # Keep your original system instruction, just add a final strict anchor.
+        tail = f"\n\nRespond with ONE integer between {mn} and {mx}. No words.\nAnswer: "
+    else:
+        tail = "\n\nRespond with ONE integer. No words.\nAnswer: "
+
+    return f"{system_text}\n\n{user_text}{tail}"
+
+
+def _parse_first_int_in_range(text: str, mn: int, mx: int) -> Optional[int]:
+    """
+    Extract the first integer token that lies within [mn,mx].
+    """
+    for tok in re.findall(r"-?\d+", text):
+        try:
+            v = int(tok)
+        except Exception:
+            continue
+        if mn <= v <= mx:
+            return v
+    return None
 
 
 def call_hf_local_chat(
@@ -73,6 +91,13 @@ def call_hf_local_chat(
     messages: List[Dict],
     temperature: float = 0.7,
 ) -> str:
+    """
+    Generates a response and returns ONE integer as a string.
+    - Uses plain text prompt (no chat tags).
+    - Robustly extracts the first valid integer within the test's scale.
+    Debug:
+      set BIASMIND_DEBUG_LLM=1 to print full prompt, raw output, and parsed result.
+    """
     debug = (os.getenv("BIASMIND_DEBUG_LLM") or "").strip().lower() in ("1", "true", "yes", "on")
 
     prompt = _messages_to_prompt(messages)
@@ -80,31 +105,34 @@ def call_hf_local_chat(
 
     pipe = _get_pipeline(model.api_name)
 
-    # ✅ Only max_new_tokens (no max_length)
+    # Give a tiny bit more room so "Answer: 6" isn't truncated
     outputs = pipe(
         prompt,
         do_sample=True,
         temperature=temperature,
         top_p=0.9,
-        max_new_tokens=4,
+        max_new_tokens=12,
         num_return_sequences=1,
         return_full_text=False,
     )
 
     gen = (outputs[0].get("generated_text") or "")
 
-    # --- What we currently "take" (legacy behavior) ---
-    first_raw = gen.lstrip()[:1]
-    first = first_raw.strip()
+    parsed: str = ""
+
+    if scale is not None:
+        mn, mx = scale
+        v = _parse_first_int_in_range(gen, mn, mx)
+        parsed = "" if v is None else str(v)
+    else:
+        m = re.search(r"-?\d+", gen)
+        parsed = "" if not m else m.group(0)
 
     if debug:
         print("\n" + "=" * 90)
         print("[BiasMind DEBUG] hf_local_chat")
         print(f"model.id={getattr(model, 'id', None)} api_name={getattr(model, 'api_name', None)} provider={getattr(model, 'provider', None)}")
-        if scale is not None:
-            print(f"extracted_scale={scale[0]}..{scale[1]}")
-        else:
-            print("extracted_scale=None")
+        print(f"extracted_scale={scale[0]}..{scale[1]}" if scale else "extracted_scale=None")
         print("-" * 90)
         print("[PROMPT SENT TO MODEL]")
         print(prompt)
@@ -112,29 +140,8 @@ def call_hf_local_chat(
         print("[RAW MODEL OUTPUT]")
         print(gen)
         print("-" * 90)
-        print("[PARSE STEP]")
-        print(f"gen.lstrip()[:1] -> {repr(first_raw)}")
-        print(f"strip() -> {repr(first)}")
-        print("-" * 90)
-
-    # dynamic validation using extracted scale (no hardcoded values)
-    if scale is not None:
-        mn, mx = scale
-        try:
-            v = int(first)
-            if not (mn <= v <= mx):
-                if debug:
-                    print(f"[VALIDATION FAIL] int(first)={v} not in [{mn},{mx}] -> returning ''")
-                    print("=" * 90 + "\n")
-                return ""
-        except Exception as e:
-            if debug:
-                print(f"[VALIDATION FAIL] int(first) raised {type(e).__name__}: {e} -> returning ''")
-                print("=" * 90 + "\n")
-            return ""
-
-    if debug:
-        print(f"[FINAL RETURN] {repr(first)}")
+        print("[PARSED RETURN]")
+        print(repr(parsed))
         print("=" * 90 + "\n")
 
-    return first
+    return parsed
