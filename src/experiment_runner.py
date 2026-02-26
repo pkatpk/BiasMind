@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import List, Dict, Optional, Tuple
 from datetime import datetime
 import re
+import os
 
 from input_loader import ModelDef, PersonaDef
 from test_loader import load_test, TestDefinition
@@ -122,6 +123,19 @@ def _compute_scored_rows(
 
 
 def run_experiment(config: ExperimentConfig) -> None:
+    """
+    Memory behaviour:
+    - within persona:
+        fresh      -> κάθε run ξεκινά από base_context (seed)
+        continuous -> κάθε run συνεχίζει από το προηγούμενο run
+    - between personas:
+        reset      -> base_context = []
+        carry_over -> base_context = τελικό context προηγούμενης persona (τελευταίο run)
+    Debug:
+    - set BIASMIND_DEBUG_CTX=1 to print context info before each item call
+    """
+    debug_ctx = (os.getenv("BIASMIND_DEBUG_CTX") or "").strip().lower() in ("1", "true", "yes", "on")
+
     test_def: TestDefinition = load_test(config.test_file)
     scale_min, scale_max = _infer_scale_from_test(test_def)
 
@@ -194,12 +208,24 @@ def run_experiment(config: ExperimentConfig) -> None:
                 )
 
                 for item in test_def.items:
-                    # ✅ Include full conversation history (like ChatGPT)
+                    # ✅ Include full conversation history
                     messages = (
                         [{"role": "system", "content": system_prompt}]
                         + run_context
                         + [{"role": "user", "content": item.text}]
                     )
+
+                    if debug_ctx:
+                        print("\n" + "-" * 80)
+                        print(f"[CTX DEBUG] model={model.id} persona={persona.id} run={run_index} qid={item.id}")
+                        print(f"[CTX DEBUG] history_messages={len(run_context)}")
+                        if len(run_context) >= 2:
+                            print("[CTX DEBUG] last user:", run_context[-2]["content"][:200])
+                            print("[CTX DEBUG] last assistant:", run_context[-1]["content"][:200])
+                        else:
+                            print("[CTX DEBUG] (no prior turns)")
+                        print("[CTX DEBUG] current item:", item.text[:200])
+                        print("-" * 80 + "\n")
 
                     reply_text = call_model(model, messages, temperature=0.2)
                     answer_val = _parse_likert_answer(reply_text, scale_min, scale_max)
