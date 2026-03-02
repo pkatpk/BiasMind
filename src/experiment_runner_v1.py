@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import List, Dict, Optional, Tuple
 from datetime import datetime
 import re
+import os
 
 from input_loader import ModelDef, PersonaDef
 from test_loader import load_test, TestDefinition
@@ -122,6 +123,19 @@ def _compute_scored_rows(
 
 
 def run_experiment(config: ExperimentConfig) -> None:
+    """
+    Memory behaviour:
+    - within persona:
+        fresh      -> κάθε run ξεκινά από base_context (seed)
+        continuous -> κάθε run συνεχίζει από το προηγούμενο run
+    - between personas:
+        reset      -> base_context = []
+        carry_over -> base_context = τελικό context προηγούμενης persona (τελευταίο run)
+    Debug:
+    - set BIASMIND_DEBUG_CTX=1 to print context info before each item call
+    """
+    debug_ctx = (os.getenv("BIASMIND_DEBUG_CTX") or "").strip().lower() in ("1", "true", "yes", "on")
+
     test_def: TestDefinition = load_test(config.test_file)
     scale_min, scale_max = _infer_scale_from_test(test_def)
 
@@ -156,27 +170,36 @@ def run_experiment(config: ExperimentConfig) -> None:
 
     for model in config.models:
         print(f"\n=== MODEL: {model.id} (provider={model.provider}) ===")
+
         previous_persona_id: Optional[str] = None
-        context_messages: List[Dict] = []
+        carry_over_seed: List[Dict] = []  # seed passed to next persona if carry_over
 
         for persona_cfg in config.personas:
             persona = persona_cfg.persona
-
-            if previous_persona_id is None:
-                between_reset = True
-            else:
-                between_reset = (config.memory_between_personas == "reset")
-
             print(f"-- Persona: {persona.id} (runs={persona_cfg.runs})")
 
-            for run_index in range(1, persona_cfg.runs + 1):
-                reset_context = (
-                    between_reset if run_index == 1
-                    else persona_cfg.memory_within_persona == "fresh"
-                )
+            # --- base_context for this persona (depends on between-persona memory) ---
+            if previous_persona_id is None:
+                base_context: List[Dict] = []
+            else:
+                if config.memory_between_personas == "carry_over":
+                    base_context = carry_over_seed.copy()
+                else:
+                    base_context = []
 
-                if reset_context:
-                    context_messages = []
+            persona_final_context: List[Dict] = base_context.copy()
+
+            for run_index in range(1, persona_cfg.runs + 1):
+                # --- start run_context depending on within-persona memory ---
+                if run_index == 1:
+                    run_context = base_context.copy()
+                else:
+                    if persona_cfg.memory_within_persona == "continuous":
+                        # keep accumulating from previous run
+                        run_context = run_context
+                    else:
+                        # fresh: restart from base_context
+                        run_context = base_context.copy()
 
                 system_prompt = (
                     f"{persona.prompt_prefix} "
@@ -185,15 +208,27 @@ def run_experiment(config: ExperimentConfig) -> None:
                 )
 
                 for item in test_def.items:
-                    messages = [
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": item.text},
-                    ]
+                    # ✅ Include full conversation history
+                    messages = (
+                        [{"role": "system", "content": system_prompt}]
+                        + run_context
+                        + [{"role": "user", "content": item.text}]
+                    )
+
+                    if debug_ctx:
+                        print("\n" + "-" * 80)
+                        print(f"[CTX DEBUG] model={model.id} persona={persona.id} run={run_index} qid={item.id}")
+                        print(f"[CTX DEBUG] history_messages={len(run_context)}")
+                        if len(run_context) >= 2:
+                            print("[CTX DEBUG] last user:", run_context[-2]["content"][:200])
+                            print("[CTX DEBUG] last assistant:", run_context[-1]["content"][:200])
+                        else:
+                            print("[CTX DEBUG] (no prior turns)")
+                        print("[CTX DEBUG] current item:", item.text[:200])
+                        print("-" * 80 + "\n")
 
                     reply_text = call_model(model, messages, temperature=0.2)
-                    answer_val = _parse_likert_answer(
-                        reply_text, scale_min, scale_max
-                    )
+                    answer_val = _parse_likert_answer(reply_text, scale_min, scale_max)
 
                     raw_rows.append(
                         {
@@ -211,10 +246,14 @@ def run_experiment(config: ExperimentConfig) -> None:
                         }
                     )
 
-                    context_messages.append(
-                        {"role": "assistant", "content": reply_text}
-                    )
+                    # ✅ Store real dialogue turns
+                    run_context.append({"role": "user", "content": item.text})
+                    run_context.append({"role": "assistant", "content": reply_text})
 
+                persona_final_context = run_context.copy()
+
+            # after finishing persona runs, set seed for next persona (if carry_over)
+            carry_over_seed = persona_final_context
             previous_persona_id = persona.id
 
     write_raw_csv(config.experiment_id, raw_rows)

@@ -131,6 +131,7 @@ def run_experiment(config: ExperimentConfig) -> None:
     - between personas:
         reset      -> base_context = []
         carry_over -> base_context = τελικό context προηγούμενης persona (τελευταίο run)
+
     Debug:
     - set BIASMIND_DEBUG_CTX=1 to print context info before each item call
     """
@@ -138,6 +139,9 @@ def run_experiment(config: ExperimentConfig) -> None:
 
     test_def: TestDefinition = load_test(config.test_file)
     scale_min, scale_max = _infer_scale_from_test(test_def)
+
+    # midpoint label (helpful but not required)
+    midpoint = (scale_min + scale_max) / 2
 
     metadata = {
         "experiment_id": config.experiment_id,
@@ -201,14 +205,17 @@ def run_experiment(config: ExperimentConfig) -> None:
                         # fresh: restart from base_context
                         run_context = base_context.copy()
 
+                # ✅ KEY FIX: explicit anchors for scale direction
+                # This prevents “sign flip” ambiguity (e.g., 1 meaning agree vs disagree).
                 system_prompt = (
                     f"{persona.prompt_prefix} "
                     "You are answering a psychometric questionnaire. "
+                    f"Use the following scale: {scale_min} = Strongly DISAGREE, {scale_max} = Strongly AGREE. "
+                    f"If unsure, choose a middle value near {midpoint:g}. "
                     f"Always answer ONLY with a single integer number from {scale_min} to {scale_max}."
                 )
 
                 for item in test_def.items:
-                    # ✅ Include full conversation history
                     messages = (
                         [{"role": "system", "content": system_prompt}]
                         + run_context
@@ -246,7 +253,7 @@ def run_experiment(config: ExperimentConfig) -> None:
                         }
                     )
 
-                    # ✅ Store real dialogue turns
+                    # Store real dialogue turns (memory modes)
                     run_context.append({"role": "user", "content": item.text})
                     run_context.append({"role": "assistant", "content": reply_text})
 
