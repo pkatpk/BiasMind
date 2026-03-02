@@ -211,7 +211,6 @@ def run_experiment(config: ExperimentConfig) -> None:
                     f"{persona.prompt_prefix} "
                     "You are answering a psychometric questionnaire. "
                     f"Use the following scale: {scale_min} = Strongly DISAGREE, {scale_max} = Strongly AGREE. "
-                    f"If unsure, choose a middle value near {midpoint:g}. "
                     f"Always answer ONLY with a single integer number from {scale_min} to {scale_max}."
                 )
 
