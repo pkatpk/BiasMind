@@ -1,11 +1,12 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Dict
+from typing import List, Dict, Optional, Tuple
 from datetime import datetime
 import re
+import os
 
 from input_loader import ModelDef, PersonaDef
-from test_loader import load_test
+from test_loader import load_test, TestDefinition
 from results_io import write_metadata_json, write_raw_csv, write_scored_csv
 from llm_router import call_model
 
@@ -14,7 +15,7 @@ from llm_router import call_model
 class PersonaRunConfig:
     persona: PersonaDef
     runs: int
-    memory_within_persona: str
+    memory_within_persona: str  # fresh / continuous
 
 
 @dataclass
@@ -24,27 +25,29 @@ class ExperimentConfig:
     test_file: Path
     models: List[ModelDef]
     personas: List[PersonaRunConfig]
-    memory_between_personas: str
+    memory_between_personas: str  # reset / carry_over
 
 
-def _now_iso():
-    return datetime.utcnow().isoformat(timespec="seconds")
+def _now_iso() -> str:
+    return datetime.utcnow().strftime("%Y%m%dT%H%M%S")
 
 
-def _infer_scale_from_test(test_def):
+def _infer_scale_from_test(test_def: TestDefinition) -> Tuple[int, int]:
     scale_min = getattr(test_def, "scale_min", None)
     scale_max = getattr(test_def, "scale_max", None)
 
-    if scale_min is not None and scale_max is not None:
+    if isinstance(scale_min, int) and isinstance(scale_max, int):
         return scale_min, scale_max
 
     return 1, 5
 
 
-def _parse_likert_answer(text, min_val, max_val):
-    text = text.strip()
+def _parse_likert_answer(text: str, min_val: int, max_val: int) -> int:
+
+    text = (text or "").strip()
 
     ints = [int(m.group(0)) for m in re.finditer(r"-?\d+", text)]
+
     in_range = [x for x in ints if min_val <= x <= max_val]
 
     if in_range:
@@ -53,17 +56,22 @@ def _parse_likert_answer(text, min_val, max_val):
     return (min_val + max_val) // 2
 
 
-def _compute_scored_rows(test_def, raw_rows):
-    scored_rows = []
+def _compute_scored_rows(
+    test_def: TestDefinition,
+    raw_rows: List[Dict],
+) -> List[Dict]:
+
+    scored_rows: List[Dict] = []
 
     if not raw_rows:
         return scored_rows
 
     scale_min, scale_max = _infer_scale_from_test(test_def)
 
-    grouped = {}
+    grouped: Dict[tuple, List[Dict]] = {}
 
     for row in raw_rows:
+
         key = (
             row["model"],
             row["provider"],
@@ -74,11 +82,12 @@ def _compute_scored_rows(test_def, raw_rows):
 
         grouped.setdefault(key, []).append(row)
 
-    for key, rows in grouped.items():
+    for (model, provider, persona_id, run_index, test_name), rows in grouped.items():
 
-        trait_values = {}
+        trait_values: Dict[str, List[float]] = {}
 
         for r in rows:
+
             trait = r["trait"]
             ans = int(r["answer"])
             rev = r["reverse"]
@@ -96,11 +105,11 @@ def _compute_scored_rows(test_def, raw_rows):
 
             scored_rows.append(
                 {
-                    "model": key[0],
-                    "provider": key[1],
-                    "persona_id": key[2],
-                    "run_index": key[3],
-                    "test_name": key[4],
+                    "model": model,
+                    "provider": provider,
+                    "persona_id": persona_id,
+                    "run_index": run_index,
+                    "test_name": test_name,
                     "score_name": trait,
                     "score_kind": "trait",
                     "score_value": round(mean_val, 3),
@@ -112,30 +121,39 @@ def _compute_scored_rows(test_def, raw_rows):
 
 def run_experiment(config: ExperimentConfig):
 
-    test_def = load_test(config.test_file)
+    test_def: TestDefinition = load_test(config.test_file)
+
     scale_min, scale_max = _infer_scale_from_test(test_def)
 
     metadata = {
         "experiment_id": config.experiment_id,
         "test": config.test_name,
+        "scale_min": scale_min,
+        "scale_max": scale_max,
     }
 
     write_metadata_json(metadata)
 
-    raw_rows = []
+    raw_rows: List[Dict] = []
+
+    print("=== Running BiasMind experiment ===")
+    print(f"Experiment ID: {config.experiment_id}")
+    print(f"Test: {config.test_name} ({len(test_def.items)} items)")
+    print(f"Scale: {scale_min}–{scale_max}")
 
     for model in config.models:
 
-        print(f"\nMODEL: {model.id}")
+        print(f"\n=== MODEL: {model.id} (provider={model.provider}) ===")
 
         for persona_cfg in config.personas:
 
             persona = persona_cfg.persona
 
+            print(f"-- Persona: {persona.id} (runs={persona_cfg.runs})")
+
             for run_index in range(1, persona_cfg.runs + 1):
 
-                print(f"Persona {persona.id} run {run_index}")
-
+                # System prompt ONCE per run
                 system_prompt = (
                     f"{persona.prompt_prefix} "
                     "You are answering a psychometric questionnaire. "
@@ -143,13 +161,14 @@ def run_experiment(config: ExperimentConfig):
                     f"Always answer ONLY with a single integer number from {scale_min} to {scale_max}."
                 )
 
-                # conversation memory inside run
+                # conversation context
                 run_context = [
                     {"role": "system", "content": system_prompt}
                 ]
 
                 for item in test_def.items:
 
+                    # add question
                     run_context.append(
                         {"role": "user", "content": item.text}
                     )
@@ -182,6 +201,7 @@ def run_experiment(config: ExperimentConfig):
                         }
                     )
 
+                    # add answer to memory
                     run_context.append(
                         {"role": "assistant", "content": reply_text}
                     )
@@ -192,4 +212,4 @@ def run_experiment(config: ExperimentConfig):
 
     write_scored_csv(config.experiment_id, scored_rows)
 
-    print("\nExperiment finished")
+    print(f"\n✅ Experiment finished. RAW + SCORED saved for {config.experiment_id}")
