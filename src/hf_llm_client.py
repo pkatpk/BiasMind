@@ -8,7 +8,6 @@ from transformers.utils import logging as hf_logging
 
 from input_loader import ModelDef
 
-# Silence HF/Transformers warnings
 hf_logging.set_verbosity_error()
 
 
@@ -20,10 +19,6 @@ def _get_pipeline(model_id: str):
 
 
 def _extract_scale_from_system(messages: List[Dict]) -> Optional[Tuple[int, int]]:
-    """
-    Extract (min,max) from system prompt like:
-    "Always answer ONLY with a single integer number from X to Y."
-    """
     sys = ""
     for m in messages:
         if m.get("role") == "system":
@@ -46,12 +41,9 @@ def _extract_scale_from_system(messages: List[Dict]) -> Optional[Tuple[int, int]
 
 def _messages_to_prompt(messages: List[Dict]) -> str:
     """
-    Plain text prompt builder that preserves the FULL conversation history.
-
-    Format:
-    - system message once at the top
-    - then all user/assistant turns in order
-    - final strict numeric answer anchor
+    Preserve the FULL conversation history in plain text.
+    No extra answer instruction is appended here anymore.
+    The instruction now lives only in the initial system prompt.
     """
     system_text = ""
     conversation_parts: List[str] = []
@@ -64,35 +56,21 @@ def _messages_to_prompt(messages: List[Dict]) -> str:
             continue
 
         if role == "system":
-            # keep the first/last system message as the global instruction block
             system_text = content
-        elif role == "user":
+        elif role in ("user", "assistant"):
             conversation_parts.append(content)
-        elif role == "assistant":
-            conversation_parts.append(content)
-
-    scale = _extract_scale_from_system(messages)
-
-    if scale is not None:
-        mn, mx = scale
-        tail = f"\n\nRespond with ONE integer between {mn} and {mx}. No words.\nAnswer: "
-    else:
-        tail = "\n\nRespond with ONE integer. No words.\nAnswer: "
 
     body = "\n\n".join(conversation_parts).strip()
 
     if system_text and body:
-        return f"{system_text}\n\n{body}{tail}"
+        return f"{system_text}\n\n{body}"
     elif system_text:
-        return f"{system_text}{tail}"
+        return system_text
     else:
-        return f"{body}{tail}"
+        return body
 
 
 def _parse_first_int_in_range(text: str, mn: int, mx: int) -> Optional[int]:
-    """
-    Extract the first integer token that lies within [mn,mx].
-    """
     for tok in re.findall(r"-?\d+", text):
         try:
             v = int(tok)
@@ -108,15 +86,6 @@ def call_hf_local_chat(
     messages: List[Dict],
     temperature: float = 0.7,
 ) -> str:
-    """
-    Generates a response and returns ONE integer as a string.
-    - Uses plain text prompt (no chat tags)
-    - Preserves FULL conversation history
-    - Robustly extracts the first valid integer within the test's scale
-
-    Debug:
-      set BIASMIND_DEBUG_LLM=1 to print full prompt, raw output, and parsed result.
-    """
     debug = (os.getenv("BIASMIND_DEBUG_LLM") or "").strip().lower() in ("1", "true", "yes", "on")
 
     prompt = _messages_to_prompt(messages)
