@@ -1,3 +1,4 @@
+# hf_llm_client.py
 from typing import List, Dict, Optional, Tuple
 from functools import lru_cache
 import os
@@ -46,47 +47,29 @@ def _extract_scale_from_system(messages: List[Dict]) -> Optional[Tuple[int, int]
 
 def _messages_to_prompt(messages: List[Dict]) -> str:
     """
-    Plain text prompt builder that preserves the FULL conversation history.
-
-    Format:
-    - system message once at the top
-    - then all user/assistant turns in order
-    - final strict numeric answer anchor
+    Plain text prompt builder (NO chat tags).
+    Adds a strict output anchor at the end to encourage numeric-only responses.
     """
     system_text = ""
-    conversation_parts: List[str] = []
+    user_text = ""
 
     for msg in messages:
         role = msg.get("role")
-        content = (msg.get("content", "") or "").strip()
-
-        if not content:
-            continue
-
+        content = msg.get("content", "")
         if role == "system":
-            # keep the first/last system message as the global instruction block
             system_text = content
         elif role == "user":
-            conversation_parts.append(content)
-        elif role == "assistant":
-            conversation_parts.append(content)
+            user_text = content
 
     scale = _extract_scale_from_system(messages)
-
     if scale is not None:
         mn, mx = scale
+        # Keep your original system instruction, just add a final strict anchor.
         tail = f"\n\nRespond with ONE integer between {mn} and {mx}. No words.\nAnswer: "
     else:
         tail = "\n\nRespond with ONE integer. No words.\nAnswer: "
 
-    body = "\n\n".join(conversation_parts).strip()
-
-    if system_text and body:
-        return f"{system_text}\n\n{body}{tail}"
-    elif system_text:
-        return f"{system_text}{tail}"
-    else:
-        return f"{body}{tail}"
+    return f"{system_text}\n\n{user_text}{tail}"
 
 
 def _parse_first_int_in_range(text: str, mn: int, mx: int) -> Optional[int]:
@@ -110,10 +93,8 @@ def call_hf_local_chat(
 ) -> str:
     """
     Generates a response and returns ONE integer as a string.
-    - Uses plain text prompt (no chat tags)
-    - Preserves FULL conversation history
-    - Robustly extracts the first valid integer within the test's scale
-
+    - Uses plain text prompt (no chat tags).
+    - Robustly extracts the first valid integer within the test's scale.
     Debug:
       set BIASMIND_DEBUG_LLM=1 to print full prompt, raw output, and parsed result.
     """
@@ -124,6 +105,7 @@ def call_hf_local_chat(
 
     pipe = _get_pipeline(model.api_name)
 
+    # Give a tiny bit more room so "Answer: 6" isn't truncated
     outputs = pipe(
         prompt,
         do_sample=True,
@@ -149,11 +131,7 @@ def call_hf_local_chat(
     if debug:
         print("\n" + "=" * 90)
         print("[BiasMind DEBUG] hf_local_chat")
-        print(
-            f"model.id={getattr(model, 'id', None)} "
-            f"api_name={getattr(model, 'api_name', None)} "
-            f"provider={getattr(model, 'provider', None)}"
-        )
+        print(f"model.id={getattr(model, 'id', None)} api_name={getattr(model, 'api_name', None)} provider={getattr(model, 'provider', None)}")
         print(f"extracted_scale={scale[0]}..{scale[1]}" if scale else "extracted_scale=None")
         print("-" * 90)
         print("[PROMPT SENT TO MODEL]")
