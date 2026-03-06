@@ -41,9 +41,9 @@ def _extract_scale_from_system(messages: List[Dict]) -> Optional[Tuple[int, int]
 
 def _messages_to_prompt(messages: List[Dict]) -> str:
     """
-    Preserve the FULL conversation history in plain text.
-    No extra answer instruction is appended here anymore.
-    The instruction now lives only in the initial system prompt.
+    Keeps the full conversation history.
+    The full instruction stays only in the system prompt.
+    We append only a minimal final output anchor: 'Answer:'
     """
     system_text = ""
     conversation_parts: List[str] = []
@@ -57,17 +57,19 @@ def _messages_to_prompt(messages: List[Dict]) -> str:
 
         if role == "system":
             system_text = content
-        elif role in ("user", "assistant"):
+        elif role == "user":
+            conversation_parts.append(content)
+        elif role == "assistant":
             conversation_parts.append(content)
 
     body = "\n\n".join(conversation_parts).strip()
 
     if system_text and body:
-        return f"{system_text}\n\n{body}"
+        return f"{system_text}\n\n{body}\n\nAnswer:"
     elif system_text:
-        return system_text
+        return f"{system_text}\n\nAnswer:"
     else:
-        return body
+        return f"{body}\n\nAnswer:"
 
 
 def _parse_first_int_in_range(text: str, mn: int, mx: int) -> Optional[int]:
