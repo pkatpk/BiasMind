@@ -1,13 +1,11 @@
-# experiment_runner.py
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict
 from datetime import datetime
 import re
-import os
 
 from input_loader import ModelDef, PersonaDef
-from test_loader import load_test, TestDefinition
+from test_loader import load_test
 from results_io import write_metadata_json, write_raw_csv, write_scored_csv
 from llm_router import call_model
 
@@ -16,7 +14,7 @@ from llm_router import call_model
 class PersonaRunConfig:
     persona: PersonaDef
     runs: int
-    memory_within_persona: str  # "fresh" ή "continuous"
+    memory_within_persona: str
 
 
 @dataclass
@@ -26,29 +24,26 @@ class ExperimentConfig:
     test_file: Path
     models: List[ModelDef]
     personas: List[PersonaRunConfig]
-    memory_between_personas: str  # "reset" ή "carry_over"
+    memory_between_personas: str
 
 
-def _now_iso() -> str:
+def _now_iso():
     return datetime.utcnow().isoformat(timespec="seconds")
 
 
-def _infer_scale_from_test(test_def: TestDefinition) -> Tuple[int, int]:
+def _infer_scale_from_test(test_def):
     scale_min = getattr(test_def, "scale_min", None)
     scale_max = getattr(test_def, "scale_max", None)
-    if isinstance(scale_min, int) and isinstance(scale_max, int):
+
+    if scale_min is not None and scale_max is not None:
         return scale_min, scale_max
+
     return 1, 5
 
 
-def _parse_likert_answer(text: str, min_val: int, max_val: int) -> int:
-    """
-    Robust Likert parsing:
-    - βρίσκει όλους τους ακέραιους στο text
-    - κρατά τον τελευταίο εντός scale
-    - fallback στο midpoint
-    """
-    text = (text or "").strip()
+def _parse_likert_answer(text, min_val, max_val):
+    text = text.strip()
+
     ints = [int(m.group(0)) for m in re.finditer(r"-?\d+", text)]
     in_range = [x for x in ints if min_val <= x <= max_val]
 
@@ -58,17 +53,16 @@ def _parse_likert_answer(text: str, min_val: int, max_val: int) -> int:
     return (min_val + max_val) // 2
 
 
-def _compute_scored_rows(
-    test_def: TestDefinition,
-    raw_rows: List[Dict],
-) -> List[Dict]:
-    scored_rows: List[Dict] = []
+def _compute_scored_rows(test_def, raw_rows):
+    scored_rows = []
+
     if not raw_rows:
         return scored_rows
 
     scale_min, scale_max = _infer_scale_from_test(test_def)
 
-    grouped: Dict[tuple, List[Dict]] = {}
+    grouped = {}
+
     for row in raw_rows:
         key = (
             row["model"],
@@ -77,25 +71,19 @@ def _compute_scored_rows(
             row["run_index"],
             row["test_name"],
         )
+
         grouped.setdefault(key, []).append(row)
 
-    for (model, provider, persona_id, run_index, test_name), rows in grouped.items():
-        trait_values: Dict[str, List[float]] = {}
+    for key, rows in grouped.items():
+
+        trait_values = {}
 
         for r in rows:
             trait = r["trait"]
             ans = int(r["answer"])
             rev = r["reverse"]
 
-            is_rev = (
-                rev is True
-                or rev == "true"
-                or rev == "True"
-                or rev == 1
-                or rev == "1"
-            )
-
-            if is_rev:
+            if rev:
                 adj = scale_min + scale_max - ans
             else:
                 adj = ans
@@ -103,110 +91,51 @@ def _compute_scored_rows(
             trait_values.setdefault(trait, []).append(adj)
 
         for trait, vals in trait_values.items():
-            mean_val = sum(vals) / len(vals) if vals else 0.0
+
+            mean_val = sum(vals) / len(vals)
+
             scored_rows.append(
                 {
-                    "model": model,
-                    "provider": provider,
-                    "persona_id": persona_id,
-                    "run_index": run_index,
-                    "test_name": test_name,
+                    "model": key[0],
+                    "provider": key[1],
+                    "persona_id": key[2],
+                    "run_index": key[3],
+                    "test_name": key[4],
                     "score_name": trait,
                     "score_kind": "trait",
                     "score_value": round(mean_val, 3),
-                    "score_normalized": "",
-                    "summary_label": "",
                 }
             )
 
     return scored_rows
 
 
-def run_experiment(config: ExperimentConfig) -> None:
-    """
-    Memory behaviour:
-    - within persona:
-        fresh      -> κάθε run ξεκινά από base_context (seed)
-        continuous -> κάθε run συνεχίζει από το προηγούμενο run
-    - between personas:
-        reset      -> base_context = []
-        carry_over -> base_context = τελικό context προηγούμενης persona (τελευταίο run)
+def run_experiment(config: ExperimentConfig):
 
-    Debug:
-    - set BIASMIND_DEBUG_CTX=1 to print context info before each item call
-    """
-    debug_ctx = (os.getenv("BIASMIND_DEBUG_CTX") or "").strip().lower() in ("1", "true", "yes", "on")
-
-    test_def: TestDefinition = load_test(config.test_file)
+    test_def = load_test(config.test_file)
     scale_min, scale_max = _infer_scale_from_test(test_def)
-
-    # midpoint label (helpful but not required)
-    midpoint = (scale_min + scale_max) / 2
 
     metadata = {
         "experiment_id": config.experiment_id,
         "test": config.test_name,
-        "models": [
-            {"id": m.id, "provider": m.provider, "api_name": m.api_name}
-            for m in config.models
-        ],
-        "personas": [
-            {
-                "id": p.persona.id,
-                "prompt_prefix": p.persona.prompt_prefix,
-                "runs": p.runs,
-                "memory_within_persona": p.memory_within_persona,
-            }
-            for p in config.personas
-        ],
-        "memory_between_personas": config.memory_between_personas,
-        "scale_min": scale_min,
-        "scale_max": scale_max,
     }
+
     write_metadata_json(metadata)
 
-    raw_rows: List[Dict] = []
-
-    print("=== Running BiasMind experiment ===")
-    print(f"Experiment ID: {config.experiment_id}")
-    print(f"Test: {config.test_name} ({len(test_def.items)} items)")
-    print(f"Scale: {scale_min}–{scale_max}")
+    raw_rows = []
 
     for model in config.models:
-        print(f"\n=== MODEL: {model.id} (provider={model.provider}) ===")
 
-        previous_persona_id: Optional[str] = None
-        carry_over_seed: List[Dict] = []  # seed passed to next persona if carry_over
+        print(f"\nMODEL: {model.id}")
 
         for persona_cfg in config.personas:
+
             persona = persona_cfg.persona
-            print(f"-- Persona: {persona.id} (runs={persona_cfg.runs})")
-
-            # --- base_context for this persona (depends on between-persona memory) ---
-            if previous_persona_id is None:
-                base_context: List[Dict] = []
-            else:
-                if config.memory_between_personas == "carry_over":
-                    base_context = carry_over_seed.copy()
-                else:
-                    base_context = []
-
-            persona_final_context: List[Dict] = base_context.copy()
 
             for run_index in range(1, persona_cfg.runs + 1):
-                # --- start run_context depending on within-persona memory ---
-                if run_index == 1:
-                    run_context = base_context.copy()
-                else:
-                    if persona_cfg.memory_within_persona == "continuous":
-                        # keep accumulating from previous run
-                        run_context = run_context
-                    else:
-                        # fresh: restart from base_context
-                        run_context = base_context.copy()
 
-                # ✅ KEY FIX: explicit anchors for scale direction
-                # This prevents “sign flip” ambiguity (e.g., 1 meaning agree vs disagree).
+                print(f"Persona {persona.id} run {run_index}")
+
                 system_prompt = (
                     f"{persona.prompt_prefix} "
                     "You are answering a psychometric questionnaire. "
@@ -214,27 +143,28 @@ def run_experiment(config: ExperimentConfig) -> None:
                     f"Always answer ONLY with a single integer number from {scale_min} to {scale_max}."
                 )
 
+                # conversation memory inside run
+                run_context = [
+                    {"role": "system", "content": system_prompt}
+                ]
+
                 for item in test_def.items:
-                    messages = (
-                        [{"role": "system", "content": system_prompt}]
-                        + run_context
-                        + [{"role": "user", "content": item.text}]
+
+                    run_context.append(
+                        {"role": "user", "content": item.text}
                     )
 
-                    if debug_ctx:
-                        print("\n" + "-" * 80)
-                        print(f"[CTX DEBUG] model={model.id} persona={persona.id} run={run_index} qid={item.id}")
-                        print(f"[CTX DEBUG] history_messages={len(run_context)}")
-                        if len(run_context) >= 2:
-                            print("[CTX DEBUG] last user:", run_context[-2]["content"][:200])
-                            print("[CTX DEBUG] last assistant:", run_context[-1]["content"][:200])
-                        else:
-                            print("[CTX DEBUG] (no prior turns)")
-                        print("[CTX DEBUG] current item:", item.text[:200])
-                        print("-" * 80 + "\n")
+                    reply_text = call_model(
+                        model,
+                        run_context,
+                        temperature=0.2,
+                    )
 
-                    reply_text = call_model(model, messages, temperature=0.2)
-                    answer_val = _parse_likert_answer(reply_text, scale_min, scale_max)
+                    answer_val = _parse_likert_answer(
+                        reply_text,
+                        scale_min,
+                        scale_max,
+                    )
 
                     raw_rows.append(
                         {
@@ -252,18 +182,14 @@ def run_experiment(config: ExperimentConfig) -> None:
                         }
                     )
 
-                    # Store real dialogue turns (memory modes)
-                    run_context.append({"role": "user", "content": item.text})
-                    run_context.append({"role": "assistant", "content": reply_text})
-
-                persona_final_context = run_context.copy()
-
-            # after finishing persona runs, set seed for next persona (if carry_over)
-            carry_over_seed = persona_final_context
-            previous_persona_id = persona.id
+                    run_context.append(
+                        {"role": "assistant", "content": reply_text}
+                    )
 
     write_raw_csv(config.experiment_id, raw_rows)
+
     scored_rows = _compute_scored_rows(test_def, raw_rows)
+
     write_scored_csv(config.experiment_id, scored_rows)
 
-    print(f"\n✅ Experiment finished. RAW + SCORED saved for {config.experiment_id}")
+    print("\nExperiment finished")
