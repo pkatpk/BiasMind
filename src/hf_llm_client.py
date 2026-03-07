@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import os
 import re
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional, Tuple, Any
 
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -11,8 +11,27 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 
 DEBUG_LLM = (os.getenv("BIASMIND_DEBUG_LLM") or "").strip().lower() in ("1", "true", "yes", "on")
 
-# Απλό cache για να μη φορτώνεται το model από την αρχή σε κάθε κλήση
+# Cache για clients ώστε να μη φορτώνεται το model σε κάθε item
 _CLIENT_CACHE: Dict[Tuple[str, Optional[str], int], "HuggingFaceLLMClient"] = {}
+
+
+def _resolve_model_name(model_or_name: Any) -> str:
+    """
+    Δέχεται είτε:
+    - string model name
+    - ModelDef object
+    και επιστρέφει το πραγματικό HF model name.
+    """
+    if isinstance(model_or_name, str):
+        return model_or_name
+
+    # Συνήθη πεδία που μπορεί να έχει το ModelDef
+    for attr in ("api_name", "model_name", "name", "id"):
+        value = getattr(model_or_name, attr, None)
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+
+    raise ValueError(f"Cannot resolve HuggingFace model name from object: {model_or_name!r}")
 
 
 class HuggingFaceLLMClient:
@@ -49,21 +68,19 @@ class HuggingFaceLLMClient:
 
     def _messages_to_prompt(self, messages: List[Dict[str, str]]) -> str:
         """
-        Μετατρέπει chat-style messages σε plain instruction prompt.
+        Μετατρέπει chat-style messages σε plain prompt.
 
         Υποστηρίζει:
         - system message(s)
         - πολλαπλά user / assistant turns
-        - σωστό history injection για continuous mode
 
         Format:
+            [system]
 
-        [system]
-
-        User: ...
-        Assistant: ...
-        User: ...
-        Assistant:
+            User: ...
+            Assistant: ...
+            User: ...
+            Assistant:
         """
         system_parts: List[str] = []
         convo_parts: List[str] = []
@@ -88,30 +105,19 @@ class HuggingFaceLLMClient:
         convo_text = "\n".join(convo_parts).strip()
 
         if system_text and convo_text:
-            prompt = f"{system_text}\n\n{convo_text}\nAssistant:"
-        elif system_text:
-            prompt = f"{system_text}\n\nAssistant:"
-        elif convo_text:
-            prompt = f"{convo_text}\nAssistant:"
-        else:
-            prompt = "Assistant:"
-
-        return prompt
+            return f"{system_text}\n\n{convo_text}\nAssistant:"
+        if system_text:
+            return f"{system_text}\n\nAssistant:"
+        if convo_text:
+            return f"{convo_text}\nAssistant:"
+        return "Assistant:"
 
     def _extract_answer_text(self, generated_text: str, prompt_text: str) -> str:
-        """
-        Αφαιρεί το prompt prefix από το generated text και επιστρέφει μόνο το νέο generated τμήμα.
-        """
         if generated_text.startswith(prompt_text):
             return generated_text[len(prompt_text):].strip()
-
         return generated_text.strip()
 
     def _coerce_single_integer(self, text: str) -> str:
-        """
-        Κρατά το τελευταίο integer από την απάντηση.
-        Αν δεν βρει τίποτα, επιστρέφει το stripped raw text.
-        """
         text = (text or "").strip()
         nums = re.findall(r"-?\d+", text)
         if nums:
@@ -182,8 +188,8 @@ def _get_cached_client(
     max_new_tokens: int = 16,
 ) -> HuggingFaceLLMClient:
     key = (model_name, device, max_new_tokens)
-    client = _CLIENT_CACHE.get(key)
 
+    client = _CLIENT_CACHE.get(key)
     if client is None:
         client = HuggingFaceLLMClient(
             model_name=model_name,
@@ -196,25 +202,25 @@ def _get_cached_client(
 
 
 def call_hf_local_chat(
-    model_name: str,
+    model_name: Any,
     messages: List[Dict[str, str]],
     temperature: float = 0.2,
     device: Optional[str] = None,
     max_new_tokens: int = 16,
 ) -> str:
     """
-    Compatibility wrapper για το llm_router.py.
-
-    Χρήση:
-        reply = call_hf_local_chat(
-            model_name="TinyLlama/TinyLlama-1.1B-Chat-v1.0",
-            messages=[...],
-            temperature=0.2,
-        )
+    Compatibility wrapper για llm_router.py.
+    Δέχεται είτε string είτε ModelDef object.
     """
+    resolved_model_name = _resolve_model_name(model_name)
+
     client = _get_cached_client(
-        model_name=model_name,
+        model_name=resolved_model_name,
         device=device,
         max_new_tokens=max_new_tokens,
     )
-    return client.generate(messages=messages, temperature=temperature)
+
+    return client.generate(
+        messages=messages,
+        temperature=temperature,
+    )
