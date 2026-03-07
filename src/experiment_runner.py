@@ -2,10 +2,9 @@
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Dict, Tuple
-from datetime import datetime, UTC
-import math
-import os
+from datetime import datetime
 import re
+import os
 
 from input_loader import ModelDef, PersonaDef
 from test_loader import load_test, TestDefinition
@@ -30,7 +29,7 @@ class ExperimentConfig:
 
 
 def _now_iso() -> str:
-    return datetime.now(UTC).isoformat(timespec="seconds")
+    return datetime.utcnow().isoformat(timespec="seconds")
 
 
 def _infer_scale_from_test(test_def: TestDefinition) -> Tuple[int, int]:
@@ -47,10 +46,6 @@ def _parse_likert_answer(text: str, min_val: int, max_val: int) -> int:
     - βρίσκει όλους τους ακέραιους στο text
     - κρατά τον τελευταίο εντός scale
     - fallback στο midpoint
-
-    Σημείωση:
-    Αν το μοντέλο απαντήσει με labels τύπου "Strongly DISAGREE"
-    χωρίς αριθμό, εδώ θα πέσει στο midpoint.
     """
     text = (text or "").strip()
     ints = [int(m.group(0)) for m in re.finditer(r"-?\d+", text)]
@@ -99,7 +94,11 @@ def _compute_scored_rows(
                 or rev == "1"
             )
 
-            adj = scale_min + scale_max - ans if is_rev else ans
+            if is_rev:
+                adj = scale_min + scale_max - ans
+            else:
+                adj = ans
+
             trait_values.setdefault(trait, []).append(adj)
 
         for trait, vals in trait_values.items():
@@ -122,73 +121,17 @@ def _compute_scored_rows(
     return scored_rows
 
 
-def _compute_summary_rows(scored_rows: List[Dict]) -> List[Dict]:
-    """
-    Υπολογίζει summary ανά:
-    model, provider, persona_id, test_name, trait
-
-    Δεν γράφεται εδώ απευθείας σε file, αλλά μένει διαθέσιμο
-    αν το θες αργότερα για console summary ή άλλο layer.
-    """
-    summary_rows: List[Dict] = []
-    if not scored_rows:
-        return summary_rows
-
-    grouped: Dict[tuple, List[float]] = {}
-    for row in scored_rows:
-        key = (
-            row["model"],
-            row["provider"],
-            row["persona_id"],
-            row["test_name"],
-            row["score_name"],
-        )
-        grouped.setdefault(key, []).append(float(row["score_value"]))
-
-    for (model, provider, persona_id, test_name, trait), vals in grouped.items():
-        n = len(vals)
-        mean_val = sum(vals) / n if n else 0.0
-
-        if n > 1:
-            var = sum((x - mean_val) ** 2 for x in vals) / (n - 1)
-            std_val = math.sqrt(var)
-        else:
-            std_val = 0.0
-
-        sem_val = (std_val / math.sqrt(n)) if n > 0 else 0.0
-
-        summary_rows.append(
-            {
-                "model": model,
-                "provider": provider,
-                "persona_id": persona_id,
-                "test_name": test_name,
-                "trait": trait,
-                "n_runs": n,
-                "mean": round(mean_val, 6),
-                "std": round(std_val, 6),
-                "min": round(min(vals), 6),
-                "max": round(max(vals), 6),
-                "sem": round(sem_val, 6),
-            }
-        )
-
-    return summary_rows
-
-
 def run_experiment(config: ExperimentConfig) -> None:
     """
-    Memory policy:
-    - fresh:
-        κάθε item ανεξάρτητο, χωρίς history
-    - continuous:
-        όλα τα items ενός run είναι μία συνομιλία
-    - πάντα reset στο τέλος κάθε run
-    - δεν υπάρχει memory between runs
+    Memory behaviour:
+    - within persona:
+        fresh      -> κάθε run ξεκινά με άδειο context
+        continuous -> κρατά μνήμη μόνο μέσα στο ίδιο run
+    - στο τέλος κάθε run γίνεται reset
     - δεν υπάρχει memory between personas
 
     Debug:
-    - set BIASMIND_DEBUG_CTX=1
+    - set BIASMIND_DEBUG_CTX=1 to print context info before each item call
     """
     debug_ctx = (os.getenv("BIASMIND_DEBUG_CTX") or "").strip().lower() in ("1", "true", "yes", "on")
 
@@ -197,7 +140,6 @@ def run_experiment(config: ExperimentConfig) -> None:
 
     metadata = {
         "experiment_id": config.experiment_id,
-        "created_at": _now_iso(),
         "test": config.test_name,
         "models": [
             {"id": m.id, "provider": m.provider, "api_name": m.api_name}
@@ -212,11 +154,6 @@ def run_experiment(config: ExperimentConfig) -> None:
             }
             for p in config.personas
         ],
-        "memory_policy": {
-            "within_run": ["fresh", "continuous"],
-            "between_runs": "always_reset",
-            "between_personas": "always_reset",
-        },
         "scale_min": scale_min,
         "scale_max": scale_max,
     }
@@ -234,45 +171,37 @@ def run_experiment(config: ExperimentConfig) -> None:
 
         for persona_cfg in config.personas:
             persona = persona_cfg.persona
-            memory_mode = persona_cfg.memory_within_persona
+            print(f"-- Persona: {persona.id} (runs={persona_cfg.runs})")
 
-            if memory_mode not in ("fresh", "continuous"):
+            if persona_cfg.memory_within_persona not in ("fresh", "continuous"):
                 raise ValueError(
-                    f"Unsupported memory mode '{memory_mode}' for persona '{persona.id}'. "
-                    "Expected 'fresh' or 'continuous'."
+                    f"memory_within_persona για '{persona.id}' πρέπει να είναι "
+                    f"'fresh' ή 'continuous', όχι '{persona_cfg.memory_within_persona}'"
                 )
 
-            print(f"-- Persona: {persona.id} (runs={persona_cfg.runs}, memory={memory_mode})")
+            system_prompt = (
+                f"{persona.prompt_prefix} "
+                "You are answering a psychometric questionnaire. "
+                f"Use the following scale: {scale_min} = Strongly DISAGREE, {scale_max} = Strongly AGREE. "
+                f"Always answer ONLY with a single integer number from {scale_min} to {scale_max}."
+            )
 
             for run_index in range(1, persona_cfg.runs + 1):
+                # fresh/continuous ισχύει μόνο ΜΕΣΑ στο run
                 run_context: List[Dict] = []
 
-                system_prompt = (
-                    f"{persona.prompt_prefix} "
-                    "You are answering a psychometric questionnaire. "
-                    f"Use the following scale: {scale_min} = Strongly DISAGREE, {scale_max} = Strongly AGREE. "
-                    f"Always answer ONLY with a single integer number from {scale_min} to {scale_max}."
-                )
-
                 for item in test_def.items:
-                    if memory_mode == "continuous":
-                        messages = (
-                            [{"role": "system", "content": system_prompt}]
-                            + run_context
-                            + [{"role": "user", "content": item.text}]
-                        )
-                    else:
-                        messages = [
-                            {"role": "system", "content": system_prompt},
-                            {"role": "user", "content": item.text},
-                        ]
+                    messages = (
+                        [{"role": "system", "content": system_prompt}]
+                        + run_context
+                        + [{"role": "user", "content": item.text}]
+                    )
 
                     if debug_ctx:
                         print("\n" + "-" * 80)
                         print(f"[CTX DEBUG] model={model.id} persona={persona.id} run={run_index} qid={item.id}")
-                        print(f"[CTX DEBUG] memory_mode={memory_mode}")
-                        print(f"[CTX DEBUG] history_messages={len(run_context) if memory_mode == 'continuous' else 0}")
-                        if memory_mode == "continuous" and len(run_context) >= 2:
+                        print(f"[CTX DEBUG] history_messages={len(run_context)}")
+                        if len(run_context) >= 2:
                             print("[CTX DEBUG] last user:", run_context[-2]["content"][:200])
                             print("[CTX DEBUG] last assistant:", run_context[-1]["content"][:200])
                         else:
@@ -285,8 +214,6 @@ def run_experiment(config: ExperimentConfig) -> None:
 
                     raw_rows.append(
                         {
-                            "experiment_id": config.experiment_id,
-                            "timestamp_run": _now_iso(),
                             "model": model.id,
                             "provider": model.provider,
                             "persona_id": persona.id,
@@ -294,26 +221,23 @@ def run_experiment(config: ExperimentConfig) -> None:
                             "test_name": config.test_name,
                             "question_id": item.id,
                             "question_text": item.text,
-                            "trait": getattr(item, "trait", ""),
-                            "reverse": getattr(item, "reverse", False),
+                            "trait": item.trait,
+                            "reverse": item.reverse,
                             "answer": answer_val,
+                            "timestamp_run": _now_iso(),
                         }
                     )
 
-                    if memory_mode == "continuous":
-                        run_context.extend(
-                            [
-                                {"role": "user", "content": item.text},
-                                {"role": "assistant", "content": str(answer_val)},
-                            ]
-                        )
+                    # memory μόνο αν είναι continuous
+                    if persona_cfg.memory_within_persona == "continuous":
+                        run_context.append({"role": "user", "content": item.text})
+                        run_context.append({"role": "assistant", "content": reply_text})
 
+                # reset στο τέλος κάθε run
                 run_context = []
 
-    scored_rows = _compute_scored_rows(test_def, raw_rows)
-    _ = _compute_summary_rows(scored_rows)
-
     write_raw_csv(config.experiment_id, raw_rows)
+    scored_rows = _compute_scored_rows(test_def, raw_rows)
     write_scored_csv(config.experiment_id, scored_rows)
 
     print(f"\n✅ Experiment finished. RAW + SCORED saved for {config.experiment_id}")

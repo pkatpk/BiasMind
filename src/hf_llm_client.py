@@ -1,228 +1,166 @@
 # hf_llm_client.py
-from __future__ import annotations
-
+from typing import List, Dict, Optional, Tuple
+from functools import lru_cache
 import os
 import re
-from typing import List, Dict, Optional, Tuple, Any
 
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
+from transformers.utils import logging as hf_logging
+
+from input_loader import ModelDef
+
+# Silence HF/Transformers warnings
+hf_logging.set_verbosity_error()
 
 
-DEBUG_LLM = (os.getenv("BIASMIND_DEBUG_LLM") or "").strip().lower() in ("1", "true", "yes", "on")
+@lru_cache(maxsize=4)
+def _get_pipeline(model_id: str):
+    tokenizer = AutoTokenizer.from_pretrained(model_id)
+    model = AutoModelForCausalLM.from_pretrained(model_id, device_map="auto")
+    return pipeline("text-generation", model=model, tokenizer=tokenizer)
 
-_CLIENT_CACHE: Dict[Tuple[str, Optional[str], int], "HuggingFaceLLMClient"] = {}
 
-
-def _resolve_model_name(model_or_name: Any) -> str:
+def _extract_scale_from_system(messages: List[Dict]) -> Optional[Tuple[int, int]]:
     """
-    Δέχεται είτε:
-    - string model name
-    - ModelDef object
-    και επιστρέφει το πραγματικό HF model name.
+    Extract (min,max) from system prompt like:
+    "Always answer ONLY with a single integer number from X to Y."
     """
-    if isinstance(model_or_name, str):
-        return model_or_name
+    sys = ""
+    for m in messages:
+        if m.get("role") == "system":
+            sys = m.get("content", "") or ""
+            break
 
-    for attr in ("api_name", "model_name", "name", "id"):
-        value = getattr(model_or_name, attr, None)
-        if isinstance(value, str) and value.strip():
-            return value.strip()
+    matches = re.findall(r"from\s+(-?\d+)\s+to\s+(-?\d+)", sys, flags=re.IGNORECASE)
+    if not matches:
+        return None
 
-    raise ValueError(f"Cannot resolve HuggingFace model name from object: {model_or_name!r}")
-
-
-class HuggingFaceLLMClient:
-    def __init__(
-        self,
-        model_name: str,
-        device: Optional[str] = None,
-        max_new_tokens: int = 8,
-    ) -> None:
-        self.model_name = model_name
-        self.max_new_tokens = max_new_tokens
-
-        if device is None:
-            device = "cuda" if torch.cuda.is_available() else "cpu"
-
-        self.device = device
-
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=True)
-
-        if self.tokenizer.pad_token is None:
-            self.tokenizer.pad_token = self.tokenizer.eos_token
-
-        if self.device == "cuda":
-            self.model = AutoModelForCausalLM.from_pretrained(
-                model_name,
-                dtype=torch.float16,
-                device_map="auto",
-            )
-        else:
-            self.model = AutoModelForCausalLM.from_pretrained(model_name)
-            self.model.to(self.device)
-
-        self.model.eval()
-
-    def _messages_to_prompt(self, messages: List[Dict[str, str]]) -> str:
-        """
-        Plain prompt builder.
-
-        fresh:
-            system + current user item + strict numeric instruction
-
-        continuous:
-            system + prior conversation turns + current item + strict numeric instruction
-        """
-        system_parts: List[str] = []
-        convo_parts: List[str] = []
-
-        for msg in messages:
-            role = (msg.get("role") or "").strip().lower()
-            content = (msg.get("content") or "").strip()
-
-            if not content:
-                continue
-
-            if role == "system":
-                system_parts.append(content)
-            elif role == "user":
-                convo_parts.append(f"Question: {content}")
-            elif role == "assistant":
-                # προηγούμενες αριθμητικές απαντήσεις για continuous
-                convo_parts.append(f"Answer: {content}")
-            else:
-                convo_parts.append(content)
-
-        system_text = "\n\n".join(system_parts).strip()
-        convo_text = "\n\n".join(convo_parts).strip()
-
-        strict_tail = (
-            "Respond with ONE integer only.\n"
-            "No words.\n"
-            "Answer:"
-        )
-
-        if system_text and convo_text:
-            prompt = f"{system_text}\n\n{convo_text}\n\n{strict_tail}"
-        elif system_text:
-            prompt = f"{system_text}\n\n{strict_tail}"
-        elif convo_text:
-            prompt = f"{convo_text}\n\n{strict_tail}"
-        else:
-            prompt = strict_tail
-
-        return prompt
-
-    def _extract_answer_text(self, generated_text: str, prompt_text: str) -> str:
-        if generated_text.startswith(prompt_text):
-            return generated_text[len(prompt_text):].strip()
-        return generated_text.strip()
-
-    def _coerce_single_integer(self, text: str) -> str:
-        text = (text or "").strip()
-        nums = re.findall(r"-?\d+", text)
-        if nums:
-            return nums[-1]
-        return text
-
-    def generate(
-        self,
-        messages: List[Dict[str, str]],
-        temperature: float = 0.2,
-    ) -> str:
-        prompt = self._messages_to_prompt(messages)
-
-        if DEBUG_LLM:
-            print("\n" + "=" * 100)
-            print("PROMPT SENT TO MODEL")
-            print("=" * 100)
-            print(prompt)
-            print("=" * 100 + "\n")
-
-        inputs = self.tokenizer(
-            prompt,
-            return_tensors="pt",
-            padding=True,
-            truncation=True,
-        )
-        inputs = {k: v.to(self.model.device) for k, v in inputs.items()}
-
-        do_sample = temperature > 0
-
-        generate_kwargs = {
-            "max_new_tokens": self.max_new_tokens,
-            "do_sample": do_sample,
-            "pad_token_id": self.tokenizer.pad_token_id,
-            "eos_token_id": self.tokenizer.eos_token_id,
-        }
-
-        if do_sample:
-            generate_kwargs["temperature"] = temperature
-
-        with torch.no_grad():
-            output_ids = self.model.generate(
-                **inputs,
-                **generate_kwargs,
-            )
-
-        generated_text = self.tokenizer.decode(output_ids[0], skip_special_tokens=True)
-        answer_text = self._extract_answer_text(generated_text, prompt)
-        answer_text = self._coerce_single_integer(answer_text)
-
-        if DEBUG_LLM:
-            print("\n" + "=" * 100)
-            print("RAW MODEL OUTPUT")
-            print("=" * 100)
-            print(generated_text)
-            print("=" * 100)
-            print("PARSED ANSWER TEXT")
-            print("=" * 100)
-            print(answer_text)
-            print("=" * 100 + "\n")
-
-        return answer_text
+    a, b = matches[-1]
+    try:
+        mn, mx = int(a), int(b)
+        if mn > mx:
+            mn, mx = mx, mn
+        return mn, mx
+    except Exception:
+        return None
 
 
-def _get_cached_client(
-    model_name: str,
-    device: Optional[str] = None,
-    max_new_tokens: int = 8,
-) -> HuggingFaceLLMClient:
-    key = (model_name, device, max_new_tokens)
+def _messages_to_prompt(messages: List[Dict]) -> str:
+    """
+    Plain text prompt builder (NO chat tags).
 
-    client = _CLIENT_CACHE.get(key)
-    if client is None:
-        client = HuggingFaceLLMClient(
-            model_name=model_name,
-            device=device,
-            max_new_tokens=max_new_tokens,
-        )
-        _CLIENT_CACHE[key] = client
+    fresh:
+      - κρατά μόνο system + current user
+      - ακριβώς όπως η παλιά λογική
 
-    return client
+    continuous:
+      - περνά και τα προηγούμενα user/assistant turns ως plain text history
+      - χωρίς να αλλάξει το τελικό strict numeric anchor
+    """
+    system_text = ""
+    convo_parts: List[str] = []
+
+    for msg in messages:
+        role = msg.get("role")
+        content = msg.get("content", "") or ""
+
+        if role == "system":
+            system_text = content
+        elif role == "user":
+            convo_parts.append(content)
+        elif role == "assistant":
+            convo_parts.append(str(content))
+
+    if convo_parts:
+        user_block = "\n\n".join(convo_parts)
+    else:
+        user_block = ""
+
+    scale = _extract_scale_from_system(messages)
+    if scale is not None:
+        mn, mx = scale
+        tail = f"\n\nRespond with ONE integer between {mn} and {mx}. No words.\nAnswer: "
+    else:
+        tail = "\n\nRespond with ONE integer. No words.\nAnswer: "
+
+    return f"{system_text}\n\n{user_block}{tail}"
+
+
+def _parse_first_int_in_range(text: str, mn: int, mx: int) -> Optional[int]:
+    """
+    Extract the first integer token that lies within [mn,mx].
+    """
+    for tok in re.findall(r"-?\d+", text):
+        try:
+            v = int(tok)
+        except Exception:
+            continue
+        if mn <= v <= mx:
+            return v
+    return None
 
 
 def call_hf_local_chat(
-    model_name: Any,
-    messages: List[Dict[str, str]],
-    temperature: float = 0.2,
-    device: Optional[str] = None,
-    max_new_tokens: int = 8,
+    model: ModelDef,
+    messages: List[Dict],
+    temperature: float = 0.7,
 ) -> str:
     """
-    Compatibility wrapper για llm_router.py.
-    Δέχεται είτε string είτε ModelDef object.
+    Generates a response and returns ONE integer as a string.
+    - Uses plain text prompt (no chat tags).
+    - Robustly extracts the first valid integer within the test's scale.
+
+    Debug:
+      set BIASMIND_DEBUG_LLM=1 to print full prompt, raw output, and parsed result.
     """
-    resolved_model_name = _resolve_model_name(model_name)
+    debug = (os.getenv("BIASMIND_DEBUG_LLM") or "").strip().lower() in ("1", "true", "yes", "on")
 
-    client = _get_cached_client(
-        model_name=resolved_model_name,
-        device=device,
-        max_new_tokens=max_new_tokens,
-    )
+    prompt = _messages_to_prompt(messages)
+    scale = _extract_scale_from_system(messages)
 
-    return client.generate(
-        messages=messages,
+    pipe = _get_pipeline(model.api_name)
+
+    # Keep old behavior: a little room so "Answer: 6" is not truncated
+    outputs = pipe(
+        prompt,
+        do_sample=True,
         temperature=temperature,
+        top_p=0.9,
+        max_new_tokens=12,
+        num_return_sequences=1,
+        return_full_text=False,
     )
+
+    gen = (outputs[0].get("generated_text") or "")
+
+    parsed: str = ""
+
+    if scale is not None:
+        mn, mx = scale
+        v = _parse_first_int_in_range(gen, mn, mx)
+        parsed = "" if v is None else str(v)
+    else:
+        m = re.search(r"-?\d+", gen)
+        parsed = "" if not m else m.group(0)
+
+    if debug:
+        print("\n" + "=" * 90)
+        print("[BiasMind DEBUG] hf_local_chat")
+        print(
+            f"model.id={getattr(model, 'id', None)} "
+            f"api_name={getattr(model, 'api_name', None)} "
+            f"provider={getattr(model, 'provider', None)}"
+        )
+        print(f"extracted_scale={scale[0]}.{scale[1]}" if scale else "extracted_scale=None")
+        print("-" * 90)
+        print("[PROMPT SENT TO MODEL]")
+        print(prompt)
+        print("-" * 90)
+        print("[RAW MODEL OUTPUT]")
+        print(gen)
+        print("-" * 90)
+        print("[PARSED RETURN]")
+        print(repr(parsed))
+        print("=" * 90 + "\n")
+
+    return parsed
