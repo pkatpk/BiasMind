@@ -47,6 +47,10 @@ def _parse_likert_answer(text: str, min_val: int, max_val: int) -> int:
     - βρίσκει όλους τους ακέραιους στο text
     - κρατά τον τελευταίο εντός scale
     - fallback στο midpoint
+
+    Σημείωση:
+    Αν το μοντέλο απαντήσει με labels τύπου "Strongly DISAGREE"
+    χωρίς αριθμό, εδώ θα πέσει στο midpoint.
     """
     text = (text or "").strip()
     ints = [int(m.group(0)) for m in re.finditer(r"-?\d+", text)]
@@ -95,11 +99,7 @@ def _compute_scored_rows(
                 or rev == "1"
             )
 
-            if is_rev:
-                adj = scale_min + scale_max - ans
-            else:
-                adj = ans
-
+            adj = scale_min + scale_max - ans if is_rev else ans
             trait_values.setdefault(trait, []).append(adj)
 
         for trait, vals in trait_values.items():
@@ -124,10 +124,11 @@ def _compute_scored_rows(
 
 def _compute_summary_rows(scored_rows: List[Dict]) -> List[Dict]:
     """
-    Summary ανά:
+    Υπολογίζει summary ανά:
     model, provider, persona_id, test_name, trait
-    με:
-    n_runs, mean, std, min, max, sem
+
+    Δεν γράφεται εδώ απευθείας σε file, αλλά μένει διαθέσιμο
+    αν το θες αργότερα για console summary ή άλλο layer.
     """
     summary_rows: List[Dict] = []
     if not scored_rows:
@@ -182,11 +183,12 @@ def run_experiment(config: ExperimentConfig) -> None:
         κάθε item ανεξάρτητο, χωρίς history
     - continuous:
         όλα τα items ενός run είναι μία συνομιλία
-    - μετά το τέλος κάθε run γίνεται πάντα reset
-    - δεν υπάρχει memory between runs / personas
+    - πάντα reset στο τέλος κάθε run
+    - δεν υπάρχει memory between runs
+    - δεν υπάρχει memory between personas
 
     Debug:
-    - BIASMIND_DEBUG_CTX=1
+    - set BIASMIND_DEBUG_CTX=1
     """
     debug_ctx = (os.getenv("BIASMIND_DEBUG_CTX") or "").strip().lower() in ("1", "true", "yes", "on")
 
@@ -243,7 +245,6 @@ def run_experiment(config: ExperimentConfig) -> None:
             print(f"-- Persona: {persona.id} (runs={persona_cfg.runs}, memory={memory_mode})")
 
             for run_index in range(1, persona_cfg.runs + 1):
-                # πάντα νέα συνομιλία στην αρχή κάθε run
                 run_context: List[Dict] = []
 
                 system_prompt = (
@@ -307,13 +308,12 @@ def run_experiment(config: ExperimentConfig) -> None:
                             ]
                         )
 
-                # reset στο τέλος του run
                 run_context = []
 
     scored_rows = _compute_scored_rows(test_def, raw_rows)
-    summary_rows = _compute_summary_rows(scored_rows)
+    _ = _compute_summary_rows(scored_rows)
 
     write_raw_csv(config.experiment_id, raw_rows)
-    write_scored_csv(config.experiment_id, scored_rows, summary_rows)
+    write_scored_csv(config.experiment_id, scored_rows)
 
     print(f"\n✅ Experiment finished. RAW + SCORED saved for {config.experiment_id}")
