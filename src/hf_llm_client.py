@@ -11,7 +11,6 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 
 DEBUG_LLM = (os.getenv("BIASMIND_DEBUG_LLM") or "").strip().lower() in ("1", "true", "yes", "on")
 
-# Cache για clients ώστε να μη φορτώνεται το model σε κάθε item
 _CLIENT_CACHE: Dict[Tuple[str, Optional[str], int], "HuggingFaceLLMClient"] = {}
 
 
@@ -25,7 +24,6 @@ def _resolve_model_name(model_or_name: Any) -> str:
     if isinstance(model_or_name, str):
         return model_or_name
 
-    # Συνήθη πεδία που μπορεί να έχει το ModelDef
     for attr in ("api_name", "model_name", "name", "id"):
         value = getattr(model_or_name, attr, None)
         if isinstance(value, str) and value.strip():
@@ -39,7 +37,7 @@ class HuggingFaceLLMClient:
         self,
         model_name: str,
         device: Optional[str] = None,
-        max_new_tokens: int = 16,
+        max_new_tokens: int = 8,
     ) -> None:
         self.model_name = model_name
         self.max_new_tokens = max_new_tokens
@@ -57,7 +55,7 @@ class HuggingFaceLLMClient:
         if self.device == "cuda":
             self.model = AutoModelForCausalLM.from_pretrained(
                 model_name,
-                torch_dtype=torch.float16,
+                dtype=torch.float16,
                 device_map="auto",
             )
         else:
@@ -68,19 +66,13 @@ class HuggingFaceLLMClient:
 
     def _messages_to_prompt(self, messages: List[Dict[str, str]]) -> str:
         """
-        Μετατρέπει chat-style messages σε plain prompt.
+        Plain prompt builder.
 
-        Υποστηρίζει:
-        - system message(s)
-        - πολλαπλά user / assistant turns
+        fresh:
+            system + current user item + strict numeric instruction
 
-        Format:
-            [system]
-
-            User: ...
-            Assistant: ...
-            User: ...
-            Assistant:
+        continuous:
+            system + prior conversation turns + current item + strict numeric instruction
         """
         system_parts: List[str] = []
         convo_parts: List[str] = []
@@ -95,22 +87,32 @@ class HuggingFaceLLMClient:
             if role == "system":
                 system_parts.append(content)
             elif role == "user":
-                convo_parts.append(f"User: {content}")
+                convo_parts.append(f"Question: {content}")
             elif role == "assistant":
-                convo_parts.append(f"Assistant: {content}")
+                # προηγούμενες αριθμητικές απαντήσεις για continuous
+                convo_parts.append(f"Answer: {content}")
             else:
                 convo_parts.append(content)
 
         system_text = "\n\n".join(system_parts).strip()
-        convo_text = "\n".join(convo_parts).strip()
+        convo_text = "\n\n".join(convo_parts).strip()
+
+        strict_tail = (
+            "Respond with ONE integer only.\n"
+            "No words.\n"
+            "Answer:"
+        )
 
         if system_text and convo_text:
-            return f"{system_text}\n\n{convo_text}\nAssistant:"
-        if system_text:
-            return f"{system_text}\n\nAssistant:"
-        if convo_text:
-            return f"{convo_text}\nAssistant:"
-        return "Assistant:"
+            prompt = f"{system_text}\n\n{convo_text}\n\n{strict_tail}"
+        elif system_text:
+            prompt = f"{system_text}\n\n{strict_tail}"
+        elif convo_text:
+            prompt = f"{convo_text}\n\n{strict_tail}"
+        else:
+            prompt = strict_tail
+
+        return prompt
 
     def _extract_answer_text(self, generated_text: str, prompt_text: str) -> str:
         if generated_text.startswith(prompt_text):
@@ -185,7 +187,7 @@ class HuggingFaceLLMClient:
 def _get_cached_client(
     model_name: str,
     device: Optional[str] = None,
-    max_new_tokens: int = 16,
+    max_new_tokens: int = 8,
 ) -> HuggingFaceLLMClient:
     key = (model_name, device, max_new_tokens)
 
@@ -206,7 +208,7 @@ def call_hf_local_chat(
     messages: List[Dict[str, str]],
     temperature: float = 0.2,
     device: Optional[str] = None,
-    max_new_tokens: int = 16,
+    max_new_tokens: int = 8,
 ) -> str:
     """
     Compatibility wrapper για llm_router.py.

@@ -124,7 +124,7 @@ def _compute_scored_rows(
 
 def _compute_summary_rows(scored_rows: List[Dict]) -> List[Dict]:
     """
-    Παράγει summary ανά:
+    Summary ανά:
     model, provider, persona_id, test_name, trait
     με:
     n_runs, mean, std, min, max, sem
@@ -177,17 +177,16 @@ def _compute_summary_rows(scored_rows: List[Dict]) -> List[Dict]:
 
 def run_experiment(config: ExperimentConfig) -> None:
     """
-    Memory behaviour:
+    Memory policy:
     - fresh:
-        κάθε item απαντιέται ανεξάρτητα, χωρίς history
+        κάθε item ανεξάρτητο, χωρίς history
     - continuous:
-        όλα τα items ενός run μπαίνουν στην ίδια συνομιλία
+        όλα τα items ενός run είναι μία συνομιλία
     - μετά το τέλος κάθε run γίνεται πάντα reset
-    - δεν υπάρχει memory between runs
-    - δεν υπάρχει memory between personas
+    - δεν υπάρχει memory between runs / personas
 
     Debug:
-    - set BIASMIND_DEBUG_CTX=1 to print context info before each item call
+    - BIASMIND_DEBUG_CTX=1
     """
     debug_ctx = (os.getenv("BIASMIND_DEBUG_CTX") or "").strip().lower() in ("1", "true", "yes", "on")
 
@@ -244,7 +243,7 @@ def run_experiment(config: ExperimentConfig) -> None:
             print(f"-- Persona: {persona.id} (runs={persona_cfg.runs}, memory={memory_mode})")
 
             for run_index in range(1, persona_cfg.runs + 1):
-                # Πάντα νέα συνομιλία στην αρχή κάθε run
+                # πάντα νέα συνομιλία στην αρχή κάθε run
                 run_context: List[Dict] = []
 
                 system_prompt = (
@@ -262,7 +261,6 @@ def run_experiment(config: ExperimentConfig) -> None:
                             + [{"role": "user", "content": item.text}]
                         )
                     else:
-                        # fresh: κανένα history μέσα στο run
                         messages = [
                             {"role": "system", "content": system_prompt},
                             {"role": "user", "content": item.text},
@@ -287,19 +285,17 @@ def run_experiment(config: ExperimentConfig) -> None:
                     raw_rows.append(
                         {
                             "experiment_id": config.experiment_id,
-                            "timestamp": _now_iso(),
+                            "timestamp_run": _now_iso(),
                             "model": model.id,
                             "provider": model.provider,
                             "persona_id": persona.id,
                             "run_index": run_index,
                             "test_name": config.test_name,
-                            "item_id": item.id,
-                            "item_text": item.text,
+                            "question_id": item.id,
+                            "question_text": item.text,
                             "trait": getattr(item, "trait", ""),
                             "reverse": getattr(item, "reverse", False),
                             "answer": answer_val,
-                            "raw_model_output": reply_text,
-                            "memory_within_persona": memory_mode,
                         }
                     )
 
