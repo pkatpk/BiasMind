@@ -1,227 +1,121 @@
-# src/experiment_runner.py
-from dataclasses import dataclass
-from pathlib import Path
-from typing import List, Dict, Tuple
-from datetime import datetime
-import re
 import os
+from dataclasses import dataclass
+from typing import List, Dict
 
-from input_loader import ModelDef, PersonaDef
-from test_loader import load_test, TestDefinition
-from results_io import write_metadata_json, write_raw_csv, write_scored_csv
 from llm_router import call_model
+from results_io import write_raw_csv, write_scored_csv
+from scoring import score_test
+
+
+DEBUG_CTX = os.getenv("BIASMIND_DEBUG_CTX") == "1"
 
 
 @dataclass
 class PersonaRunConfig:
-    persona: PersonaDef
+    persona_id: str
     runs: int
 
 
 @dataclass
 class ExperimentConfig:
     experiment_id: str
-    test_name: str
-    test_file: Path
-    models: List[ModelDef]
-    persona: PersonaRunConfig
+    test
+    model
+    personas: List[PersonaRunConfig]
 
 
-def _now_iso() -> str:
-    return datetime.utcnow().isoformat(timespec="seconds")
+def build_system_prompt(persona: str, scale_min: int, scale_max: int):
+
+    if persona == "neutral":
+        persona_text = "Answer as a neutral, helpful AI assistant."
+    else:
+        persona_text = f"Answer as a {persona.replace('_',' ')}."
+
+    return (
+        f"{persona_text} Answer as a real person speaking about yourself. "
+        f"You are answering a psychometric questionnaire. "
+        f"Use the following scale: {scale_min} = Strongly DISAGREE, "
+        f"{scale_max} = Strongly AGREE. "
+        f"Always answer ONLY with a single integer number from {scale_min} to {scale_max}."
+    )
 
 
-def _infer_scale_from_test(test_def: TestDefinition) -> Tuple[int, int]:
-    scale_min = getattr(test_def, "scale_min", None)
-    scale_max = getattr(test_def, "scale_max", None)
-    if isinstance(scale_min, int) and isinstance(scale_max, int):
-        return scale_min, scale_max
-    return 1, 5
+def run_experiment(config: ExperimentConfig):
 
+    raw_rows = []
+    scored_rows = []
+    summary_rows = []
 
-def _parse_likert_answer(text: str, min_val: int, max_val: int) -> int:
-    """
-    Robust Likert parsing:
-    - βρίσκει όλους τους ακέραιους στο text
-    - κρατά τον τελευταίο εντός scale
-    - fallback στο midpoint
-    """
-    text = (text or "").strip()
-    ints = [int(m.group(0)) for m in re.finditer(r"-?\d+", text)]
-    in_range = [x for x in ints if min_val <= x <= max_val]
-
-    if in_range:
-        return in_range[-1]
-
-    return (min_val + max_val) // 2
-
-
-def _compute_scored_rows(
-    test_def: TestDefinition,
-    raw_rows: List[Dict],
-) -> List[Dict]:
-    scored_rows: List[Dict] = []
-    if not raw_rows:
-        return scored_rows
-
-    scale_min, scale_max = _infer_scale_from_test(test_def)
-
-    grouped: Dict[tuple, List[Dict]] = {}
-    for row in raw_rows:
-        key = (
-            row["model"],
-            row["provider"],
-            row["persona_id"],
-            row["run_index"],
-            row["test_name"],
-        )
-        grouped.setdefault(key, []).append(row)
-
-    for (model, provider, persona_id, run_index, test_name), rows in grouped.items():
-        trait_values: Dict[str, List[float]] = {}
-
-        for r in rows:
-            trait = r["trait"]
-            ans = int(r["answer"])
-            rev = r["reverse"]
-
-            is_rev = (
-                rev is True
-                or rev == "true"
-                or rev == "True"
-                or rev == 1
-                or rev == "1"
-            )
-
-            if is_rev:
-                adj = scale_min + scale_max - ans
-            else:
-                adj = ans
-
-            trait_values.setdefault(trait, []).append(adj)
-
-        for trait, vals in trait_values.items():
-            mean_val = sum(vals) / len(vals) if vals else 0.0
-            scored_rows.append(
-                {
-                    "model": model,
-                    "provider": provider,
-                    "persona_id": persona_id,
-                    "run_index": run_index,
-                    "test_name": test_name,
-                    "score_name": trait,
-                    "score_kind": "trait",
-                    "score_value": round(mean_val, 3),
-                    "score_normalized": "",
-                    "summary_label": "",
-                }
-            )
-
-    return scored_rows
-
-
-def run_experiment(config: ExperimentConfig) -> None:
-    """
-    Τελική λογική:
-    - 1 run = 1 συνομιλία για όλο το test
-    - μέσα στο run κρατάμε history
-    - στο τέλος κάθε run γίνεται reset
-    - δεν υπάρχει επιλογή memory mode
-    """
-    debug_ctx = (os.getenv("BIASMIND_DEBUG_CTX") or "").strip().lower() in ("1", "true", "yes", "on")
-
-    test_def: TestDefinition = load_test(config.test_file)
-    scale_min, scale_max = _infer_scale_from_test(test_def)
-
-    metadata = {
-        "experiment_id": config.experiment_id,
-        "test": config.test_name,
-        "models": [
-            {"id": m.id, "provider": m.provider, "api_name": m.api_name}
-            for m in config.models
-        ],
-        "persona": {
-            "id": config.persona.persona.id,
-            "prompt_prefix": config.persona.persona.prompt_prefix,
-            "runs": config.persona.runs,
-        },
-        "scale_min": scale_min,
-        "scale_max": scale_max,
-        "conversation_policy": "one_full_conversation_per_run",
-    }
-    write_metadata_json(metadata)
-
-    raw_rows: List[Dict] = []
+    test = config.test
+    model = config.model
 
     print("=== Running BiasMind experiment ===")
     print(f"Experiment ID: {config.experiment_id}")
-    print(f"Test: {config.test_name} ({len(test_def.items)} items)")
-    print(f"Scale: {scale_min}–{scale_max}")
+    print(f"Test: {test.name} ({len(test.items)} items)")
+    print(f"Scale: {test.scale_min}–{test.scale_max}\n")
 
-    persona = config.persona.persona
+    print(f"=== MODEL: {model.id} (provider={model.provider}) ===")
 
-    for model in config.models:
-        print(f"\n=== MODEL: {model.id} (provider={model.provider}) ===")
-        print(f"-- Persona: {persona.id} (runs={config.persona.runs})")
+    for persona_cfg in config.personas:
 
-        system_prompt = (
-            f"{persona.prompt_prefix} "
-            "You are answering a psychometric questionnaire. "
-            f"Use the following scale: {scale_min} = Strongly DISAGREE, {scale_max} = Strongly AGREE. "
-            f"Always answer ONLY with a single integer number from {scale_min} to {scale_max}."
-        )
+        persona = persona_cfg.persona_id
+        runs = persona_cfg.runs
 
-        for run_index in range(1, config.persona.runs + 1):
-            # νέα συνομιλία σε κάθε run
-            run_context: List[Dict] = []
+        print(f"-- Persona: {persona} (runs={runs})\n")
 
-            for item in test_def.items:
-                messages = (
-                    [{"role": "system", "content": system_prompt}]
-                    + run_context
-                    + [{"role": "user", "content": item.text}]
-                )
+        for run_idx in range(1, runs + 1):
 
-                if debug_ctx:
-                    print("\n" + "-" * 80)
-                    print(f"[CTX DEBUG] model={model.id} persona={persona.id} run={run_index} qid={item.id}")
-                    print(f"[CTX DEBUG] history_messages={len(run_context)}")
-                    if len(run_context) >= 2:
-                        print("[CTX DEBUG] last user:", run_context[-2]["content"][:200])
-                        print("[CTX DEBUG] last assistant:", str(run_context[-1]["content"])[:200])
-                    else:
+            system_prompt = build_system_prompt(persona, test.scale_min, test.scale_max)
+
+            messages = [
+                {"role": "system", "content": system_prompt}
+            ]
+
+            for q_idx, item in enumerate(test.items, start=1):
+
+                question = item["text"]
+
+                if DEBUG_CTX:
+                    print("--------------------------------------------------------------------------------")
+                    print(
+                        f"[CTX DEBUG] model={model.id} persona={persona} run={run_idx} qid={q_idx}"
+                    )
+                    print(f"[CTX DEBUG] history_messages={len(messages)-1}")
+
+                    if len(messages) <= 1:
                         print("[CTX DEBUG] (no prior turns)")
-                    print("[CTX DEBUG] current item:", item.text[:200])
-                    print("-" * 80 + "\n")
+                    else:
+                        last_user = messages[-2]["content"]
+                        last_assistant = messages[-1]["content"]
+                        print(f"[CTX DEBUG] last user: {last_user}")
+                        print(f"[CTX DEBUG] last assistant: {last_assistant}")
+
+                    print(f"[CTX DEBUG] current item: {question}")
+                    print("--------------------------------------------------------------------------------\n")
+
+                messages.append({"role": "user", "content": question})
 
                 reply_text = call_model(model, messages, temperature=0.2)
-                answer_val = _parse_likert_answer(reply_text, scale_min, scale_max)
+
+                messages.append({"role": "assistant", "content": reply_text})
 
                 raw_rows.append(
                     {
+                        "experiment_id": config.experiment_id,
                         "model": model.id,
                         "provider": model.provider,
-                        "persona_id": persona.id,
-                        "run_index": run_index,
-                        "test_name": config.test_name,
-                        "question_id": item.id,
-                        "question_text": item.text,
-                        "trait": item.trait,
-                        "reverse": item.reverse,
-                        "answer": answer_val,
-                        "timestamp_run": _now_iso(),
+                        "persona_id": persona,
+                        "run": run_idx,
+                        "question_id": q_idx,
+                        "question": question,
+                        "answer": reply_text,
                     }
                 )
 
-                # κρατάμε τη συνομιλία μέσα στο run
-                run_context.append({"role": "user", "content": item.text})
-                run_context.append({"role": "assistant", "content": reply_text})
-
-            # reset μετά από κάθε run
-            run_context = []
-
     write_raw_csv(config.experiment_id, raw_rows)
-    scored_rows = _compute_scored_rows(test_def, raw_rows)
-    write_scored_csv(config.experiment_id, scored_rows)
+
+    scored_rows, summary_rows = score_test(config.experiment_id, test, raw_rows)
+
+    write_scored_csv(config.experiment_id, scored_rows, summary_rows)
 
     print(f"\n✅ Experiment finished. RAW + SCORED saved for {config.experiment_id}")
