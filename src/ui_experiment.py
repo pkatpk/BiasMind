@@ -59,47 +59,7 @@ def _load_persona_prompt(persona_id: str) -> str:
         return f"(error reading json: {e})"
 
 
-def _add_persona(selected_pid, cfg, order):
-    cfg = cfg or {}
-    order = order or []
-    pid = (selected_pid or "").strip()
-
-    if not pid:
-        return cfg, order, "❌ Διάλεξε persona πρώτα."
-
-    if pid in cfg:
-        return cfg, order, f"ℹ️ Η persona **{pid}** είναι ήδη στη λίστα."
-
-    cfg[pid] = {"runs": 1, "memory_within": "fresh"}
-    order = order + [pid]
-    return cfg, order, f"✅ Προστέθηκε η persona **{pid}**."
-
-
-def _remove_persona(pid, cfg, order):
-    cfg = cfg or {}
-    order = order or []
-    if pid in cfg:
-        del cfg[pid]
-    order = [x for x in order if x != pid]
-    return cfg, order
-
-
-def _move_persona(pid, direction, order):
-    order = order or []
-    if pid not in order:
-        return order
-
-    i = order.index(pid)
-    j = i + int(direction)
-    if j < 0 or j >= len(order):
-        return order
-
-    new_order = order[:]
-    new_order[i], new_order[j] = new_order[j], new_order[i]
-    return new_order
-
-
-def _build_cmd(test_file, model_id, cfg_dict, order_list):
+def _build_cmd(test_file, model_id, persona_id, runs, memory_within):
     if not test_file:
         raise ValueError("Επίλεξε test file.")
 
@@ -107,42 +67,35 @@ def _build_cmd(test_file, model_id, cfg_dict, order_list):
     if not model_id:
         raise ValueError("Επίλεξε model.")
 
-    cfg_dict = cfg_dict or {}
-    order_list = order_list or []
-    ordered_personas = [pid for pid in order_list if pid in cfg_dict]
+    persona_id = (persona_id or "").strip()
+    if not persona_id:
+        raise ValueError("Επίλεξε persona.")
 
-    if not ordered_personas:
-        raise ValueError("Πρόσθεσε τουλάχιστον μία persona (Add).")
+    try:
+        runs = max(1, int(runs))
+    except Exception:
+        raise ValueError("Τα runs πρέπει να είναι ακέραιος >= 1.")
+
+    memory_within = (memory_within or "").strip().lower()
+    if memory_within not in ("fresh", "continuous"):
+        raise ValueError("memory_within πρέπει να είναι fresh ή continuous.")
 
     argv = [sys.executable, "src/run_experiment.py", "--test-file", test_file]
     argv += ["--model", model_id]
-
-    for pid in ordered_personas:
-        cfg = cfg_dict[pid]
-        runs = int(cfg.get("runs", 1))
-        mem = cfg.get("memory_within", "fresh")
-        if mem not in ("fresh", "continuous"):
-            raise ValueError(f"memory_within για '{pid}' πρέπει να είναι fresh ή continuous.")
-        argv += ["--persona", f"{pid}:{runs}:{mem}"]
+    argv += ["--persona", f"{persona_id}:{runs}:{memory_within}"]
 
     pretty = " ".join(shlex.quote(a) for a in argv)
     return argv, pretty
 
 
-def _preview_command(test_file, model_id, cfg_dict, order_list):
-    """
-    Only builds the CLI command (does NOT execute) and formats it multiline for display.
-    """
-    _, pretty = _build_cmd(test_file, model_id, cfg_dict, order_list)
-
-    # break before each --flag for readability
+def _preview_command(test_file, model_id, persona_id, runs, memory_within):
+    _, pretty = _build_cmd(test_file, model_id, persona_id, runs, memory_within)
     pretty_ml = pretty.replace(" --", "\n  --")
-
     return f"$ {pretty_ml}"
 
 
-def _run_experiment(test_file, model_id, cfg_dict, order_list):
-    argv, _pretty = _build_cmd(test_file, model_id, cfg_dict, order_list)
+def _run_experiment(test_file, model_id, persona_id, runs, memory_within):
+    argv, _pretty = _build_cmd(test_file, model_id, persona_id, runs, memory_within)
 
     proc = subprocess.run(argv, capture_output=True, text=True)
     out = []
@@ -181,16 +134,13 @@ def build_experiment_ui():
                 label="Model",
             )
 
-        gr.Markdown("### Personas")
-
-        cfg_state = gr.State({})
-        order_state = gr.State([])
+        gr.Markdown("### Persona")
 
         with gr.Row():
-            persona_select = gr.Dropdown(
+            persona_id = gr.Dropdown(
                 choices=persona_ids,
                 value=None,
-                label="Select persona",
+                label="Persona",
             )
             persona_preview = gr.Textbox(
                 label="Prompt prefix preview",
@@ -198,101 +148,25 @@ def build_experiment_ui():
                 interactive=False,
             )
 
-        with gr.Row():
-            btn_add_persona = gr.Button("Add persona", variant="primary")
-            add_status = gr.Markdown("")
-
-        persona_select.change(
+        persona_id.change(
             fn=_load_persona_prompt,
-            inputs=[persona_select],
+            inputs=[persona_id],
             outputs=[persona_preview],
         )
 
-        btn_add_persona.click(
-            fn=_add_persona,
-            inputs=[persona_select, cfg_state, order_state],
-            outputs=[cfg_state, order_state, add_status],
-        )
+        with gr.Row():
+            runs = gr.Number(
+                value=1,
+                precision=0,
+                minimum=1,
+                label="Runs",
+            )
 
-        @gr.render(inputs=[cfg_state, order_state])
-        def _render_persona_rows(cfg, order):
-            cfg = cfg or {}
-            order = order or []
-            ordered = [pid for pid in order if pid in cfg]
-
-            if not ordered:
-                gr.Markdown("_No personas added yet._")
-                return
-
-            gr.Markdown("#### Per-persona settings (ordered)")
-
-            def _set_runs(pid, val, cfg_in):
-                cfg_in = cfg_in or {}
-                if pid in cfg_in:
-                    try:
-                        cfg_in[pid]["runs"] = max(1, int(val))
-                    except Exception:
-                        cfg_in[pid]["runs"] = 1
-                return cfg_in
-
-            def _set_mem(pid, val, cfg_in):
-                cfg_in = cfg_in or {}
-                if pid in cfg_in:
-                    cfg_in[pid]["memory_within"] = val
-                return cfg_in
-
-            for pid in ordered:
-                with gr.Row():
-                    gr.Markdown(f"**{pid}**")
-
-                    runs = gr.Number(
-                        value=int(cfg[pid].get("runs", 1)),
-                        precision=0,
-                        minimum=1,
-                        label="runs",
-                    )
-
-                    mem = gr.Dropdown(
-                        choices=["fresh", "continuous"],
-                        value=str(cfg[pid].get("memory_within", "fresh")),
-                        label="memory_within",
-                    )
-
-                    with gr.Column(scale=0):
-                        btn_up = gr.Button("↑", size="sm")
-                        btn_down = gr.Button("↓", size="sm")
-
-                    btn_remove = gr.Button("Remove", variant="secondary")
-
-                runs.change(
-                    fn=lambda v, s, _pid=pid: _set_runs(_pid, v, s),
-                    inputs=[runs, cfg_state],
-                    outputs=[cfg_state],
-                )
-
-                mem.change(
-                    fn=lambda v, s, _pid=pid: _set_mem(_pid, v, s),
-                    inputs=[mem, cfg_state],
-                    outputs=[cfg_state],
-                )
-
-                btn_up.click(
-                    fn=lambda s_order, _pid=pid: _move_persona(_pid, -1, s_order),
-                    inputs=[order_state],
-                    outputs=[order_state],
-                )
-
-                btn_down.click(
-                    fn=lambda s_order, _pid=pid: _move_persona(_pid, +1, s_order),
-                    inputs=[order_state],
-                    outputs=[order_state],
-                )
-
-                btn_remove.click(
-                    fn=lambda s_cfg, s_order, _pid=pid: _remove_persona(_pid, s_cfg, s_order),
-                    inputs=[cfg_state, order_state],
-                    outputs=[cfg_state, order_state],
-                )
+            memory_within = gr.Dropdown(
+                choices=["fresh", "continuous"],
+                value="fresh",
+                label="Memory mode",
+            )
 
         gr.Markdown("### Run")
 
@@ -312,13 +186,13 @@ def build_experiment_ui():
 
         btn_preview.click(
             fn=_preview_command,
-            inputs=[test_file, model_id, cfg_state, order_state],
+            inputs=[test_file, model_id, persona_id, runs, memory_within],
             outputs=[cmd_preview],
         )
 
         btn_run.click(
             fn=_run_experiment,
-            inputs=[test_file, model_id, cfg_state, order_state],
+            inputs=[test_file, model_id, persona_id, runs, memory_within],
             outputs=[output],
         )
 
