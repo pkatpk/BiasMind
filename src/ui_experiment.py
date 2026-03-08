@@ -99,14 +99,7 @@ def _move_persona(pid, direction, order):
     return new_order
 
 
-def _memory_between_ui(order):
-    n = len(order or [])
-    if n < 2:
-        return gr.update(value="reset", interactive=False)
-    return gr.update(interactive=True)
-
-
-def _build_cmd(test_file, model_id, memory_between, cfg_dict, order_list):
+def _build_cmd(test_file, model_id, cfg_dict, order_list):
     if not test_file:
         raise ValueError("Επίλεξε test file.")
 
@@ -121,10 +114,6 @@ def _build_cmd(test_file, model_id, memory_between, cfg_dict, order_list):
     if not ordered_personas:
         raise ValueError("Πρόσθεσε τουλάχιστον μία persona (Add).")
 
-    # no meaning with <2 personas
-    if len(ordered_personas) < 2:
-        memory_between = "reset"
-
     argv = [sys.executable, "src/run_experiment.py", "--test-file", test_file]
     argv += ["--model", model_id]
 
@@ -136,19 +125,15 @@ def _build_cmd(test_file, model_id, memory_between, cfg_dict, order_list):
             raise ValueError(f"memory_within για '{pid}' πρέπει να είναι fresh ή continuous.")
         argv += ["--persona", f"{pid}:{runs}:{mem}"]
 
-    if memory_between not in ("reset", "carry_over"):
-        raise ValueError("memory-between πρέπει να είναι reset ή carry_over.")
-    argv += ["--memory-between", memory_between]
-
     pretty = " ".join(shlex.quote(a) for a in argv)
     return argv, pretty
 
 
-def _preview_command(test_file, model_id, memory_between, cfg_dict, order_list):
+def _preview_command(test_file, model_id, cfg_dict, order_list):
     """
     Only builds the CLI command (does NOT execute) and formats it multiline for display.
     """
-    _, pretty = _build_cmd(test_file, model_id, memory_between, cfg_dict, order_list)
+    _, pretty = _build_cmd(test_file, model_id, cfg_dict, order_list)
 
     # break before each --flag for readability
     pretty_ml = pretty.replace(" --", "\n  --")
@@ -156,8 +141,8 @@ def _preview_command(test_file, model_id, memory_between, cfg_dict, order_list):
     return f"$ {pretty_ml}"
 
 
-def _run_experiment(test_file, model_id, memory_between, cfg_dict, order_list):
-    argv, _pretty = _build_cmd(test_file, model_id, memory_between, cfg_dict, order_list)
+def _run_experiment(test_file, model_id, cfg_dict, order_list):
+    argv, _pretty = _build_cmd(test_file, model_id, cfg_dict, order_list)
 
     proc = subprocess.run(argv, capture_output=True, text=True)
     out = []
@@ -178,7 +163,7 @@ def _run_experiment(test_file, model_id, memory_between, cfg_dict, order_list):
 
 def build_experiment_ui():
     persona_ids = _list_persona_ids()
-    test_files = _list_test_files()   # ✅ now (label, value)
+    test_files = _list_test_files()
     model_ids = _list_model_ids()
 
     with gr.Blocks() as experiment_ui:
@@ -309,19 +294,6 @@ def build_experiment_ui():
                     outputs=[cfg_state, order_state],
                 )
 
-        memory_between = gr.Dropdown(
-            choices=["reset", "carry_over"],
-            value="reset",
-            label="memory-between personas",
-            interactive=False,
-        )
-
-        order_state.change(
-            fn=_memory_between_ui,
-            inputs=[order_state],
-            outputs=[memory_between],
-        )
-
         gr.Markdown("### Run")
 
         with gr.Row():
@@ -340,13 +312,13 @@ def build_experiment_ui():
 
         btn_preview.click(
             fn=_preview_command,
-            inputs=[test_file, model_id, memory_between, cfg_state, order_state],
+            inputs=[test_file, model_id, cfg_state, order_state],
             outputs=[cmd_preview],
         )
 
         btn_run.click(
             fn=_run_experiment,
-            inputs=[test_file, model_id, memory_between, cfg_state, order_state],
+            inputs=[test_file, model_id, cfg_state, order_state],
             outputs=[output],
         )
 
