@@ -1,4 +1,5 @@
 # src/ui_experiment.py
+import csv
 import json
 import sys
 import shlex
@@ -10,6 +11,8 @@ import gradio as gr
 PERSONAS_DIR = Path("data/personas")
 TESTS_DIR = Path("data/tests")
 MODELS_DIR = Path("data/models")
+RESULTS_DIR = Path("results")
+SCORED_DIR = RESULTS_DIR / "scored"
 
 
 # ---------- helpers ----------
@@ -108,11 +111,35 @@ def _run_experiment(test_file, model_id, persona_id, runs, memory_within):
     return "".join(out)
 
 
+def _format_summary_table(rows):
+    columns = ["model", "provider", "persona_id", "test_name", "trait", "n_runs", "mean", "std", "min", "max", "sem"]
+
+    clean_rows = []
+    for row in rows:
+        clean_rows.append({col: str(row.get(col, "")) for col in columns})
+
+    widths = {}
+    for col in columns:
+        max_len = len(col)
+        for row in clean_rows:
+            max_len = max(max_len, len(row[col]))
+        widths[col] = max_len + 3
+
+    header = "".join(col.ljust(widths[col]) for col in columns).rstrip()
+    data_lines = [
+        "".join(row[col].ljust(widths[col]) for col in columns).rstrip()
+        for row in clean_rows
+    ]
+
+    return "\n".join([header] + data_lines)
+
+
 def _run_summary(experiment_id: str):
     experiment_id = (experiment_id or "").strip()
     if not experiment_id:
         return "❌ Δώσε experiment id."
 
+    # Τρέχουμε κανονικά το analyze script όπως ζήτησες
     argv = [
         sys.executable,
         "src/analyze_experiment.py",
@@ -121,35 +148,70 @@ def _run_summary(experiment_id: str):
         "--results-dir",
         "results",
     ]
-
     proc = subprocess.run(argv, capture_output=True, text=True)
 
-    text = proc.stdout
-    lines = text.splitlines()
-    formatted = []
+    scored_file = SCORED_DIR / f"scored_{experiment_id}.csv"
+    if not scored_file.exists():
+        out = []
+        if proc.stdout:
+            out.append(proc.stdout)
+        if proc.stderr:
+            out.append("\n---- STDERR ----\n")
+            out.append(proc.stderr)
+        if not out:
+            out.append(f"❌ Δεν βρέθηκε το αρχείο: {scored_file}")
+        return "".join(out).strip()
 
-    for line in lines:
-        stripped = line.strip()
+    # Διαβάζουμε το CSV και κρατάμε μόνο τα summary rows
+    summary_rows = []
+    try:
+        with scored_file.open("r", encoding="utf-8", newline="") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                # κρατά summary γραμμές, ή fallback σε όλες αν δεν υπάρχει summary_label
+                summary_label = str(row.get("summary_label", "") or "").strip()
+                if summary_label:
+                    summary_rows.append(
+                        {
+                            "model": row.get("model", ""),
+                            "provider": row.get("provider", ""),
+                            "persona_id": row.get("persona_id", ""),
+                            "test_name": row.get("test_name", ""),
+                            "trait": row.get("trait", row.get("score_name", "")),
+                            "n_runs": row.get("n_runs", ""),
+                            "mean": row.get("mean", ""),
+                            "std": row.get("std", ""),
+                            "min": row.get("min", ""),
+                            "max": row.get("max", ""),
+                            "sem": row.get("sem", ""),
+                        }
+                    )
+    except Exception as e:
+        return f"❌ Σφάλμα στο διάβασμα του summary CSV:\n{e}"
 
-        if stripped.startswith("model"):
-            cols = line.split()
-            formatted.append("".join(f"{c:<18}" for c in cols))
-            continue
+    # Αν δεν βρέθηκαν explicit summary rows, fallback:
+    # προσπαθούμε να διαβάσουμε το analyze_experiment stdout ως έχει
+    if not summary_rows:
+        stdout = (proc.stdout or "").strip()
+        if stdout:
+            return stdout
+        return f"❌ Δεν βρέθηκαν summary rows στο {scored_file}"
 
-        if stripped.startswith(("tinyllama", "mistral", "llama", "qwen", "gpt")):
-            cols = line.split()
-            formatted.append("".join(f"{c:<18}" for c in cols))
-            continue
+    table = _format_summary_table(summary_rows)
 
-        formatted.append(line)
-
-    output = "\n".join(formatted)
+    parts = [
+        f"=== SUMMARY for experiment {experiment_id} ===",
+        f"Source: {scored_file.as_posix()}",
+        "",
+        table,
+        "=== END SUMMARY ===",
+    ]
 
     if proc.stderr:
-        output += "\n\n---- STDERR ----\n"
-        output += proc.stderr
+        parts.append("\n---- STDERR ----")
+        parts.append(proc.stderr.strip())
 
-    return output
+    return "\n".join(parts).strip()
 
 
 # ---------- UI ----------
