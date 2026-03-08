@@ -128,18 +128,34 @@ class HFLLMClient:
 
 # -------------------------------------------------------------
 # ROUTER COMPATIBILITY FUNCTION
-# (χρειάζεται για llm_router)
 # -------------------------------------------------------------
 
 _client_cache = {}
 
-
-def call_hf_local_chat(model_name: str, system_prompt: str, history: List[Dict], question: str):
+def call_hf_local_chat(model_name, messages, temperature=0.0):
 
     if model_name not in _client_cache:
-
         _client_cache[model_name] = HFLLMClient(model_name)
 
     client = _client_cache[model_name]
+
+    # messages format from runner
+    system_prompt = ""
+    history = []
+    question = ""
+
+    for m in messages:
+
+        if m["role"] == "system":
+            system_prompt = m["content"]
+
+        elif m["role"] == "user":
+            question = m["content"]
+
+        elif m["role"] == "assistant":
+            history.append({
+                "question": question,
+                "answer": m["content"]
+            })
 
     return client.generate(system_prompt, history, question)
