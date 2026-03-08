@@ -129,9 +129,18 @@ def _run_summary(experiment_id: str):
     formatted = []
 
     for line in lines:
-        if line.startswith("model") or line.startswith("tinyllama") or line.startswith("mistral") or line.startswith("llama") or line.startswith("qwen"):
-            parts = line.split()
-            line = "   ".join(f"{p:<15}" for p in parts)
+        stripped = line.strip()
+
+        if stripped.startswith("model"):
+            cols = line.split()
+            formatted.append("".join(f"{c:<18}" for c in cols))
+            continue
+
+        if stripped.startswith(("tinyllama", "mistral", "llama", "qwen", "gpt")):
+            cols = line.split()
+            formatted.append("".join(f"{c:<18}" for c in cols))
+            continue
+
         formatted.append(line)
 
     output = "\n".join(formatted)
