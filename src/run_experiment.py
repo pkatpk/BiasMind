@@ -1,8 +1,8 @@
 # src/run_experiment.py
+
 import argparse
 from datetime import datetime, UTC
 from pathlib import Path
-from typing import Tuple
 
 from input_loader import load_models, load_personas, ModelDef, PersonaDef
 from experiment_runner import ExperimentConfig, PersonaRunConfig, run_experiment
@@ -21,6 +21,7 @@ def _parse_persona_spec(spec: str, personas_defs: list[PersonaDef]) -> PersonaRu
       id = personas/<id>.json
       runs = πόσα runs
     """
+
     persona_map = {p.id: p for p in personas_defs}
 
     parts = spec.split(":")
@@ -36,55 +37,64 @@ def _parse_persona_spec(spec: str, personas_defs: list[PersonaDef]) -> PersonaRu
     try:
         runs = int(runs_str)
     except ValueError as exc:
-        raise ValueError(f"Τα runs για persona '{pid}' πρέπει να είναι ακέραιος.") from exc
+        raise ValueError(
+            f"Τα runs για persona '{pid}' πρέπει να είναι ακέραιος."
+        ) from exc
 
     if runs <= 0:
-        raise ValueError(f"Τα runs για persona '{pid}' πρέπει να είναι > 0.")
+        raise ValueError(
+            f"Τα runs για persona '{pid}' πρέπει να είναι > 0."
+        )
 
     if pid not in persona_map:
-        raise ValueError(f"Persona id '{pid}' δεν βρέθηκε στα data/personas/*.json")
+        raise ValueError(
+            f"Persona id '{pid}' δεν βρέθηκε στα data/personas/*.json"
+        )
 
     return PersonaRunConfig(
         persona=persona_map[pid],
         runs=runs,
+        memory_within_persona="fresh",
     )
 
 
 def parse_args() -> argparse.Namespace:
+
     parser = argparse.ArgumentParser(description="BiasMind experiment runner")
 
     parser.add_argument(
         "--experiment-id",
-        help="ID του experiment (αν δεν δοθεί, θα φτιαχτεί timestamp-based).",
+        help="ID του experiment (αν δεν δοθεί, δημιουργείται timestamp).",
     )
 
     parser.add_argument(
         "--test-file",
         required=True,
-        help="Διαδρομή στο test JSON (π.χ. data/tests/rwa22_en.json).",
+        help="Path στο test JSON (π.χ. data/tests/rwa22_en.json)",
     )
 
     parser.add_argument(
         "--test-name",
-        help="Όνομα του test. Αν δεν δοθεί, θα χρησιμοποιηθεί το όνομα του αρχείου.",
+        help="Όνομα test (αν δεν δοθεί χρησιμοποιείται το filename)",
     )
 
     parser.add_argument(
         "--model",
         required=True,
-        help="ID μοντέλου, π.χ. tinyllama-chat.",
+        help="Model id (π.χ. tinyllama-chat)",
     )
 
     parser.add_argument(
         "--persona",
         required=True,
-        help="Persona spec της μορφής id:runs, π.χ. neutral:50",
+        help="Persona spec: id:runs (π.χ. neutral:50)",
     )
 
     return parser.parse_args()
 
 
 def main() -> None:
+
     args = parse_args()
 
     experiment_id = args.experiment_id or _generate_experiment_id()
@@ -101,14 +111,15 @@ def main() -> None:
     persona_id = args.persona.split(":")[0].strip()
     personas_defs: list[PersonaDef] = load_personas([persona_id])
 
-    persona_cfg: PersonaRunConfig = _parse_persona_spec(args.persona, personas_defs)
+    persona_cfg = _parse_persona_spec(args.persona, personas_defs)
 
     config = ExperimentConfig(
         experiment_id=experiment_id,
         test_name=test_name,
         test_file=test_file,
         models=models,
-        persona=persona_cfg,
+        personas=[persona_cfg],        # runner θέλει list
+        memory_between_personas="reset"
     )
 
     run_experiment(config)
