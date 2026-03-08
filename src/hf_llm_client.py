@@ -1,79 +1,125 @@
 import os
+import re
+from typing import List, Dict
+
 import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 
-DEBUG_LLM = os.getenv("BIASMIND_DEBUG_LLM") == "1"
-
-_CLIENT_CACHE = {}
+DEBUG_LLM = os.getenv("BIASMIND_DEBUG_LLM", "0") == "1"
 
 
-def _get_cached_client(model_def):
+class HFLLMClient:
 
-    key = model_def.id
+    def __init__(self, model_name: str):
 
-    if key in _CLIENT_CACHE:
-        return _CLIENT_CACHE[key]
+        self.model_name = model_name
 
-    tokenizer = AutoTokenizer.from_pretrained(model_def.api_name)
-    model = AutoModelForCausalLM.from_pretrained(
-        model_def.api_name,
-        torch_dtype=torch.float16,
-        device_map="auto"
-    )
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
 
-    client = (tokenizer, model)
+        self.model = AutoModelForCausalLM.from_pretrained(
+            model_name,
+            torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
+            device_map="auto"
+        )
 
-    _CLIENT_CACHE[key] = client
-
-    return client
+        self.model.eval()
 
 
-def call_hf_local_chat(model_def, messages, temperature=0.2):
+    # -------------------------------------------------------------
+    # PROMPT BUILDER (SINGLE PROMPT - NO CHAT TEMPLATE)
+    # -------------------------------------------------------------
 
-    tokenizer, model = _get_cached_client(model_def)
+    def build_prompt(self, system_prompt: str, history: List[Dict], question: str):
 
-    prompt = tokenizer.apply_chat_template(
-        messages,
-        tokenize=False,
-        add_generation_prompt=True
-    )
+        prompt_parts = []
 
-    if DEBUG_LLM:
-        print("\n" + "="*100)
-        print("PROMPT SENT TO MODEL")
-        print("="*100)
-        print(prompt)
-        print("\n")
+        if system_prompt:
+            prompt_parts.append(system_prompt.strip())
+            prompt_parts.append("")
 
-    inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+        if history:
+            prompt_parts.append("Previous answers:")
+            for turn in history:
+                q = turn["question"]
+                a = turn["answer"]
+                prompt_parts.append(f"Q: {q}")
+                prompt_parts.append(f"A: {a}")
+            prompt_parts.append("")
 
-    output = model.generate(
-        **inputs,
-        max_new_tokens=10,
-        do_sample=True,
-        temperature=temperature,
-        pad_token_id=tokenizer.eos_token_id
-    )
+        prompt_parts.append("Statement:")
+        prompt_parts.append(question)
+        prompt_parts.append("")
+        prompt_parts.append("Answer with ONE number (1-9):")
 
-    text = tokenizer.decode(output[0], skip_special_tokens=True)
+        return "\n".join(prompt_parts)
 
-    reply = text[len(prompt):].strip()
 
-    if DEBUG_LLM:
-        print("="*100)
-        print("RAW MODEL OUTPUT")
-        print("="*100)
-        print(reply)
-        print("\n")
+    # -------------------------------------------------------------
+    # GENERATE
+    # -------------------------------------------------------------
 
-    first_line = reply.split("\n")[0].strip()
+    def generate(self, system_prompt: str, history: List[Dict], question: str):
 
-    if DEBUG_LLM:
-        print("="*100)
-        print("PARSED ANSWER TEXT")
-        print("="*100)
-        print(first_line)
-        print("="*100 + "\n")
+        prompt = self.build_prompt(system_prompt, history, question)
 
-    return first_line
+        if DEBUG_LLM:
+            print("\n")
+            print("=" * 100)
+            print("PROMPT SENT TO MODEL")
+            print("=" * 100)
+            print(prompt)
+            print("\n")
+
+        inputs = self.tokenizer(prompt, return_tensors="pt").to(self.model.device)
+
+        with torch.no_grad():
+            outputs = self.model.generate(
+                **inputs,
+                max_new_tokens=8,
+                do_sample=False,
+                temperature=0.0,
+                pad_token_id=self.tokenizer.eos_token_id
+            )
+
+        text = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+        generated = text[len(prompt):].strip()
+
+        if DEBUG_LLM:
+            print("\n")
+            print("=" * 100)
+            print("RAW MODEL OUTPUT")
+            print("=" * 100)
+            print(generated)
+            print("\n")
+
+        parsed = self.parse_answer(generated)
+
+        if DEBUG_LLM:
+            print("\n")
+            print("=" * 100)
+            print("PARSED ANSWER TEXT")
+            print("=" * 100)
+            print(parsed)
+            print("=" * 100)
+            print("\n")
+
+        return parsed
+
+
+    # -------------------------------------------------------------
+    # PARSER
+    # -------------------------------------------------------------
+
+    def parse_answer(self, text: str):
+
+        if not text:
+            return ""
+
+        m = re.search(r"\b([1-9])\b", text)
+
+        if m:
+            return m.group(1)
+
+        return text.strip()
