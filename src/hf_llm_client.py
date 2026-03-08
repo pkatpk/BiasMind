@@ -1,145 +1,35 @@
 import os
 import re
-from typing import List, Dict
-
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoTokenizer, AutoModelForCausalLM
 
 
 DEBUG_LLM = os.getenv("BIASMIND_DEBUG_LLM", "0") == "1"
 
+_client_cache = {}
 
-class HFLLMClient:
 
-    def __init__(self, model_name: str):
+def get_client(model_name):
 
-        self.model_name = model_name
+    if model_name not in _client_cache:
 
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
 
-        self.model = AutoModelForCausalLM.from_pretrained(
+        model = AutoModelForCausalLM.from_pretrained(
             model_name,
             torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
             device_map="auto"
         )
 
-        self.model.eval()
+        model.eval()
 
-    # -------------------------------------------------------------
-    # PROMPT BUILDER
-    # -------------------------------------------------------------
+        _client_cache[model_name] = (tokenizer, model)
 
-    def build_prompt(self, system_prompt: str, history: List[Dict], question: str):
-
-        parts = []
-
-        if system_prompt:
-            parts.append(system_prompt.strip())
-            parts.append("")
-
-        if history:
-            parts.append("Previous answers:")
-
-            for turn in history:
-                q = turn["question"]
-                a = turn["answer"]
-
-                parts.append(f"Q: {q}")
-                parts.append(f"A: {a}")
-
-            parts.append("")
-
-        parts.append("Statement:")
-        parts.append(question)
-        parts.append("")
-        parts.append("Answer with ONE number (1-9):")
-
-        return "\n".join(parts)
-
-    # -------------------------------------------------------------
-    # GENERATION
-    # -------------------------------------------------------------
-
-    def generate(self, system_prompt: str, history: List[Dict], question: str):
-
-        prompt = self.build_prompt(system_prompt, history, question)
-
-        if DEBUG_LLM:
-            print("\n")
-            print("=" * 100)
-            print("PROMPT SENT TO MODEL")
-            print("=" * 100)
-            print(prompt)
-            print("\n")
-
-        inputs = self.tokenizer(prompt, return_tensors="pt").to(self.model.device)
-
-        with torch.no_grad():
-
-            outputs = self.model.generate(
-                **inputs,
-                max_new_tokens=8,
-                do_sample=False,
-                temperature=0.0,
-                pad_token_id=self.tokenizer.eos_token_id
-            )
-
-        text = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
-
-        generated = text[len(prompt):].strip()
-
-        if DEBUG_LLM:
-            print("\n")
-            print("=" * 100)
-            print("RAW MODEL OUTPUT")
-            print("=" * 100)
-            print(generated)
-            print("\n")
-
-        parsed = self.parse_answer(generated)
-
-        if DEBUG_LLM:
-            print("\n")
-            print("=" * 100)
-            print("PARSED ANSWER TEXT")
-            print("=" * 100)
-            print(parsed)
-            print("=" * 100)
-            print("\n")
-
-        return parsed
-
-    # -------------------------------------------------------------
-    # PARSER
-    # -------------------------------------------------------------
-
-    def parse_answer(self, text: str):
-
-        if not text:
-            return ""
-
-        match = re.search(r"\b([1-9])\b", text)
-
-        if match:
-            return match.group(1)
-
-        return text.strip()
+    return _client_cache[model_name]
 
 
-# -------------------------------------------------------------
-# ROUTER COMPATIBILITY FUNCTION
-# -------------------------------------------------------------
+def build_prompt(messages):
 
-_client_cache = {}
-
-def call_hf_local_chat(model_name, messages, temperature=0.0):
-
-    if model_name not in _client_cache:
-        _client_cache[model_name] = HFLLMClient(model_name)
-
-    client = _client_cache[model_name]
-
-    # messages format from runner
     system_prompt = ""
     history = []
     question = ""
@@ -153,9 +43,71 @@ def call_hf_local_chat(model_name, messages, temperature=0.0):
             question = m["content"]
 
         elif m["role"] == "assistant":
-            history.append({
-                "question": question,
-                "answer": m["content"]
-            })
+            history.append(m["content"])
 
-    return client.generate(system_prompt, history, question)
+    parts = []
+
+    if system_prompt:
+        parts.append(system_prompt)
+        parts.append("")
+
+    if history:
+        parts.append("Previous answers:")
+        for a in history:
+            parts.append(a)
+        parts.append("")
+
+    parts.append("Statement:")
+    parts.append(question)
+    parts.append("")
+    parts.append("Answer with ONE number (1-9):")
+
+    return "\n".join(parts)
+
+
+def parse_answer(text):
+
+    if not text:
+        return ""
+
+    m = re.search(r"\b([1-9])\b", text)
+
+    if m:
+        return m.group(1)
+
+    return text.strip()
+
+
+def call_hf_local_chat(model, messages, temperature=0.0):
+
+    model_name = model.model_name
+
+    tokenizer, hf_model = get_client(model_name)
+
+    prompt = build_prompt(messages)
+
+    if DEBUG_LLM:
+        print("\n================ PROMPT =================")
+        print(prompt)
+
+    inputs = tokenizer(prompt, return_tensors="pt").to(hf_model.device)
+
+    with torch.no_grad():
+
+        outputs = hf_model.generate(
+            **inputs,
+            max_new_tokens=8,
+            do_sample=False,
+            temperature=temperature,
+            pad_token_id=tokenizer.eos_token_id
+        )
+
+    text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+    generated = text[len(prompt):].strip()
+
+    if DEBUG_LLM:
+        print("\n================ RAW OUTPUT =============")
+        print(generated)
+
+    return parse_answer(generated)
