@@ -1,4 +1,4 @@
-# src/experiment_runner.py
+# experiment_runner.py
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Dict, Tuple
@@ -16,6 +16,7 @@ from llm_router import call_model
 class PersonaRunConfig:
     persona: PersonaDef
     runs: int
+    memory_within_persona: str  # "fresh" ή "continuous"
 
 
 @dataclass
@@ -24,7 +25,7 @@ class ExperimentConfig:
     test_name: str
     test_file: Path
     models: List[ModelDef]
-    persona: PersonaRunConfig
+    personas: List[PersonaRunConfig]
 
 
 def _now_iso() -> str:
@@ -122,11 +123,15 @@ def _compute_scored_rows(
 
 def run_experiment(config: ExperimentConfig) -> None:
     """
-    Τελική λογική:
-    - 1 run = 1 συνομιλία για όλο το test
-    - μέσα στο run κρατάμε history
+    Memory behaviour:
+    - within persona:
+        fresh      -> κάθε run ξεκινά με άδειο context
+        continuous -> κρατά μνήμη μόνο μέσα στο ίδιο run
     - στο τέλος κάθε run γίνεται reset
-    - δεν υπάρχει επιλογή memory mode
+    - δεν υπάρχει memory between personas
+
+    Debug:
+    - set BIASMIND_DEBUG_CTX=1 to print context info before each item call
     """
     debug_ctx = (os.getenv("BIASMIND_DEBUG_CTX") or "").strip().lower() in ("1", "true", "yes", "on")
 
@@ -140,14 +145,17 @@ def run_experiment(config: ExperimentConfig) -> None:
             {"id": m.id, "provider": m.provider, "api_name": m.api_name}
             for m in config.models
         ],
-        "persona": {
-            "id": config.persona.persona.id,
-            "prompt_prefix": config.persona.persona.prompt_prefix,
-            "runs": config.persona.runs,
-        },
+        "personas": [
+            {
+                "id": p.persona.id,
+                "prompt_prefix": p.persona.prompt_prefix,
+                "runs": p.runs,
+                "memory_within_persona": p.memory_within_persona,
+            }
+            for p in config.personas
+        ],
         "scale_min": scale_min,
         "scale_max": scale_max,
-        "conversation_policy": "one_full_conversation_per_run",
     }
     write_metadata_json(metadata)
 
@@ -158,67 +166,75 @@ def run_experiment(config: ExperimentConfig) -> None:
     print(f"Test: {config.test_name} ({len(test_def.items)} items)")
     print(f"Scale: {scale_min}–{scale_max}")
 
-    persona = config.persona.persona
-
     for model in config.models:
         print(f"\n=== MODEL: {model.id} (provider={model.provider}) ===")
-        print(f"-- Persona: {persona.id} (runs={config.persona.runs})")
 
-        system_prompt = (
-            f"{persona.prompt_prefix} "
-            "You are answering a psychometric questionnaire. "
-            f"Use the following scale: {scale_min} = Strongly DISAGREE, {scale_max} = Strongly AGREE. "
-            f"Always answer ONLY with a single integer number from {scale_min} to {scale_max}."
-        )
+        for persona_cfg in config.personas:
+            persona = persona_cfg.persona
+            print(f"-- Persona: {persona.id} (runs={persona_cfg.runs})")
 
-        for run_index in range(1, config.persona.runs + 1):
-            # νέα συνομιλία σε κάθε run
-            run_context: List[Dict] = []
-
-            for item in test_def.items:
-                messages = (
-                    [{"role": "system", "content": system_prompt}]
-                    + run_context
-                    + [{"role": "user", "content": item.text}]
+            if persona_cfg.memory_within_persona not in ("fresh", "continuous"):
+                raise ValueError(
+                    f"memory_within_persona για '{persona.id}' πρέπει να είναι "
+                    f"'fresh' ή 'continuous', όχι '{persona_cfg.memory_within_persona}'"
                 )
 
-                if debug_ctx:
-                    print("\n" + "-" * 80)
-                    print(f"[CTX DEBUG] model={model.id} persona={persona.id} run={run_index} qid={item.id}")
-                    print(f"[CTX DEBUG] history_messages={len(run_context)}")
-                    if len(run_context) >= 2:
-                        print("[CTX DEBUG] last user:", run_context[-2]["content"][:200])
-                        print("[CTX DEBUG] last assistant:", str(run_context[-1]["content"])[:200])
-                    else:
-                        print("[CTX DEBUG] (no prior turns)")
-                    print("[CTX DEBUG] current item:", item.text[:200])
-                    print("-" * 80 + "\n")
+            system_prompt = (
+                f"{persona.prompt_prefix} "
+                "You are answering a psychometric questionnaire. "
+                f"Use the following scale: {scale_min} = Strongly DISAGREE, {scale_max} = Strongly AGREE. "
+                f"Always answer ONLY with a single integer number from {scale_min} to {scale_max}."
+            )
 
-                reply_text = call_model(model, messages, temperature=0.2)
-                answer_val = _parse_likert_answer(reply_text, scale_min, scale_max)
+            for run_index in range(1, persona_cfg.runs + 1):
+                # fresh/continuous ισχύει μόνο ΜΕΣΑ στο run
+                run_context: List[Dict] = []
 
-                raw_rows.append(
-                    {
-                        "model": model.id,
-                        "provider": model.provider,
-                        "persona_id": persona.id,
-                        "run_index": run_index,
-                        "test_name": config.test_name,
-                        "question_id": item.id,
-                        "question_text": item.text,
-                        "trait": item.trait,
-                        "reverse": item.reverse,
-                        "answer": answer_val,
-                        "timestamp_run": _now_iso(),
-                    }
-                )
+                for item in test_def.items:
+                    messages = (
+                        [{"role": "system", "content": system_prompt}]
+                        + run_context
+                        + [{"role": "user", "content": item.text}]
+                    )
 
-                # κρατάμε τη συνομιλία μέσα στο run
-                run_context.append({"role": "user", "content": item.text})
-                run_context.append({"role": "assistant", "content": reply_text})
+                    if debug_ctx:
+                        print("\n" + "-" * 80)
+                        print(f"[CTX DEBUG] model={model.id} persona={persona.id} run={run_index} qid={item.id}")
+                        print(f"[CTX DEBUG] history_messages={len(run_context)}")
+                        if len(run_context) >= 2:
+                            print("[CTX DEBUG] last user:", run_context[-2]["content"][:200])
+                            print("[CTX DEBUG] last assistant:", run_context[-1]["content"][:200])
+                        else:
+                            print("[CTX DEBUG] (no prior turns)")
+                        print("[CTX DEBUG] current item:", item.text[:200])
+                        print("-" * 80 + "\n")
 
-            # reset μετά από κάθε run
-            run_context = []
+                    reply_text = call_model(model, messages, temperature=0.2)
+                    answer_val = _parse_likert_answer(reply_text, scale_min, scale_max)
+
+                    raw_rows.append(
+                        {
+                            "model": model.id,
+                            "provider": model.provider,
+                            "persona_id": persona.id,
+                            "run_index": run_index,
+                            "test_name": config.test_name,
+                            "question_id": item.id,
+                            "question_text": item.text,
+                            "trait": item.trait,
+                            "reverse": item.reverse,
+                            "answer": answer_val,
+                            "timestamp_run": _now_iso(),
+                        }
+                    )
+
+                    # memory μόνο αν είναι continuous
+                    if persona_cfg.memory_within_persona == "continuous":
+                        run_context.append({"role": "user", "content": item.text})
+                        run_context.append({"role": "assistant", "content": reply_text})
+
+                # reset στο τέλος κάθε run
+                run_context = []
 
     write_raw_csv(config.experiment_id, raw_rows)
     scored_rows = _compute_scored_rows(test_def, raw_rows)
