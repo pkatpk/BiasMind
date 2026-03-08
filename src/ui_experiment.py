@@ -123,18 +123,24 @@ def _run_summary(experiment_id: str):
     ]
 
     proc = subprocess.run(argv, capture_output=True, text=True)
-    out = []
 
-    if proc.stdout:
-        out.append("---- STDOUT ----\n")
-        out.append(proc.stdout)
+    text = proc.stdout
+    lines = text.splitlines()
+    formatted = []
+
+    for line in lines:
+        if line.startswith("model") or line.startswith("tinyllama") or line.startswith("mistral") or line.startswith("llama") or line.startswith("qwen"):
+            parts = line.split()
+            line = "   ".join(f"{p:<15}" for p in parts)
+        formatted.append(line)
+
+    output = "\n".join(formatted)
 
     if proc.stderr:
-        out.append("\n---- STDERR ----\n")
-        out.append(proc.stderr)
+        output += "\n\n---- STDERR ----\n"
+        output += proc.stderr
 
-    out.append(f"\n(exit code: {proc.returncode})")
-    return "".join(out)
+    return output
 
 
 # ---------- UI ----------
