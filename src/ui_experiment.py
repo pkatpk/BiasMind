@@ -58,7 +58,7 @@ def _load_persona_prompt(persona_id: str) -> str:
         return f"(error reading json: {e})"
 
 
-def _build_cmd(test_file, model_id, persona_id, runs):
+def _build_cmd(test_file, model_id, persona_id, runs, memory_within):
     if not test_file:
         raise ValueError("Επίλεξε test file.")
 
@@ -75,22 +75,26 @@ def _build_cmd(test_file, model_id, persona_id, runs):
     except Exception:
         raise ValueError("Τα runs πρέπει να είναι ακέραιος >= 1.")
 
+    memory_within = (memory_within or "").strip().lower()
+    if memory_within not in ("fresh", "continuous"):
+        raise ValueError("memory_within πρέπει να είναι fresh ή continuous.")
+
     argv = [sys.executable, "src/run_experiment.py", "--test-file", test_file]
     argv += ["--model", model_id]
-    argv += ["--persona", f"{persona_id}:{runs}"]
+    argv += ["--persona", f"{persona_id}:{runs}:{memory_within}"]
 
     pretty = " ".join(shlex.quote(a) for a in argv)
     return argv, pretty
 
 
-def _preview_command(test_file, model_id, persona_id, runs):
-    _, pretty = _build_cmd(test_file, model_id, persona_id, runs)
+def _preview_command(test_file, model_id, persona_id, runs, memory_within):
+    _, pretty = _build_cmd(test_file, model_id, persona_id, runs, memory_within)
     pretty_ml = pretty.replace(" --", "\n  --")
     return f"$ {pretty_ml}"
 
 
-def _run_experiment(test_file, model_id, persona_id, runs):
-    argv, _pretty = _build_cmd(test_file, model_id, persona_id, runs)
+def _run_experiment(test_file, model_id, persona_id, runs, memory_within):
+    argv, _pretty = _build_cmd(test_file, model_id, persona_id, runs, memory_within)
 
     proc = subprocess.run(argv, capture_output=True, text=True)
     out = []
@@ -135,6 +139,7 @@ def _run_summary(experiment_id: str):
     if not experiment_id:
         return "❌ Δώσε experiment id."
 
+    # Τρέχουμε κανονικά το analyze script όπως ζήτησες
     argv = [
         sys.executable,
         "src/analyze_experiment.py",
@@ -157,11 +162,13 @@ def _run_summary(experiment_id: str):
             out.append(f"❌ Δεν βρέθηκε το αρχείο: {scored_file}")
         return "".join(out).strip()
 
+    # Διαβάζουμε το CSV και κρατάμε μόνο τα summary rows
     summary_rows = []
     try:
         with scored_file.open("r", encoding="utf-8", newline="") as f:
             reader = csv.DictReader(f)
             for row in reader:
+                # κρατά summary γραμμές, ή fallback σε όλες αν δεν υπάρχει summary_label
                 summary_label = str(row.get("summary_label", "") or "").strip()
                 if summary_label:
                     summary_rows.append(
@@ -182,6 +189,8 @@ def _run_summary(experiment_id: str):
     except Exception as e:
         return f"❌ Σφάλμα στο διάβασμα του summary CSV:\n{e}"
 
+    # Αν δεν βρέθηκαν explicit summary rows, fallback:
+    # προσπαθούμε να διαβάσουμε το analyze_experiment stdout ως έχει
     if not summary_rows:
         stdout = (proc.stdout or "").strip()
         if stdout:
@@ -262,6 +271,12 @@ def build_experiment_ui():
                 label="Runs",
             )
 
+            memory_within = gr.Radio(
+                choices=["fresh", "continuous"],
+                value="fresh",
+                label="Memory mode",
+            )
+
         gr.Markdown("### Run")
 
         with gr.Row():
@@ -304,13 +319,13 @@ def build_experiment_ui():
 
         btn_preview.click(
             fn=_preview_command,
-            inputs=[test_file, model_id, persona_id, runs],
+            inputs=[test_file, model_id, persona_id, runs, memory_within],
             outputs=[cmd_preview],
         )
 
         btn_run.click(
             fn=_run_experiment,
-            inputs=[test_file, model_id, persona_id, runs],
+            inputs=[test_file, model_id, persona_id, runs, memory_within],
             outputs=[output],
         )
 

@@ -1,100 +1,111 @@
-# src/run_experiment.py
-
 import argparse
-from datetime import datetime, UTC
+from datetime import datetime
 from pathlib import Path
+from typing import List
 
 from input_loader import load_models, load_personas, ModelDef, PersonaDef
 from experiment_runner import ExperimentConfig, PersonaRunConfig, run_experiment
 
 
 def _generate_experiment_id() -> str:
-    return datetime.now(UTC).strftime("%Y%m%dT%H%M%S")
+    return datetime.utcnow().strftime("%Y%m%dT%H%M%S")
 
 
-def _parse_persona_spec(spec: str, personas_defs: list[PersonaDef]) -> PersonaRunConfig:
+def _parse_persona_specs(
+    specs: List[str],
+    personas_defs: List[PersonaDef],
+) -> List[PersonaRunConfig]:
     """
-    spec μορφής:
-      "neutral:50"
+    specs: λίστα από strings τύπου:
+      "neutral:1:fresh"
+      "farmer:2:continuous"
 
     όπου:
       id = personas/<id>.json
       runs = πόσα runs
+      memory_within = "fresh" ή "continuous"
     """
-
     persona_map = {p.id: p for p in personas_defs}
+    result: List[PersonaRunConfig] = []
 
-    parts = spec.split(":")
-    if len(parts) != 2:
-        raise ValueError(
-            f"Persona spec '{spec}' πρέπει να είναι της μορφής id:runs "
-            f"(π.χ. neutral:50)"
-        )
-
-    pid, runs_str = parts
-    pid = pid.strip()
-
-    try:
+    for spec in specs:
+        parts = spec.split(":")
+        if len(parts) != 3:
+            raise ValueError(
+                f"Persona spec '{spec}' πρέπει να είναι της μορφής id:runs:memory_within "
+                f"(π.χ. neutral:2:fresh)"
+            )
+        pid, runs_str, mem = parts
+        pid = pid.strip()
         runs = int(runs_str)
-    except ValueError as exc:
-        raise ValueError(
-            f"Τα runs για persona '{pid}' πρέπει να είναι ακέραιος."
-        ) from exc
 
-    if runs <= 0:
-        raise ValueError(
-            f"Τα runs για persona '{pid}' πρέπει να είναι > 0."
+        if pid not in persona_map:
+            raise ValueError(f"Persona id '{pid}' δεν βρέθηκε στα data/personas/*.json")
+
+        if mem not in ("fresh", "continuous"):
+            raise ValueError(
+                f"memory_within_persona για '{pid}' πρέπει να είναι 'fresh' ή 'continuous', όχι '{mem}'"
+            )
+
+        result.append(
+            PersonaRunConfig(
+                persona=persona_map[pid],
+                runs=runs,
+                memory_within_persona=mem,
+            )
         )
 
-    if pid not in persona_map:
-        raise ValueError(
-            f"Persona id '{pid}' δεν βρέθηκε στα data/personas/*.json"
-        )
-
-    return PersonaRunConfig(
-        persona=persona_map[pid],
-        runs=runs,
-        memory_within_persona="fresh",
-    )
+    return result
 
 
 def parse_args() -> argparse.Namespace:
-
     parser = argparse.ArgumentParser(description="BiasMind experiment runner")
 
     parser.add_argument(
         "--experiment-id",
-        help="ID του experiment (αν δεν δοθεί, δημιουργείται timestamp).",
+        help="ID του experiment (αν δεν δοθεί, θα φτιαχτεί timestamp-based).",
     )
 
     parser.add_argument(
         "--test-file",
         required=True,
-        help="Path στο test JSON (π.χ. data/tests/rwa22_en.json)",
+        help="Διαδρομή στο test JSON (π.χ. data/tests/test_bfi10.json).",
     )
 
     parser.add_argument(
         "--test-name",
-        help="Όνομα test (αν δεν δοθεί χρησιμοποιείται το filename)",
+        help="Όνομα του test (π.χ. BFI-10). Αν δεν δοθεί, θα χρησιμοποιηθεί το όνομα του αρχείου.",
     )
 
     parser.add_argument(
         "--model",
+        action="append",
         required=True,
-        help="Model id (π.χ. tinyllama-chat)",
+        help="ID μοντέλου, π.χ. tinyllama-chat. Μπορεί να δοθεί πολλές φορές.",
     )
 
     parser.add_argument(
         "--persona",
+        action="append",
         required=True,
-        help="Persona spec: id:runs (π.χ. neutral:50)",
+        help=(
+            "Persona spec της μορφής id:runs:memory_within, π.χ. "
+            "neutral:1:fresh ή farmer:2:continuous. "
+            "Μπορεί να δοθεί πολλές φορές."
+        ),
+    )
+
+    parser.add_argument(
+        "--memory-between",
+        choices=["reset", "carry_over"],
+        default="reset",
+        help="Συμπεριφορά μνήμης όταν αλλάζει persona.",
     )
 
     return parser.parse_args()
 
 
 def main() -> None:
-
     args = parse_args()
 
     experiment_id = args.experiment_id or _generate_experiment_id()
@@ -105,21 +116,24 @@ def main() -> None:
 
     test_name = args.test_name or test_file.stem
 
-    model_id = args.model.strip()
-    models: list[ModelDef] = load_models([model_id])
+    # Φορτώνουμε τα μοντέλα
+    model_ids = [m.strip() for m in args.model]
+    models: List[ModelDef] = load_models(model_ids)
 
-    persona_id = args.persona.split(":")[0].strip()
-    personas_defs: list[PersonaDef] = load_personas([persona_id])
+    # Φορτώνουμε τις personas (μόνο τα PersonaDef)
+    persona_ids = [spec.split(":")[0].strip() for spec in args.persona]
+    personas_defs: List[PersonaDef] = load_personas(persona_ids)
 
-    persona_cfg = _parse_persona_spec(args.persona, personas_defs)
+    # Συνδυάζουμε personas + runs + memory_within
+    persona_cfgs: List[PersonaRunConfig] = _parse_persona_specs(args.persona, personas_defs)
 
     config = ExperimentConfig(
         experiment_id=experiment_id,
         test_name=test_name,
         test_file=test_file,
         models=models,
-        personas=[persona_cfg],        # runner θέλει list
-        memory_between_personas="reset"
+        personas=persona_cfgs,
+        memory_between_personas=args.memory_between,
     )
 
     run_experiment(config)
