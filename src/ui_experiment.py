@@ -148,7 +148,11 @@ def build_experiment_ui():
     test_files = _list_test_files()
     model_ids = _list_model_ids()
 
-    with gr.Blocks() as experiment_ui:
+    with gr.Blocks(css="""
+    .monospace textarea {
+        font-family: monospace !important;
+    }
+    """) as experiment_ui:
         gr.Markdown("## Experiment Runner")
 
         with gr.Row():
@@ -211,7 +215,7 @@ def build_experiment_ui():
         with gr.Row():
             btn_run = gr.Button("Run experiment", variant="primary")
 
-        output = gr.Textbox(label="Output", lines=18, interactive=False)
+        output = gr.Textbox(label="Output", lines=10, interactive=False)
 
         gr.Markdown("### Summary")
 
@@ -220,9 +224,14 @@ def build_experiment_ui():
                 label="Experiment ID",
                 placeholder="e.g. 20260307T142849",
             )
-            btn_summary = gr.Button("Summary")
+            btn_summary = gr.Button("Summary", variant="primary")
 
-        summary_output = gr.Textbox(label="Summary output", lines=12, interactive=False)
+        summary_output = gr.Textbox(
+            label="Summary output",
+            lines=12,
+            interactive=False,
+            elem_classes="monospace",
+        )
 
         btn_preview.click(
             fn=_preview_command,
