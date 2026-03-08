@@ -112,6 +112,35 @@ def _run_experiment(test_file, model_id, persona_id, runs, memory_within):
     return "".join(out)
 
 
+def _run_summary(experiment_id: str):
+    experiment_id = (experiment_id or "").strip()
+    if not experiment_id:
+        return "❌ Δώσε experiment id."
+
+    argv = [
+        sys.executable,
+        "src/analyze_experiment.py",
+        "--experiment-id",
+        experiment_id,
+        "--results-dir",
+        "results",
+    ]
+
+    proc = subprocess.run(argv, capture_output=True, text=True)
+    out = []
+
+    if proc.stdout:
+        out.append("---- STDOUT ----\n")
+        out.append(proc.stdout)
+
+    if proc.stderr:
+        out.append("\n---- STDERR ----\n")
+        out.append(proc.stderr)
+
+    out.append(f"\n(exit code: {proc.returncode})")
+    return "".join(out)
+
+
 # ---------- UI ----------
 
 def build_experiment_ui():
@@ -184,6 +213,17 @@ def build_experiment_ui():
 
         output = gr.Textbox(label="Output", lines=18, interactive=False)
 
+        gr.Markdown("### Summary")
+
+        with gr.Row():
+            summary_experiment_id = gr.Textbox(
+                label="Experiment ID",
+                placeholder="e.g. 20260307T142849",
+            )
+            btn_summary = gr.Button("Summary")
+
+        summary_output = gr.Textbox(label="Summary output", lines=12, interactive=False)
+
         btn_preview.click(
             fn=_preview_command,
             inputs=[test_file, model_id, persona_id, runs, memory_within],
@@ -194,6 +234,12 @@ def build_experiment_ui():
             fn=_run_experiment,
             inputs=[test_file, model_id, persona_id, runs, memory_within],
             outputs=[output],
+        )
+
+        btn_summary.click(
+            fn=_run_summary,
+            inputs=[summary_experiment_id],
+            outputs=[summary_output],
         )
 
     return experiment_ui
