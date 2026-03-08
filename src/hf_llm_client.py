@@ -25,38 +25,39 @@ class HFLLMClient:
 
         self.model.eval()
 
-
     # -------------------------------------------------------------
-    # PROMPT BUILDER (SINGLE PROMPT - NO CHAT TEMPLATE)
+    # PROMPT BUILDER
     # -------------------------------------------------------------
 
     def build_prompt(self, system_prompt: str, history: List[Dict], question: str):
 
-        prompt_parts = []
+        parts = []
 
         if system_prompt:
-            prompt_parts.append(system_prompt.strip())
-            prompt_parts.append("")
+            parts.append(system_prompt.strip())
+            parts.append("")
 
         if history:
-            prompt_parts.append("Previous answers:")
+            parts.append("Previous answers:")
+
             for turn in history:
                 q = turn["question"]
                 a = turn["answer"]
-                prompt_parts.append(f"Q: {q}")
-                prompt_parts.append(f"A: {a}")
-            prompt_parts.append("")
 
-        prompt_parts.append("Statement:")
-        prompt_parts.append(question)
-        prompt_parts.append("")
-        prompt_parts.append("Answer with ONE number (1-9):")
+                parts.append(f"Q: {q}")
+                parts.append(f"A: {a}")
 
-        return "\n".join(prompt_parts)
+            parts.append("")
 
+        parts.append("Statement:")
+        parts.append(question)
+        parts.append("")
+        parts.append("Answer with ONE number (1-9):")
+
+        return "\n".join(parts)
 
     # -------------------------------------------------------------
-    # GENERATE
+    # GENERATION
     # -------------------------------------------------------------
 
     def generate(self, system_prompt: str, history: List[Dict], question: str):
@@ -74,6 +75,7 @@ class HFLLMClient:
         inputs = self.tokenizer(prompt, return_tensors="pt").to(self.model.device)
 
         with torch.no_grad():
+
             outputs = self.model.generate(
                 **inputs,
                 max_new_tokens=8,
@@ -107,7 +109,6 @@ class HFLLMClient:
 
         return parsed
 
-
     # -------------------------------------------------------------
     # PARSER
     # -------------------------------------------------------------
@@ -117,9 +118,28 @@ class HFLLMClient:
         if not text:
             return ""
 
-        m = re.search(r"\b([1-9])\b", text)
+        match = re.search(r"\b([1-9])\b", text)
 
-        if m:
-            return m.group(1)
+        if match:
+            return match.group(1)
 
         return text.strip()
+
+
+# -------------------------------------------------------------
+# ROUTER COMPATIBILITY FUNCTION
+# (χρειάζεται για llm_router)
+# -------------------------------------------------------------
+
+_client_cache = {}
+
+
+def call_hf_local_chat(model_name: str, system_prompt: str, history: List[Dict], question: str):
+
+    if model_name not in _client_cache:
+
+        _client_cache[model_name] = HFLLMClient(model_name)
+
+    client = _client_cache[model_name]
+
+    return client.generate(system_prompt, history, question)
