@@ -21,10 +21,6 @@ def _list_persona_ids():
 
 
 def _list_test_files():
-    """
-    UI: show only filename (label)
-    Value: keep full path for CLI
-    """
     if not TESTS_DIR.exists():
         return []
     paths = sorted(TESTS_DIR.glob("*.json"))
@@ -153,6 +149,7 @@ def build_experiment_ui():
         font-family: monospace !important;
     }
     """) as experiment_ui:
+
         gr.Markdown("## Experiment Runner")
 
         with gr.Row():
@@ -161,6 +158,7 @@ def build_experiment_ui():
                 value=None,
                 label="Test file",
             )
+
             model_id = gr.Dropdown(
                 choices=model_ids,
                 value=None,
@@ -175,6 +173,7 @@ def build_experiment_ui():
                 value=None,
                 label="Persona",
             )
+
             persona_preview = gr.Textbox(
                 label="Prompt prefix preview",
                 lines=8,
@@ -195,7 +194,7 @@ def build_experiment_ui():
                 label="Runs",
             )
 
-            memory_within = gr.Dropdown(
+            memory_within = gr.Radio(
                 choices=["fresh", "continuous"],
                 value="fresh",
                 label="Memory mode",
@@ -215,7 +214,11 @@ def build_experiment_ui():
         with gr.Row():
             btn_run = gr.Button("Run experiment", variant="primary")
 
-        output = gr.Textbox(label="Output", lines=10, interactive=False)
+        output = gr.Textbox(
+            label="Output",
+            lines=10,
+            interactive=False,
+        )
 
         gr.Markdown("### Summary")
 
@@ -224,7 +227,11 @@ def build_experiment_ui():
                 label="Experiment ID",
                 placeholder="e.g. 20260307T142849",
             )
-            btn_summary = gr.Button("Summary", variant="primary")
+
+            btn_summary = gr.Button(
+                "Summary",
+                variant="primary",
+            )
 
         summary_output = gr.Textbox(
             label="Summary output",
