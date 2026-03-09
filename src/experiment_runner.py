@@ -1,4 +1,3 @@
-# experiment_runner.py
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Dict, Optional, Tuple
@@ -27,6 +26,7 @@ class ExperimentConfig:
     models: List[ModelDef]
     personas: List[PersonaRunConfig]
     memory_between_personas: str  # "reset" ή "carry_over"
+    temperature: float = 0.7
 
 
 def _now_iso() -> str:
@@ -140,9 +140,6 @@ def run_experiment(config: ExperimentConfig) -> None:
     test_def: TestDefinition = load_test(config.test_file)
     scale_min, scale_max = _infer_scale_from_test(test_def)
 
-    # midpoint label (helpful but not required)
-    midpoint = (scale_min + scale_max) / 2
-
     metadata = {
         "experiment_id": config.experiment_id,
         "test": config.test_name,
@@ -162,6 +159,7 @@ def run_experiment(config: ExperimentConfig) -> None:
         "memory_between_personas": config.memory_between_personas,
         "scale_min": scale_min,
         "scale_max": scale_max,
+        "temperature": config.temperature,
     }
     write_metadata_json(metadata)
 
@@ -171,6 +169,7 @@ def run_experiment(config: ExperimentConfig) -> None:
     print(f"Experiment ID: {config.experiment_id}")
     print(f"Test: {config.test_name} ({len(test_def.items)} items)")
     print(f"Scale: {scale_min}–{scale_max}")
+    print(f"Temperature: {config.temperature}")
 
     for model in config.models:
         print(f"\n=== MODEL: {model.id} (provider={model.provider}) ===")
@@ -205,8 +204,6 @@ def run_experiment(config: ExperimentConfig) -> None:
                         # fresh: restart from base_context
                         run_context = base_context.copy()
 
-                # ✅ KEY FIX: explicit anchors for scale direction
-                # This prevents “sign flip” ambiguity (e.g., 1 meaning agree vs disagree).
                 system_prompt = (
                     f"{persona.prompt_prefix} "
                     "You are answering a psychometric questionnaire. "
@@ -233,7 +230,11 @@ def run_experiment(config: ExperimentConfig) -> None:
                         print("[CTX DEBUG] current item:", item.text[:200])
                         print("-" * 80 + "\n")
 
-                    reply_text = call_model(model, messages, temperature=0.2)
+                    reply_text = call_model(
+                        model,
+                        messages,
+                        temperature=config.temperature,
+                    )
                     answer_val = _parse_likert_answer(reply_text, scale_min, scale_max)
 
                     raw_rows.append(

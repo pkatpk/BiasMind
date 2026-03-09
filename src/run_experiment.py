@@ -102,6 +102,13 @@ def parse_args() -> argparse.Namespace:
         help="Συμπεριφορά μνήμης όταν αλλάζει persona.",
     )
 
+    parser.add_argument(
+        "--temperature",
+        type=float,
+        default=0.7,
+        help="Temperature για το μοντέλο (π.χ. 0.2, 0.5, 0.7).",
+    )
+
     return parser.parse_args()
 
 
@@ -116,15 +123,12 @@ def main() -> None:
 
     test_name = args.test_name or test_file.stem
 
-    # Φορτώνουμε τα μοντέλα
     model_ids = [m.strip() for m in args.model]
     models: List[ModelDef] = load_models(model_ids)
 
-    # Φορτώνουμε τις personas (μόνο τα PersonaDef)
     persona_ids = [spec.split(":")[0].strip() for spec in args.persona]
     personas_defs: List[PersonaDef] = load_personas(persona_ids)
 
-    # Συνδυάζουμε personas + runs + memory_within
     persona_cfgs: List[PersonaRunConfig] = _parse_persona_specs(args.persona, personas_defs)
 
     config = ExperimentConfig(
@@ -134,6 +138,7 @@ def main() -> None:
         models=models,
         personas=persona_cfgs,
         memory_between_personas=args.memory_between,
+        temperature=args.temperature,
     )
 
     run_experiment(config)

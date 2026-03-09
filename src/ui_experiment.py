@@ -1,5 +1,4 @@
 # src/ui_experiment.py
-import csv
 import json
 import sys
 import shlex
@@ -11,8 +10,6 @@ import gradio as gr
 PERSONAS_DIR = Path("data/personas")
 TESTS_DIR = Path("data/tests")
 MODELS_DIR = Path("data/models")
-RESULTS_DIR = Path("results")
-SCORED_DIR = RESULTS_DIR / "scored"
 
 
 # ---------- helpers ----------
@@ -24,6 +21,10 @@ def _list_persona_ids():
 
 
 def _list_test_files():
+    """
+    UI: show only filename (label)
+    Value: keep full path for CLI
+    """
     if not TESTS_DIR.exists():
         return []
     paths = sorted(TESTS_DIR.glob("*.json"))
@@ -58,7 +59,54 @@ def _load_persona_prompt(persona_id: str) -> str:
         return f"(error reading json: {e})"
 
 
-def _build_cmd(test_file, model_id, persona_id, runs, memory_within):
+def _add_persona(selected_pid, cfg, order):
+    cfg = cfg or {}
+    order = order or []
+    pid = (selected_pid or "").strip()
+
+    if not pid:
+        return cfg, order, "❌ Διάλεξε persona πρώτα."
+
+    if pid in cfg:
+        return cfg, order, f"ℹ️ Η persona **{pid}** είναι ήδη στη λίστα."
+
+    cfg[pid] = {"runs": 1, "memory_within": "fresh"}
+    order = order + [pid]
+    return cfg, order, f"✅ Προστέθηκε η persona **{pid}**."
+
+
+def _remove_persona(pid, cfg, order):
+    cfg = cfg or {}
+    order = order or []
+    if pid in cfg:
+        del cfg[pid]
+    order = [x for x in order if x != pid]
+    return cfg, order
+
+
+def _move_persona(pid, direction, order):
+    order = order or []
+    if pid not in order:
+        return order
+
+    i = order.index(pid)
+    j = i + int(direction)
+    if j < 0 or j >= len(order):
+        return order
+
+    new_order = order[:]
+    new_order[i], new_order[j] = new_order[j], new_order[i]
+    return new_order
+
+
+def _memory_between_ui(order):
+    n = len(order or [])
+    if n < 2:
+        return gr.update(value="reset", interactive=False)
+    return gr.update(interactive=True)
+
+
+def _build_cmd(test_file, model_id, memory_between, cfg_dict, order_list):
     if not test_file:
         raise ValueError("Επίλεξε test file.")
 
@@ -66,35 +114,50 @@ def _build_cmd(test_file, model_id, persona_id, runs, memory_within):
     if not model_id:
         raise ValueError("Επίλεξε model.")
 
-    persona_id = (persona_id or "").strip()
-    if not persona_id:
-        raise ValueError("Επίλεξε persona.")
+    cfg_dict = cfg_dict or {}
+    order_list = order_list or []
+    ordered_personas = [pid for pid in order_list if pid in cfg_dict]
 
-    try:
-        runs = max(1, int(runs))
-    except Exception:
-        raise ValueError("Τα runs πρέπει να είναι ακέραιος >= 1.")
+    if not ordered_personas:
+        raise ValueError("Πρόσθεσε τουλάχιστον μία persona (Add).")
 
-    memory_within = (memory_within or "").strip().lower()
-    if memory_within not in ("fresh", "continuous"):
-        raise ValueError("memory_within πρέπει να είναι fresh ή continuous.")
+    # no meaning with <2 personas
+    if len(ordered_personas) < 2:
+        memory_between = "reset"
 
     argv = [sys.executable, "src/run_experiment.py", "--test-file", test_file]
     argv += ["--model", model_id]
-    argv += ["--persona", f"{persona_id}:{runs}:{memory_within}"]
+
+    for pid in ordered_personas:
+        cfg = cfg_dict[pid]
+        runs = int(cfg.get("runs", 1))
+        mem = cfg.get("memory_within", "fresh")
+        if mem not in ("fresh", "continuous"):
+            raise ValueError(f"memory_within για '{pid}' πρέπει να είναι fresh ή continuous.")
+        argv += ["--persona", f"{pid}:{runs}:{mem}"]
+
+    if memory_between not in ("reset", "carry_over"):
+        raise ValueError("memory-between πρέπει να είναι reset ή carry_over.")
+    argv += ["--memory-between", memory_between]
 
     pretty = " ".join(shlex.quote(a) for a in argv)
     return argv, pretty
 
 
-def _preview_command(test_file, model_id, persona_id, runs, memory_within):
-    _, pretty = _build_cmd(test_file, model_id, persona_id, runs, memory_within)
+def _preview_command(test_file, model_id, memory_between, cfg_dict, order_list):
+    """
+    Only builds the CLI command (does NOT execute) and formats it multiline for display.
+    """
+    _, pretty = _build_cmd(test_file, model_id, memory_between, cfg_dict, order_list)
+
+    # break before each --flag for readability
     pretty_ml = pretty.replace(" --", "\n  --")
+
     return f"$ {pretty_ml}"
 
 
-def _run_experiment(test_file, model_id, persona_id, runs, memory_within):
-    argv, _pretty = _build_cmd(test_file, model_id, persona_id, runs, memory_within)
+def _run_experiment(test_file, model_id, memory_between, cfg_dict, order_list):
+    argv, _pretty = _build_cmd(test_file, model_id, memory_between, cfg_dict, order_list)
 
     proc = subprocess.run(argv, capture_output=True, text=True)
     out = []
@@ -111,122 +174,14 @@ def _run_experiment(test_file, model_id, persona_id, runs, memory_within):
     return "".join(out)
 
 
-def _format_summary_table(rows):
-    columns = ["model", "provider", "persona_id", "test_name", "trait", "n_runs", "mean", "std", "min", "max", "sem"]
-
-    clean_rows = []
-    for row in rows:
-        clean_rows.append({col: str(row.get(col, "")) for col in columns})
-
-    widths = {}
-    for col in columns:
-        max_len = len(col)
-        for row in clean_rows:
-            max_len = max(max_len, len(row[col]))
-        widths[col] = max_len + 3
-
-    header = "".join(col.ljust(widths[col]) for col in columns).rstrip()
-    data_lines = [
-        "".join(row[col].ljust(widths[col]) for col in columns).rstrip()
-        for row in clean_rows
-    ]
-
-    return "\n".join([header] + data_lines)
-
-
-def _run_summary(experiment_id: str):
-    experiment_id = (experiment_id or "").strip()
-    if not experiment_id:
-        return "❌ Δώσε experiment id."
-
-    # Τρέχουμε κανονικά το analyze script όπως ζήτησες
-    argv = [
-        sys.executable,
-        "src/analyze_experiment.py",
-        "--experiment-id",
-        experiment_id,
-        "--results-dir",
-        "results",
-    ]
-    proc = subprocess.run(argv, capture_output=True, text=True)
-
-    scored_file = SCORED_DIR / f"scored_{experiment_id}.csv"
-    if not scored_file.exists():
-        out = []
-        if proc.stdout:
-            out.append(proc.stdout)
-        if proc.stderr:
-            out.append("\n---- STDERR ----\n")
-            out.append(proc.stderr)
-        if not out:
-            out.append(f"❌ Δεν βρέθηκε το αρχείο: {scored_file}")
-        return "".join(out).strip()
-
-    # Διαβάζουμε το CSV και κρατάμε μόνο τα summary rows
-    summary_rows = []
-    try:
-        with scored_file.open("r", encoding="utf-8", newline="") as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                # κρατά summary γραμμές, ή fallback σε όλες αν δεν υπάρχει summary_label
-                summary_label = str(row.get("summary_label", "") or "").strip()
-                if summary_label:
-                    summary_rows.append(
-                        {
-                            "model": row.get("model", ""),
-                            "provider": row.get("provider", ""),
-                            "persona_id": row.get("persona_id", ""),
-                            "test_name": row.get("test_name", ""),
-                            "trait": row.get("trait", row.get("score_name", "")),
-                            "n_runs": row.get("n_runs", ""),
-                            "mean": row.get("mean", ""),
-                            "std": row.get("std", ""),
-                            "min": row.get("min", ""),
-                            "max": row.get("max", ""),
-                            "sem": row.get("sem", ""),
-                        }
-                    )
-    except Exception as e:
-        return f"❌ Σφάλμα στο διάβασμα του summary CSV:\n{e}"
-
-    # Αν δεν βρέθηκαν explicit summary rows, fallback:
-    # προσπαθούμε να διαβάσουμε το analyze_experiment stdout ως έχει
-    if not summary_rows:
-        stdout = (proc.stdout or "").strip()
-        if stdout:
-            return stdout
-        return f"❌ Δεν βρέθηκαν summary rows στο {scored_file}"
-
-    table = _format_summary_table(summary_rows)
-
-    parts = [
-        f"=== SUMMARY for experiment {experiment_id} ===",
-        f"Source: {scored_file.as_posix()}",
-        "",
-        table,
-        "=== END SUMMARY ===",
-    ]
-
-    if proc.stderr:
-        parts.append("\n---- STDERR ----")
-        parts.append(proc.stderr.strip())
-
-    return "\n".join(parts).strip()
-
-
 # ---------- UI ----------
 
 def build_experiment_ui():
     persona_ids = _list_persona_ids()
-    test_files = _list_test_files()
+    test_files = _list_test_files()   # ✅ now (label, value)
     model_ids = _list_model_ids()
 
-    with gr.Blocks(css="""
-    .monospace textarea {
-        font-family: monospace !important;
-    }
-    """) as experiment_ui:
-
+    with gr.Blocks() as experiment_ui:
         gr.Markdown("## Experiment Runner")
 
         with gr.Row():
@@ -235,47 +190,137 @@ def build_experiment_ui():
                 value=None,
                 label="Test file",
             )
-
             model_id = gr.Dropdown(
                 choices=model_ids,
                 value=None,
                 label="Model",
             )
 
-        gr.Markdown("### Persona")
+        gr.Markdown("### Personas")
+
+        cfg_state = gr.State({})
+        order_state = gr.State([])
 
         with gr.Row():
-            persona_id = gr.Dropdown(
+            persona_select = gr.Dropdown(
                 choices=persona_ids,
                 value=None,
-                label="Persona",
+                label="Select persona",
             )
-
             persona_preview = gr.Textbox(
                 label="Prompt prefix preview",
                 lines=8,
                 interactive=False,
             )
 
-        persona_id.change(
+        with gr.Row():
+            btn_add_persona = gr.Button("Add persona", variant="primary")
+            add_status = gr.Markdown("")
+
+        persona_select.change(
             fn=_load_persona_prompt,
-            inputs=[persona_id],
+            inputs=[persona_select],
             outputs=[persona_preview],
         )
 
-        with gr.Row():
-            runs = gr.Number(
-                value=1,
-                precision=0,
-                minimum=1,
-                label="Runs",
-            )
+        btn_add_persona.click(
+            fn=_add_persona,
+            inputs=[persona_select, cfg_state, order_state],
+            outputs=[cfg_state, order_state, add_status],
+        )
 
-            memory_within = gr.Radio(
-                choices=["fresh", "continuous"],
-                value="fresh",
-                label="Memory mode",
-            )
+        @gr.render(inputs=[cfg_state, order_state])
+        def _render_persona_rows(cfg, order):
+            cfg = cfg or {}
+            order = order or []
+            ordered = [pid for pid in order if pid in cfg]
+
+            if not ordered:
+                gr.Markdown("_No personas added yet._")
+                return
+
+            gr.Markdown("#### Per-persona settings (ordered)")
+
+            def _set_runs(pid, val, cfg_in):
+                cfg_in = cfg_in or {}
+                if pid in cfg_in:
+                    try:
+                        cfg_in[pid]["runs"] = max(1, int(val))
+                    except Exception:
+                        cfg_in[pid]["runs"] = 1
+                return cfg_in
+
+            def _set_mem(pid, val, cfg_in):
+                cfg_in = cfg_in or {}
+                if pid in cfg_in:
+                    cfg_in[pid]["memory_within"] = val
+                return cfg_in
+
+            for pid in ordered:
+                with gr.Row():
+                    gr.Markdown(f"**{pid}**")
+
+                    runs = gr.Number(
+                        value=int(cfg[pid].get("runs", 1)),
+                        precision=0,
+                        minimum=1,
+                        label="runs",
+                    )
+
+                    mem = gr.Dropdown(
+                        choices=["fresh", "continuous"],
+                        value=str(cfg[pid].get("memory_within", "fresh")),
+                        label="memory_within",
+                    )
+
+                    with gr.Column(scale=0):
+                        btn_up = gr.Button("↑", size="sm")
+                        btn_down = gr.Button("↓", size="sm")
+
+                    btn_remove = gr.Button("Remove", variant="secondary")
+
+                runs.change(
+                    fn=lambda v, s, _pid=pid: _set_runs(_pid, v, s),
+                    inputs=[runs, cfg_state],
+                    outputs=[cfg_state],
+                )
+
+                mem.change(
+                    fn=lambda v, s, _pid=pid: _set_mem(_pid, v, s),
+                    inputs=[mem, cfg_state],
+                    outputs=[cfg_state],
+                )
+
+                btn_up.click(
+                    fn=lambda s_order, _pid=pid: _move_persona(_pid, -1, s_order),
+                    inputs=[order_state],
+                    outputs=[order_state],
+                )
+
+                btn_down.click(
+                    fn=lambda s_order, _pid=pid: _move_persona(_pid, +1, s_order),
+                    inputs=[order_state],
+                    outputs=[order_state],
+                )
+
+                btn_remove.click(
+                    fn=lambda s_cfg, s_order, _pid=pid: _remove_persona(_pid, s_cfg, s_order),
+                    inputs=[cfg_state, order_state],
+                    outputs=[cfg_state, order_state],
+                )
+
+        memory_between = gr.Dropdown(
+            choices=["reset", "carry_over"],
+            value="reset",
+            label="memory-between personas",
+            interactive=False,
+        )
+
+        order_state.change(
+            fn=_memory_between_ui,
+            inputs=[order_state],
+            outputs=[memory_between],
+        )
 
         gr.Markdown("### Run")
 
@@ -291,48 +336,18 @@ def build_experiment_ui():
         with gr.Row():
             btn_run = gr.Button("Run experiment", variant="primary")
 
-        output = gr.Textbox(
-            label="Output",
-            lines=10,
-            interactive=False,
-        )
-
-        gr.Markdown("### Summary")
-
-        with gr.Row():
-            summary_experiment_id = gr.Textbox(
-                label="Experiment ID",
-                placeholder="e.g. 20260307T142849",
-            )
-
-            btn_summary = gr.Button(
-                "Summary",
-                variant="primary",
-            )
-
-        summary_output = gr.Textbox(
-            label="Summary output",
-            lines=12,
-            interactive=False,
-            elem_classes="monospace",
-        )
+        output = gr.Textbox(label="Output", lines=18, interactive=False)
 
         btn_preview.click(
             fn=_preview_command,
-            inputs=[test_file, model_id, persona_id, runs, memory_within],
+            inputs=[test_file, model_id, memory_between, cfg_state, order_state],
             outputs=[cmd_preview],
         )
 
         btn_run.click(
             fn=_run_experiment,
-            inputs=[test_file, model_id, persona_id, runs, memory_within],
+            inputs=[test_file, model_id, memory_between, cfg_state, order_state],
             outputs=[output],
-        )
-
-        btn_summary.click(
-            fn=_run_summary,
-            inputs=[summary_experiment_id],
-            outputs=[summary_output],
         )
 
     return experiment_ui
