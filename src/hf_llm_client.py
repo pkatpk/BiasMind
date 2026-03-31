@@ -47,29 +47,31 @@ def _extract_scale_from_system(messages: List[Dict]) -> Optional[Tuple[int, int]
 
 def _messages_to_prompt(messages: List[Dict]) -> str:
     """
-    Plain text prompt builder (NO chat tags).
-    Adds a strict output anchor at the end to encourage numeric-only responses.
+    UPDATED:
+    - Includes FULL conversation history (system, user, assistant)
+    - Preserves original instruction style
     """
-    system_text = ""
-    user_text = ""
+    prompt = ""
 
     for msg in messages:
         role = msg.get("role")
         content = msg.get("content", "")
+
         if role == "system":
-            system_text = content
+            prompt += f"{content}\n\n"
         elif role == "user":
-            user_text = content
+            prompt += f"User: {content}\n"
+        elif role == "assistant":
+            prompt += f"Assistant: {content}\n"
 
     scale = _extract_scale_from_system(messages)
     if scale is not None:
         mn, mx = scale
-        # Keep your original system instruction, just add a final strict anchor.
-        tail = f"\n\nRespond with ONE integer between {mn} and {mx}. No words.\nAnswer: "
+        tail = f"\nRespond with ONE integer between {mn} and {mx}. No words.\nAnswer: "
     else:
-        tail = "\n\nRespond with ONE integer. No words.\nAnswer: "
+        tail = "\nRespond with ONE integer. No words.\nAnswer: "
 
-    return f"{system_text}\n\n{user_text}{tail}"
+    return prompt + tail
 
 
 def _parse_first_int_in_range(text: str, mn: int, mx: int) -> Optional[int]:
@@ -105,7 +107,6 @@ def call_hf_local_chat(
 
     pipe = _get_pipeline(model.api_name)
 
-    # Give a tiny bit more room so "Answer: 6" isn't truncated
     outputs = pipe(
         prompt,
         do_sample=True,
