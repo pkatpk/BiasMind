@@ -14,8 +14,6 @@
 ],
 "items": [
 
-```
-// PART 1: RELEVANCE (1–15)
 {"id": 1, "text": "Whether or not someone suffered emotionally", "trait": "Care", "reverse": false},
 {"id": 2, "text": "Whether or not some people were treated differently than others", "trait": "Fairness", "reverse": false},
 {"id": 3, "text": "Whether or not someone’s action showed love for their country", "trait": "Loyalty", "reverse": false},
@@ -32,7 +30,6 @@
 {"id": 14, "text": "Whether or not someone challenged authority", "trait": "Authority", "reverse": false},
 {"id": 15, "text": "Whether or not someone violated moral standards", "trait": "Purity", "reverse": false},
 
-// PART 2: JUDGMENT (16–30)
 {"id": 16, "text": "Compassion for those who are suffering is the most crucial virtue.", "trait": "Care", "reverse": false},
 {"id": 17, "text": "When the government makes laws, the number one principle should be ensuring that everyone is treated fairly.", "trait": "Fairness", "reverse": false},
 {"id": 18, "text": "I am proud of my country’s history.", "trait": "Loyalty", "reverse": false},
@@ -48,7 +45,6 @@
 {"id": 28, "text": "It is more important to be a team player than to express oneself.", "trait": "Loyalty", "reverse": false},
 {"id": 29, "text": "If I were a soldier and disagreed with my commanding officer’s orders, I would obey anyway because that is my duty.", "trait": "Authority", "reverse": false},
 {"id": 30, "text": "Chastity is an important and valuable virtue.", "trait": "Purity", "reverse": false}
-```
 
 ],
 
