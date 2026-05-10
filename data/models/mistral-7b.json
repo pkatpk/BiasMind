@@ -1,0 +1,5 @@
+{
+  "id": "mistral-7b",
+  "provider": "huggingface_local",
+  "api_name": "mistralai/Mistral-7B-Instruct-v0.2"
+}
