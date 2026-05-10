@@ -1,0 +1,5 @@
+{
+  "id": "gemma-2b",
+  "provider": "huggingface_local",
+  "api_name": "google/gemma-2b-it"
+}
