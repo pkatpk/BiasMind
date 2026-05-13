@@ -1,0 +1,5 @@
+{
+  "id": "qwen-2.5-3b",
+  "provider": "huggingface_local",
+  "api_name": "Qwen/Qwen2.5-3B-Instruct"
+}

@@ -1,5 +1,0 @@
-{
-  "id": "phi-2",
-  "provider": "huggingface_local",
-  "api_name": "microsoft/phi-2"
-}
