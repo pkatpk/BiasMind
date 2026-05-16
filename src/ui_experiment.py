@@ -26,7 +26,9 @@ def _list_test_files():
     """
     if not TESTS_DIR.exists():
         return []
+
     paths = sorted(TESTS_DIR.glob("*.json"))
+
     return [(p.name, str(p)) for p in paths]
 
 
@@ -364,7 +366,7 @@ def build_experiment_ui():
                         label="runs",
                     )
 
-                    mem = gr.Dropdown(
+                    mem = gr.Radio(
                         choices=["fresh", "continuous"],
                         value=str(cfg[pid].get("memory_within", "fresh")),
                         label="memory_within",
@@ -413,7 +415,7 @@ def build_experiment_ui():
                     outputs=[cfg_state, order_state],
                 )
 
-        memory_between = gr.Dropdown(
+        memory_between = gr.Radio(
             choices=["reset", "carry_over"],
             value="reset",
             label="memory-between personas",
