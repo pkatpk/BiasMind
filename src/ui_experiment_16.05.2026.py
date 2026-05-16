@@ -1,3 +1,4 @@
+# src/ui_experiment.py
 import json
 import sys
 import shlex
@@ -105,7 +106,7 @@ def _memory_between_ui(order):
     return gr.update(interactive=True)
 
 
-def _build_cmd(test_file, model_id, temperature, memory_between, cfg_dict, order_list):
+def _build_cmd(test_file, model_id, memory_between, cfg_dict, order_list):
     if not test_file:
         raise ValueError("Επίλεξε test file.")
 
@@ -139,24 +140,15 @@ def _build_cmd(test_file, model_id, temperature, memory_between, cfg_dict, order
         raise ValueError("memory-between πρέπει να είναι reset ή carry_over.")
     argv += ["--memory-between", memory_between]
 
-    argv += ["--temperature", str(temperature)]
-
     pretty = " ".join(shlex.quote(a) for a in argv)
     return argv, pretty
 
 
-def _preview_command(test_file, model_id, temperature, memory_between, cfg_dict, order_list):
+def _preview_command(test_file, model_id, memory_between, cfg_dict, order_list):
     """
     Only builds the CLI command (does NOT execute) and formats it multiline for display.
     """
-    _, pretty = _build_cmd(
-        test_file,
-        model_id,
-        temperature,
-        memory_between,
-        cfg_dict,
-        order_list,
-    )
+    _, pretty = _build_cmd(test_file, model_id, memory_between, cfg_dict, order_list)
 
     # break before each --flag for readability
     pretty_ml = pretty.replace(" --", "\n  --")
@@ -164,15 +156,8 @@ def _preview_command(test_file, model_id, temperature, memory_between, cfg_dict,
     return f"$ {pretty_ml}"
 
 
-def _run_experiment(test_file, model_id, temperature, memory_between, cfg_dict, order_list):
-    argv, _pretty = _build_cmd(
-        test_file,
-        model_id,
-        temperature,
-        memory_between,
-        cfg_dict,
-        order_list,
-    )
+def _run_experiment(test_file, model_id, memory_between, cfg_dict, order_list):
+    argv, _pretty = _build_cmd(test_file, model_id, memory_between, cfg_dict, order_list)
 
     proc = subprocess.run(argv, capture_output=True, text=True)
     out = []
@@ -193,7 +178,7 @@ def _run_experiment(test_file, model_id, temperature, memory_between, cfg_dict, 
 
 def build_experiment_ui():
     persona_ids = _list_persona_ids()
-    test_files = _list_test_files()
+    test_files = _list_test_files()   # ✅ now (label, value)
     model_ids = _list_model_ids()
 
     with gr.Blocks() as experiment_ui:
@@ -205,20 +190,11 @@ def build_experiment_ui():
                 value=None,
                 label="Test file",
             )
-
             model_id = gr.Dropdown(
                 choices=model_ids,
                 value=None,
                 label="Model",
             )
-
-        temperature = gr.Number(
-            value=0.7,
-            minimum=0.0,
-            maximum=2.0,
-            step=0.1,
-            label="Temperature",
-        )
 
         gr.Markdown("### Personas")
 
@@ -231,7 +207,6 @@ def build_experiment_ui():
                 value=None,
                 label="Select persona",
             )
-
             persona_preview = gr.Textbox(
                 label="Prompt prefix preview",
                 lines=8,
@@ -351,7 +326,6 @@ def build_experiment_ui():
 
         with gr.Row():
             btn_preview = gr.Button("Command preview (optional)")
-
             cmd_preview = gr.Textbox(
                 label="CLI command",
                 lines=8,
@@ -366,27 +340,13 @@ def build_experiment_ui():
 
         btn_preview.click(
             fn=_preview_command,
-            inputs=[
-                test_file,
-                model_id,
-                temperature,
-                memory_between,
-                cfg_state,
-                order_state,
-            ],
+            inputs=[test_file, model_id, memory_between, cfg_state, order_state],
             outputs=[cmd_preview],
         )
 
         btn_run.click(
             fn=_run_experiment,
-            inputs=[
-                test_file,
-                model_id,
-                temperature,
-                memory_between,
-                cfg_state,
-                order_state,
-            ],
+            inputs=[test_file, model_id, memory_between, cfg_state, order_state],
             outputs=[output],
         )
 
