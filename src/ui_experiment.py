@@ -369,7 +369,6 @@ def build_experiment_ui():
                         value=str(cfg[pid].get("memory_within", "fresh")),
                         label="memory_within",
                         allow_custom_value=False,
-                        interactive=True,
                     )
 
                     with gr.Column(scale=0):
@@ -419,7 +418,6 @@ def build_experiment_ui():
             choices=["reset", "carry_over"],
             value="reset",
             label="memory-between personas",
-            interactive=False,
             allow_custom_value=False,
         )
 
