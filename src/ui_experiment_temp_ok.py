@@ -33,6 +33,7 @@ def _list_test_files():
 def _list_model_ids():
     if not MODELS_DIR.exists():
         return []
+
     ids = set()
 
     for p in MODELS_DIR.glob("*.json"):
@@ -197,10 +198,6 @@ def _preview_command(
     cfg_dict,
     order_list,
 ):
-    """
-    Only builds the CLI command (does NOT execute)
-    """
-
     _, pretty = _build_cmd(
         test_file,
         model_id,
@@ -371,6 +368,8 @@ def build_experiment_ui():
                         choices=["fresh", "continuous"],
                         value=str(cfg[pid].get("memory_within", "fresh")),
                         label="memory_within",
+                        allow_custom_value=False,
+                        interactive=True,
                     )
 
                     with gr.Column(scale=0):
@@ -421,6 +420,7 @@ def build_experiment_ui():
             value="reset",
             label="memory-between personas",
             interactive=False,
+            allow_custom_value=False,
         )
 
         order_state.change(
