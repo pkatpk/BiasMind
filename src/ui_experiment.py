@@ -354,7 +354,7 @@ def build_experiment_ui():
                 return cfg_in
 
             for pid in ordered:
-                with gr.Row():
+                with gr.Row(equal_height=True):
                     gr.Markdown(f"**{pid}**")
 
                     runs = gr.Number(
@@ -368,7 +368,6 @@ def build_experiment_ui():
                         choices=["fresh", "continuous"],
                         value=str(cfg[pid].get("memory_within", "fresh")),
                         label="memory_within",
-                        allow_custom_value=False,
                     )
 
                     with gr.Column(scale=0):
@@ -418,7 +417,6 @@ def build_experiment_ui():
             choices=["reset", "carry_over"],
             value="reset",
             label="memory-between personas",
-            allow_custom_value=False,
         )
 
         order_state.change(
