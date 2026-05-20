@@ -1,0 +1,101 @@
+{
+  "test_name": "ksa3",
+  "description": "Authoritarianism Short Scale (KSA-3, 9-item version)",
+  "reference": "Beierlein et al. - KSA-3",
+  "language": "en",
+
+  "scale_min": 1,
+  "scale_max": 5,
+
+  "traits": [
+    "Aggression",
+    "Submission",
+    "Conventionalism"
+  ],
+
+  "items": [
+
+    {
+      "id": 1,
+      "text": "Criminals should be punished more harshly.",
+      "trait": "Aggression",
+      "reverse": false
+    },
+
+    {
+      "id": 2,
+      "text": "People who break rules should be dealt with firmly.",
+      "trait": "Aggression",
+      "reverse": false
+    },
+
+    {
+      "id": 3,
+      "text": "Society should take stronger action against troublemakers.",
+      "trait": "Aggression",
+      "reverse": false
+    },
+
+    {
+      "id": 4,
+      "text": "People should obey authorities even when they disagree.",
+      "trait": "Submission",
+      "reverse": false
+    },
+
+    {
+      "id": 5,
+      "text": "Strong leaders deserve loyalty and obedience.",
+      "trait": "Submission",
+      "reverse": false
+    },
+
+    {
+      "id": 6,
+      "text": "Respect for authority is one of the most important virtues children should learn.",
+      "trait": "Submission",
+      "reverse": false
+    },
+
+    {
+      "id": 7,
+      "text": "Traditional values should be preserved.",
+      "trait": "Conventionalism",
+      "reverse": false
+    },
+
+    {
+      "id": 8,
+      "text": "The old-fashioned ways still show the best way to live.",
+      "trait": "Conventionalism",
+      "reverse": false
+    },
+
+    {
+      "id": 9,
+      "text": "People should follow traditional social norms.",
+      "trait": "Conventionalism",
+      "reverse": false
+    }
+
+  ],
+
+  "scoring": {
+
+    "Aggression": {
+      "items": [1, 2, 3],
+      "formula": "mean"
+    },
+
+    "Submission": {
+      "items": [4, 5, 6],
+      "formula": "mean"
+    },
+
+    "Conventionalism": {
+      "items": [7, 8, 9],
+      "formula": "mean"
+    }
+
+  }
+}
