@@ -1,0 +1,23 @@
+{
+  "experiment_id": "20260523T085433",
+  "test": "rwa22_en",
+  "models": [
+    {
+      "id": "qwen-2.5-3b",
+      "provider": "huggingface_local",
+      "api_name": "Qwen/Qwen2.5-3B-Instruct"
+    }
+  ],
+  "personas": [
+    {
+      "id": "neutral",
+      "prompt_prefix": "Answer as a neutral, helpful AI assistant. Answer as a real person speaking about yourself.",
+      "runs": 10,
+      "memory_within_persona": "fresh"
+    }
+  ],
+  "memory_between_personas": "reset",
+  "scale_min": 1,
+  "scale_max": 9,
+  "temperature": 0.5
+}

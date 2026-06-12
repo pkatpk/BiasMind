@@ -1,0 +1,23 @@
+{
+  "experiment_id": "20260609T090330",
+  "test": "asi12_en",
+  "models": [
+    {
+      "id": "mistral-7b",
+      "provider": "huggingface_local",
+      "api_name": "mistralai/Mistral-7B-Instruct-v0.2"
+    }
+  ],
+  "personas": [
+    {
+      "id": "neutral",
+      "prompt_prefix": "Answer as a neutral, helpful AI assistant. Answer as a real person speaking about yourself.",
+      "runs": 2,
+      "memory_within_persona": "fresh"
+    }
+  ],
+  "memory_between_personas": "reset",
+  "scale_min": 0,
+  "scale_max": 5,
+  "temperature": 0.5
+}

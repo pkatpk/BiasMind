@@ -1,0 +1,3 @@
+experiment_id,model,provider,persona_id,run_index,test_name,score_name,score_kind,score_value,score_normalized,summary_label
+20260524T082848,mistral-7b,huggingface_local,neutral,1,rwa22_en,RWA,trait,1.0,,
+20260524T082848,mistral-7b,huggingface_local,neutral,2,rwa22_en,RWA,trait,1.0,,
