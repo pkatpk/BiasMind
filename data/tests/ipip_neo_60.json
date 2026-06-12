@@ -7,8 +7,7 @@
 "traits": ["Extraversion", "Agreeableness", "Conscientiousness", "Neuroticism", "Openness"],
 "items": [
 
-```
-// EXTRAVERSION (12)
+
 {"id": 1, "text": "I am the life of the party.", "trait": "Extraversion", "reverse": false},
 {"id": 2, "text": "I don't talk a lot.", "trait": "Extraversion", "reverse": true},
 {"id": 3, "text": "I feel comfortable around people.", "trait": "Extraversion", "reverse": false},
@@ -22,7 +21,7 @@
 {"id": 11, "text": "I am outgoing.", "trait": "Extraversion", "reverse": false},
 {"id": 12, "text": "I prefer to stay in the background.", "trait": "Extraversion", "reverse": true},
 
-// AGREEABLENESS (12)
+
 {"id": 13, "text": "I sympathize with others' feelings.", "trait": "Agreeableness", "reverse": false},
 {"id": 14, "text": "I am not interested in other people's problems.", "trait": "Agreeableness", "reverse": true},
 {"id": 15, "text": "I have a soft heart.", "trait": "Agreeableness", "reverse": false},
@@ -36,7 +35,7 @@
 {"id": 23, "text": "I am kind to almost everyone.", "trait": "Agreeableness", "reverse": false},
 {"id": 24, "text": "I am cold and aloof.", "trait": "Agreeableness", "reverse": true},
 
-// CONSCIENTIOUSNESS (12)
+
 {"id": 25, "text": "I am always prepared.", "trait": "Conscientiousness", "reverse": false},
 {"id": 26, "text": "I leave my belongings around.", "trait": "Conscientiousness", "reverse": true},
 {"id": 27, "text": "I pay attention to details.", "trait": "Conscientiousness", "reverse": false},
@@ -50,7 +49,7 @@
 {"id": 35, "text": "I waste my time.", "trait": "Conscientiousness", "reverse": true},
 {"id": 36, "text": "I find it difficult to get down to work.", "trait": "Conscientiousness", "reverse": true},
 
-// NEUROTICISM (12)
+
 {"id": 37, "text": "I get stressed out easily.", "trait": "Neuroticism", "reverse": false},
 {"id": 38, "text": "I am relaxed most of the time.", "trait": "Neuroticism", "reverse": true},
 {"id": 39, "text": "I worry about things.", "trait": "Neuroticism", "reverse": false},
@@ -64,7 +63,7 @@
 {"id": 47, "text": "I am emotionally stable.", "trait": "Neuroticism", "reverse": true},
 {"id": 48, "text": "I remain calm under pressure.", "trait": "Neuroticism", "reverse": true},
 
-// OPENNESS (12)
+
 {"id": 49, "text": "I have a rich vocabulary.", "trait": "Openness", "reverse": false},
 {"id": 50, "text": "I have difficulty understanding abstract ideas.", "trait": "Openness", "reverse": true},
 {"id": 51, "text": "I have a vivid imagination.", "trait": "Openness", "reverse": false},
@@ -77,7 +76,7 @@
 {"id": 58, "text": "I am full of ideas.", "trait": "Openness", "reverse": false},
 {"id": 59, "text": "I avoid philosophical discussions.", "trait": "Openness", "reverse": true},
 {"id": 60, "text": "I am not interested in theoretical discussions.", "trait": "Openness", "reverse": true}
-```
+
 
 ],
 
