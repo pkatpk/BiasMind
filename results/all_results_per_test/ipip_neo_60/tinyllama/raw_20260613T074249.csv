@@ -1,0 +1,901 @@
+experiment_id,model,provider,persona_id,run_index,test_name,question_id,question_text,trait,reverse,answer,timestamp_run
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,1,I am the life of the party.,Extraversion,False,3,2026-06-13T07:43:09
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,2,I don't talk a lot.,Extraversion,True,1,2026-06-13T07:43:09
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,3,I feel comfortable around people.,Extraversion,False,3,2026-06-13T07:43:10
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,4,I keep in the background.,Extraversion,True,3,2026-06-13T07:43:10
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,5,I start conversations.,Extraversion,False,1,2026-06-13T07:43:11
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,6,I have little to say.,Extraversion,True,3,2026-06-13T07:43:11
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,7,I talk to a lot of different people at parties.,Extraversion,False,3,2026-06-13T07:43:12
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,8,I don't like to draw attention to myself.,Extraversion,True,1,2026-06-13T07:43:12
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,9,I don't mind being the center of attention.,Extraversion,False,1,2026-06-13T07:43:13
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,10,I am quiet around strangers.,Extraversion,True,3,2026-06-13T07:43:14
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,11,I am outgoing.,Extraversion,False,3,2026-06-13T07:43:14
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,12,I prefer to stay in the background.,Extraversion,True,3,2026-06-13T07:43:15
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,13,I sympathize with others' feelings.,Agreeableness,False,3,2026-06-13T07:43:16
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,14,I am not interested in other people's problems.,Agreeableness,True,3,2026-06-13T07:43:16
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,15,I have a soft heart.,Agreeableness,False,3,2026-06-13T07:43:17
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,16,I am not really interested in others.,Agreeableness,True,3,2026-06-13T07:43:17
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,17,I take time out for others.,Agreeableness,False,3,2026-06-13T07:43:18
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,18,I feel little concern for others.,Agreeableness,True,3,2026-06-13T07:43:19
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,19,I am interested in people.,Agreeableness,False,3,2026-06-13T07:43:19
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,20,I insult people.,Agreeableness,True,3,2026-06-13T07:43:20
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,21,I make people feel at ease.,Agreeableness,False,3,2026-06-13T07:43:21
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,22,I am not interested in others.,Agreeableness,True,3,2026-06-13T07:43:21
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,23,I am kind to almost everyone.,Agreeableness,False,1,2026-06-13T07:43:22
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,24,I am cold and aloof.,Agreeableness,True,1,2026-06-13T07:43:22
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,25,I am always prepared.,Conscientiousness,False,2,2026-06-13T07:43:23
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,26,I leave my belongings around.,Conscientiousness,True,1,2026-06-13T07:43:24
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,27,I pay attention to details.,Conscientiousness,False,3,2026-06-13T07:43:24
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,28,I make a mess of things.,Conscientiousness,True,3,2026-06-13T07:43:25
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,29,I get chores done right away.,Conscientiousness,False,3,2026-06-13T07:43:25
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,30,I often forget to put things back in their proper place.,Conscientiousness,True,3,2026-06-13T07:43:26
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,31,I like order.,Conscientiousness,False,1,2026-06-13T07:43:26
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,32,I shirk my duties.,Conscientiousness,True,3,2026-06-13T07:43:27
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,33,I follow a schedule.,Conscientiousness,False,3,2026-06-13T07:43:28
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,34,I am exacting in my work.,Conscientiousness,False,3,2026-06-13T07:43:29
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,35,I waste my time.,Conscientiousness,True,3,2026-06-13T07:43:29
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,36,I find it difficult to get down to work.,Conscientiousness,True,3,2026-06-13T07:43:30
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,37,I get stressed out easily.,Neuroticism,False,3,2026-06-13T07:43:31
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,38,I am relaxed most of the time.,Neuroticism,True,1,2026-06-13T07:43:31
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,39,I worry about things.,Neuroticism,False,1,2026-06-13T07:43:32
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,40,I seldom feel blue.,Neuroticism,True,1,2026-06-13T07:43:33
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,41,I am easily disturbed.,Neuroticism,False,3,2026-06-13T07:43:34
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,42,I get upset easily.,Neuroticism,False,3,2026-06-13T07:43:35
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,43,I change my mood a lot.,Neuroticism,False,3,2026-06-13T07:43:36
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,44,I have frequent mood swings.,Neuroticism,False,1,2026-06-13T07:43:36
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,45,I get irritated easily.,Neuroticism,False,3,2026-06-13T07:43:37
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,46,I often feel blue.,Neuroticism,False,1,2026-06-13T07:43:38
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,47,I am emotionally stable.,Neuroticism,True,3,2026-06-13T07:43:39
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,48,I remain calm under pressure.,Neuroticism,True,3,2026-06-13T07:43:40
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,49,I have a rich vocabulary.,Openness,False,1,2026-06-13T07:43:41
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,50,I have difficulty understanding abstract ideas.,Openness,True,2,2026-06-13T07:43:43
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,51,I have a vivid imagination.,Openness,False,3,2026-06-13T07:43:44
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,52,I am not interested in abstract ideas.,Openness,True,1,2026-06-13T07:43:45
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,53,I have excellent ideas.,Openness,False,3,2026-06-13T07:43:46
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,54,I do not have a good imagination.,Openness,True,3,2026-06-13T07:43:47
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,55,I am quick to understand things.,Openness,False,3,2026-06-13T07:43:48
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,56,I use difficult words.,Openness,False,3,2026-06-13T07:43:49
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,57,I spend time reflecting on things.,Openness,False,3,2026-06-13T07:43:50
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,58,I am full of ideas.,Openness,False,1,2026-06-13T07:43:52
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,59,I avoid philosophical discussions.,Openness,True,3,2026-06-13T07:43:53
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,1,ipip_neo_60,60,I am not interested in theoretical discussions.,Openness,True,3,2026-06-13T07:43:54
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,1,I am the life of the party.,Extraversion,False,1,2026-06-13T07:43:55
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,2,I don't talk a lot.,Extraversion,True,1,2026-06-13T07:43:55
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,3,I feel comfortable around people.,Extraversion,False,1,2026-06-13T07:43:56
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,4,I keep in the background.,Extraversion,True,1,2026-06-13T07:43:56
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,5,I start conversations.,Extraversion,False,1,2026-06-13T07:43:57
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,6,I have little to say.,Extraversion,True,1,2026-06-13T07:43:58
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,7,I talk to a lot of different people at parties.,Extraversion,False,1,2026-06-13T07:43:58
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,8,I don't like to draw attention to myself.,Extraversion,True,1,2026-06-13T07:43:58
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,9,I don't mind being the center of attention.,Extraversion,False,1,2026-06-13T07:43:59
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,10,I am quiet around strangers.,Extraversion,True,1,2026-06-13T07:43:59
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,11,I am outgoing.,Extraversion,False,1,2026-06-13T07:44:00
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,12,I prefer to stay in the background.,Extraversion,True,1,2026-06-13T07:44:00
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,13,I sympathize with others' feelings.,Agreeableness,False,1,2026-06-13T07:44:01
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,14,I am not interested in other people's problems.,Agreeableness,True,1,2026-06-13T07:44:01
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,15,I have a soft heart.,Agreeableness,False,3,2026-06-13T07:44:02
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,16,I am not really interested in others.,Agreeableness,True,1,2026-06-13T07:44:02
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,17,I take time out for others.,Agreeableness,False,2,2026-06-13T07:44:03
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,18,I feel little concern for others.,Agreeableness,True,1,2026-06-13T07:44:03
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,19,I am interested in people.,Agreeableness,False,1,2026-06-13T07:44:04
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,20,I insult people.,Agreeableness,True,3,2026-06-13T07:44:05
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,21,I make people feel at ease.,Agreeableness,False,2,2026-06-13T07:44:06
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,22,I am not interested in others.,Agreeableness,True,1,2026-06-13T07:44:06
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,23,I am kind to almost everyone.,Agreeableness,False,1,2026-06-13T07:44:07
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,24,I am cold and aloof.,Agreeableness,True,1,2026-06-13T07:44:07
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,25,I am always prepared.,Conscientiousness,False,3,2026-06-13T07:44:08
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,26,I leave my belongings around.,Conscientiousness,True,2,2026-06-13T07:44:09
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,27,I pay attention to details.,Conscientiousness,False,1,2026-06-13T07:44:09
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,28,I make a mess of things.,Conscientiousness,True,3,2026-06-13T07:44:10
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,29,I get chores done right away.,Conscientiousness,False,3,2026-06-13T07:44:11
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,30,I often forget to put things back in their proper place.,Conscientiousness,True,3,2026-06-13T07:44:11
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,31,I like order.,Conscientiousness,False,1,2026-06-13T07:44:12
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,32,I shirk my duties.,Conscientiousness,True,1,2026-06-13T07:44:13
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,33,I follow a schedule.,Conscientiousness,False,3,2026-06-13T07:44:14
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,34,I am exacting in my work.,Conscientiousness,False,2,2026-06-13T07:44:14
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,35,I waste my time.,Conscientiousness,True,3,2026-06-13T07:44:15
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,36,I find it difficult to get down to work.,Conscientiousness,True,1,2026-06-13T07:44:16
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,37,I get stressed out easily.,Neuroticism,False,2,2026-06-13T07:44:16
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,38,I am relaxed most of the time.,Neuroticism,True,1,2026-06-13T07:44:17
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,39,I worry about things.,Neuroticism,False,1,2026-06-13T07:44:18
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,40,I seldom feel blue.,Neuroticism,True,3,2026-06-13T07:44:19
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,41,I am easily disturbed.,Neuroticism,False,2,2026-06-13T07:44:20
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,42,I get upset easily.,Neuroticism,False,1,2026-06-13T07:44:20
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,43,I change my mood a lot.,Neuroticism,False,1,2026-06-13T07:44:22
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,44,I have frequent mood swings.,Neuroticism,False,2,2026-06-13T07:44:22
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,45,I get irritated easily.,Neuroticism,False,1,2026-06-13T07:44:23
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,46,I often feel blue.,Neuroticism,False,1,2026-06-13T07:44:25
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,47,I am emotionally stable.,Neuroticism,True,3,2026-06-13T07:44:26
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,48,I remain calm under pressure.,Neuroticism,True,1,2026-06-13T07:44:27
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,49,I have a rich vocabulary.,Openness,False,2,2026-06-13T07:44:28
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,50,I have difficulty understanding abstract ideas.,Openness,True,1,2026-06-13T07:44:28
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,51,I have a vivid imagination.,Openness,False,1,2026-06-13T07:44:29
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,52,I am not interested in abstract ideas.,Openness,True,1,2026-06-13T07:44:31
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,53,I have excellent ideas.,Openness,False,3,2026-06-13T07:44:32
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,54,I do not have a good imagination.,Openness,True,2,2026-06-13T07:44:33
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,55,I am quick to understand things.,Openness,False,1,2026-06-13T07:44:34
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,56,I use difficult words.,Openness,False,1,2026-06-13T07:44:35
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,57,I spend time reflecting on things.,Openness,False,1,2026-06-13T07:44:36
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,58,I am full of ideas.,Openness,False,1,2026-06-13T07:44:38
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,59,I avoid philosophical discussions.,Openness,True,1,2026-06-13T07:44:39
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,2,ipip_neo_60,60,I am not interested in theoretical discussions.,Openness,True,3,2026-06-13T07:44:40
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,1,I am the life of the party.,Extraversion,False,5,2026-06-13T07:44:41
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,2,I don't talk a lot.,Extraversion,True,1,2026-06-13T07:44:41
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,3,I feel comfortable around people.,Extraversion,False,4,2026-06-13T07:44:42
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,4,I keep in the background.,Extraversion,True,1,2026-06-13T07:44:42
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,5,I start conversations.,Extraversion,False,3,2026-06-13T07:44:43
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,6,I have little to say.,Extraversion,True,4,2026-06-13T07:44:43
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,7,I talk to a lot of different people at parties.,Extraversion,False,3,2026-06-13T07:44:44
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,8,I don't like to draw attention to myself.,Extraversion,True,4,2026-06-13T07:44:44
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,9,I don't mind being the center of attention.,Extraversion,False,3,2026-06-13T07:44:45
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,10,I am quiet around strangers.,Extraversion,True,5,2026-06-13T07:44:45
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,11,I am outgoing.,Extraversion,False,3,2026-06-13T07:44:46
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,12,I prefer to stay in the background.,Extraversion,True,3,2026-06-13T07:44:46
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,13,I sympathize with others' feelings.,Agreeableness,False,3,2026-06-13T07:44:46
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,14,I am not interested in other people's problems.,Agreeableness,True,3,2026-06-13T07:44:47
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,15,I have a soft heart.,Agreeableness,False,1,2026-06-13T07:44:48
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,16,I am not really interested in others.,Agreeableness,True,5,2026-06-13T07:44:48
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,17,I take time out for others.,Agreeableness,False,3,2026-06-13T07:44:49
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,18,I feel little concern for others.,Agreeableness,True,3,2026-06-13T07:44:49
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,19,I am interested in people.,Agreeableness,False,2,2026-06-13T07:44:50
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,20,I insult people.,Agreeableness,True,2,2026-06-13T07:44:50
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,21,I make people feel at ease.,Agreeableness,False,3,2026-06-13T07:44:51
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,22,I am not interested in others.,Agreeableness,True,2,2026-06-13T07:44:51
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,23,I am kind to almost everyone.,Agreeableness,False,2,2026-06-13T07:44:52
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,24,I am cold and aloof.,Agreeableness,True,2,2026-06-13T07:44:52
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,25,I am always prepared.,Conscientiousness,False,4,2026-06-13T07:44:53
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,26,I leave my belongings around.,Conscientiousness,True,1,2026-06-13T07:44:54
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,27,I pay attention to details.,Conscientiousness,False,2,2026-06-13T07:44:55
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,28,I make a mess of things.,Conscientiousness,True,4,2026-06-13T07:44:55
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,29,I get chores done right away.,Conscientiousness,False,3,2026-06-13T07:44:56
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,30,I often forget to put things back in their proper place.,Conscientiousness,True,3,2026-06-13T07:44:57
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,31,I like order.,Conscientiousness,False,3,2026-06-13T07:44:58
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,32,I shirk my duties.,Conscientiousness,True,3,2026-06-13T07:44:58
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,33,I follow a schedule.,Conscientiousness,False,3,2026-06-13T07:44:59
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,34,I am exacting in my work.,Conscientiousness,False,3,2026-06-13T07:45:00
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,35,I waste my time.,Conscientiousness,True,2,2026-06-13T07:45:01
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,36,I find it difficult to get down to work.,Conscientiousness,True,3,2026-06-13T07:45:01
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,37,I get stressed out easily.,Neuroticism,False,4,2026-06-13T07:45:02
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,38,I am relaxed most of the time.,Neuroticism,True,4,2026-06-13T07:45:03
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,39,I worry about things.,Neuroticism,False,3,2026-06-13T07:45:04
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,40,I seldom feel blue.,Neuroticism,True,3,2026-06-13T07:45:05
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,41,I am easily disturbed.,Neuroticism,False,2,2026-06-13T07:45:06
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,42,I get upset easily.,Neuroticism,False,4,2026-06-13T07:45:07
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,43,I change my mood a lot.,Neuroticism,False,1,2026-06-13T07:45:08
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,44,I have frequent mood swings.,Neuroticism,False,3,2026-06-13T07:45:09
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,45,I get irritated easily.,Neuroticism,False,3,2026-06-13T07:45:10
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,46,I often feel blue.,Neuroticism,False,3,2026-06-13T07:45:11
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,47,I am emotionally stable.,Neuroticism,True,1,2026-06-13T07:45:12
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,48,I remain calm under pressure.,Neuroticism,True,2,2026-06-13T07:45:13
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,49,I have a rich vocabulary.,Openness,False,3,2026-06-13T07:45:14
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,50,I have difficulty understanding abstract ideas.,Openness,True,1,2026-06-13T07:45:15
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,51,I have a vivid imagination.,Openness,False,1,2026-06-13T07:45:16
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,52,I am not interested in abstract ideas.,Openness,True,3,2026-06-13T07:45:17
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,53,I have excellent ideas.,Openness,False,1,2026-06-13T07:45:18
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,54,I do not have a good imagination.,Openness,True,2,2026-06-13T07:45:19
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,55,I am quick to understand things.,Openness,False,1,2026-06-13T07:45:21
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,56,I use difficult words.,Openness,False,2,2026-06-13T07:45:22
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,57,I spend time reflecting on things.,Openness,False,2,2026-06-13T07:45:23
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,58,I am full of ideas.,Openness,False,1,2026-06-13T07:45:24
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,59,I avoid philosophical discussions.,Openness,True,2,2026-06-13T07:45:26
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,3,ipip_neo_60,60,I am not interested in theoretical discussions.,Openness,True,2,2026-06-13T07:45:27
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,1,I am the life of the party.,Extraversion,False,1,2026-06-13T07:45:27
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,2,I don't talk a lot.,Extraversion,True,2,2026-06-13T07:45:28
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,3,I feel comfortable around people.,Extraversion,False,3,2026-06-13T07:45:28
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,4,I keep in the background.,Extraversion,True,3,2026-06-13T07:45:29
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,5,I start conversations.,Extraversion,False,3,2026-06-13T07:45:29
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,6,I have little to say.,Extraversion,True,2,2026-06-13T07:45:30
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,7,I talk to a lot of different people at parties.,Extraversion,False,3,2026-06-13T07:45:30
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,8,I don't like to draw attention to myself.,Extraversion,True,3,2026-06-13T07:45:31
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,9,I don't mind being the center of attention.,Extraversion,False,1,2026-06-13T07:45:32
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,10,I am quiet around strangers.,Extraversion,True,1,2026-06-13T07:45:32
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,11,I am outgoing.,Extraversion,False,3,2026-06-13T07:45:32
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,12,I prefer to stay in the background.,Extraversion,True,2,2026-06-13T07:45:33
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,13,I sympathize with others' feelings.,Agreeableness,False,3,2026-06-13T07:45:33
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,14,I am not interested in other people's problems.,Agreeableness,True,1,2026-06-13T07:45:34
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,15,I have a soft heart.,Agreeableness,False,3,2026-06-13T07:45:35
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,16,I am not really interested in others.,Agreeableness,True,1,2026-06-13T07:45:35
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,17,I take time out for others.,Agreeableness,False,1,2026-06-13T07:45:36
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,18,I feel little concern for others.,Agreeableness,True,3,2026-06-13T07:45:36
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,19,I am interested in people.,Agreeableness,False,1,2026-06-13T07:45:37
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,20,I insult people.,Agreeableness,True,1,2026-06-13T07:45:38
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,21,I make people feel at ease.,Agreeableness,False,3,2026-06-13T07:45:38
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,22,I am not interested in others.,Agreeableness,True,2,2026-06-13T07:45:39
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,23,I am kind to almost everyone.,Agreeableness,False,3,2026-06-13T07:45:39
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,24,I am cold and aloof.,Agreeableness,True,1,2026-06-13T07:45:40
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,25,I am always prepared.,Conscientiousness,False,3,2026-06-13T07:45:41
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,26,I leave my belongings around.,Conscientiousness,True,3,2026-06-13T07:45:41
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,27,I pay attention to details.,Conscientiousness,False,1,2026-06-13T07:45:42
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,28,I make a mess of things.,Conscientiousness,True,1,2026-06-13T07:45:42
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,29,I get chores done right away.,Conscientiousness,False,1,2026-06-13T07:45:43
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,30,I often forget to put things back in their proper place.,Conscientiousness,True,3,2026-06-13T07:45:44
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,31,I like order.,Conscientiousness,False,3,2026-06-13T07:45:45
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,32,I shirk my duties.,Conscientiousness,True,3,2026-06-13T07:45:46
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,33,I follow a schedule.,Conscientiousness,False,2,2026-06-13T07:45:47
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,34,I am exacting in my work.,Conscientiousness,False,3,2026-06-13T07:45:48
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,35,I waste my time.,Conscientiousness,True,1,2026-06-13T07:45:49
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,36,I find it difficult to get down to work.,Conscientiousness,True,1,2026-06-13T07:45:49
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,37,I get stressed out easily.,Neuroticism,False,2,2026-06-13T07:45:50
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,38,I am relaxed most of the time.,Neuroticism,True,2,2026-06-13T07:45:51
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,39,I worry about things.,Neuroticism,False,2,2026-06-13T07:45:52
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,40,I seldom feel blue.,Neuroticism,True,2,2026-06-13T07:45:53
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,41,I am easily disturbed.,Neuroticism,False,3,2026-06-13T07:45:54
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,42,I get upset easily.,Neuroticism,False,2,2026-06-13T07:45:55
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,43,I change my mood a lot.,Neuroticism,False,3,2026-06-13T07:45:56
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,44,I have frequent mood swings.,Neuroticism,False,1,2026-06-13T07:45:57
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,45,I get irritated easily.,Neuroticism,False,2,2026-06-13T07:45:58
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,46,I often feel blue.,Neuroticism,False,2,2026-06-13T07:45:59
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,47,I am emotionally stable.,Neuroticism,True,3,2026-06-13T07:46:00
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,48,I remain calm under pressure.,Neuroticism,True,2,2026-06-13T07:46:01
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,49,I have a rich vocabulary.,Openness,False,1,2026-06-13T07:46:02
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,50,I have difficulty understanding abstract ideas.,Openness,True,2,2026-06-13T07:46:03
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,51,I have a vivid imagination.,Openness,False,2,2026-06-13T07:46:04
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,52,I am not interested in abstract ideas.,Openness,True,2,2026-06-13T07:46:05
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,53,I have excellent ideas.,Openness,False,3,2026-06-13T07:46:06
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,54,I do not have a good imagination.,Openness,True,3,2026-06-13T07:46:07
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,55,I am quick to understand things.,Openness,False,1,2026-06-13T07:46:08
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,56,I use difficult words.,Openness,False,1,2026-06-13T07:46:09
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,57,I spend time reflecting on things.,Openness,False,2,2026-06-13T07:46:10
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,58,I am full of ideas.,Openness,False,3,2026-06-13T07:46:12
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,59,I avoid philosophical discussions.,Openness,True,1,2026-06-13T07:46:13
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,4,ipip_neo_60,60,I am not interested in theoretical discussions.,Openness,True,1,2026-06-13T07:46:14
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,1,I am the life of the party.,Extraversion,False,3,2026-06-13T07:46:15
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,2,I don't talk a lot.,Extraversion,True,1,2026-06-13T07:46:15
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,3,I feel comfortable around people.,Extraversion,False,3,2026-06-13T07:46:16
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,4,I keep in the background.,Extraversion,True,1,2026-06-13T07:46:16
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,5,I start conversations.,Extraversion,False,3,2026-06-13T07:46:17
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,6,I have little to say.,Extraversion,True,3,2026-06-13T07:46:17
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,7,I talk to a lot of different people at parties.,Extraversion,False,3,2026-06-13T07:46:18
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,8,I don't like to draw attention to myself.,Extraversion,True,3,2026-06-13T07:46:18
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,9,I don't mind being the center of attention.,Extraversion,False,3,2026-06-13T07:46:18
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,10,I am quiet around strangers.,Extraversion,True,3,2026-06-13T07:46:19
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,11,I am outgoing.,Extraversion,False,3,2026-06-13T07:46:19
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,12,I prefer to stay in the background.,Extraversion,True,1,2026-06-13T07:46:20
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,13,I sympathize with others' feelings.,Agreeableness,False,3,2026-06-13T07:46:20
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,14,I am not interested in other people's problems.,Agreeableness,True,2,2026-06-13T07:46:20
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,15,I have a soft heart.,Agreeableness,False,3,2026-06-13T07:46:21
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,16,I am not really interested in others.,Agreeableness,True,3,2026-06-13T07:46:21
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,17,I take time out for others.,Agreeableness,False,3,2026-06-13T07:46:22
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,18,I feel little concern for others.,Agreeableness,True,1,2026-06-13T07:46:23
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,19,I am interested in people.,Agreeableness,False,3,2026-06-13T07:46:23
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,20,I insult people.,Agreeableness,True,3,2026-06-13T07:46:24
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,21,I make people feel at ease.,Agreeableness,False,3,2026-06-13T07:46:25
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,22,I am not interested in others.,Agreeableness,True,3,2026-06-13T07:46:25
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,23,I am kind to almost everyone.,Agreeableness,False,3,2026-06-13T07:46:26
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,24,I am cold and aloof.,Agreeableness,True,3,2026-06-13T07:46:27
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,25,I am always prepared.,Conscientiousness,False,3,2026-06-13T07:46:28
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,26,I leave my belongings around.,Conscientiousness,True,3,2026-06-13T07:46:28
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,27,I pay attention to details.,Conscientiousness,False,3,2026-06-13T07:46:29
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,28,I make a mess of things.,Conscientiousness,True,3,2026-06-13T07:46:30
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,29,I get chores done right away.,Conscientiousness,False,2,2026-06-13T07:46:30
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,30,I often forget to put things back in their proper place.,Conscientiousness,True,3,2026-06-13T07:46:31
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,31,I like order.,Conscientiousness,False,3,2026-06-13T07:46:32
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,32,I shirk my duties.,Conscientiousness,True,3,2026-06-13T07:46:33
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,33,I follow a schedule.,Conscientiousness,False,3,2026-06-13T07:46:33
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,34,I am exacting in my work.,Conscientiousness,False,1,2026-06-13T07:46:34
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,35,I waste my time.,Conscientiousness,True,3,2026-06-13T07:46:35
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,36,I find it difficult to get down to work.,Conscientiousness,True,3,2026-06-13T07:46:35
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,37,I get stressed out easily.,Neuroticism,False,3,2026-06-13T07:46:36
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,38,I am relaxed most of the time.,Neuroticism,True,3,2026-06-13T07:46:37
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,39,I worry about things.,Neuroticism,False,3,2026-06-13T07:46:38
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,40,I seldom feel blue.,Neuroticism,True,3,2026-06-13T07:46:39
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,41,I am easily disturbed.,Neuroticism,False,2,2026-06-13T07:46:39
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,42,I get upset easily.,Neuroticism,False,3,2026-06-13T07:46:41
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,43,I change my mood a lot.,Neuroticism,False,2,2026-06-13T07:46:41
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,44,I have frequent mood swings.,Neuroticism,False,3,2026-06-13T07:46:42
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,45,I get irritated easily.,Neuroticism,False,3,2026-06-13T07:46:44
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,46,I often feel blue.,Neuroticism,False,3,2026-06-13T07:46:45
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,47,I am emotionally stable.,Neuroticism,True,3,2026-06-13T07:46:46
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,48,I remain calm under pressure.,Neuroticism,True,3,2026-06-13T07:46:47
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,49,I have a rich vocabulary.,Openness,False,2,2026-06-13T07:46:48
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,50,I have difficulty understanding abstract ideas.,Openness,True,2,2026-06-13T07:46:49
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,51,I have a vivid imagination.,Openness,False,3,2026-06-13T07:46:50
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,52,I am not interested in abstract ideas.,Openness,True,1,2026-06-13T07:46:51
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,53,I have excellent ideas.,Openness,False,1,2026-06-13T07:46:52
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,54,I do not have a good imagination.,Openness,True,3,2026-06-13T07:46:53
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,55,I am quick to understand things.,Openness,False,3,2026-06-13T07:46:55
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,56,I use difficult words.,Openness,False,3,2026-06-13T07:46:56
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,57,I spend time reflecting on things.,Openness,False,2,2026-06-13T07:46:57
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,58,I am full of ideas.,Openness,False,3,2026-06-13T07:46:58
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,59,I avoid philosophical discussions.,Openness,True,2,2026-06-13T07:46:59
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,5,ipip_neo_60,60,I am not interested in theoretical discussions.,Openness,True,3,2026-06-13T07:47:01
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,1,I am the life of the party.,Extraversion,False,1,2026-06-13T07:47:01
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,2,I don't talk a lot.,Extraversion,True,1,2026-06-13T07:47:01
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,3,I feel comfortable around people.,Extraversion,False,1,2026-06-13T07:47:02
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,4,I keep in the background.,Extraversion,True,1,2026-06-13T07:47:02
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,5,I start conversations.,Extraversion,False,1,2026-06-13T07:47:03
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,6,I have little to say.,Extraversion,True,1,2026-06-13T07:47:03
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,7,I talk to a lot of different people at parties.,Extraversion,False,1,2026-06-13T07:47:04
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,8,I don't like to draw attention to myself.,Extraversion,True,1,2026-06-13T07:47:04
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,9,I don't mind being the center of attention.,Extraversion,False,1,2026-06-13T07:47:05
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,10,I am quiet around strangers.,Extraversion,True,1,2026-06-13T07:47:06
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,11,I am outgoing.,Extraversion,False,1,2026-06-13T07:47:06
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,12,I prefer to stay in the background.,Extraversion,True,1,2026-06-13T07:47:07
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,13,I sympathize with others' feelings.,Agreeableness,False,1,2026-06-13T07:47:08
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,14,I am not interested in other people's problems.,Agreeableness,True,1,2026-06-13T07:47:08
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,15,I have a soft heart.,Agreeableness,False,1,2026-06-13T07:47:09
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,16,I am not really interested in others.,Agreeableness,True,1,2026-06-13T07:47:10
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,17,I take time out for others.,Agreeableness,False,1,2026-06-13T07:47:10
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,18,I feel little concern for others.,Agreeableness,True,1,2026-06-13T07:47:11
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,19,I am interested in people.,Agreeableness,False,1,2026-06-13T07:47:12
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,20,I insult people.,Agreeableness,True,1,2026-06-13T07:47:12
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,21,I make people feel at ease.,Agreeableness,False,1,2026-06-13T07:47:13
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,22,I am not interested in others.,Agreeableness,True,1,2026-06-13T07:47:14
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,23,I am kind to almost everyone.,Agreeableness,False,1,2026-06-13T07:47:15
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,24,I am cold and aloof.,Agreeableness,True,1,2026-06-13T07:47:15
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,25,I am always prepared.,Conscientiousness,False,1,2026-06-13T07:47:16
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,26,I leave my belongings around.,Conscientiousness,True,1,2026-06-13T07:47:17
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,27,I pay attention to details.,Conscientiousness,False,2,2026-06-13T07:47:17
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,28,I make a mess of things.,Conscientiousness,True,1,2026-06-13T07:47:18
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,29,I get chores done right away.,Conscientiousness,False,1,2026-06-13T07:47:19
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,30,I often forget to put things back in their proper place.,Conscientiousness,True,2,2026-06-13T07:47:20
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,31,I like order.,Conscientiousness,False,1,2026-06-13T07:47:21
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,32,I shirk my duties.,Conscientiousness,True,2,2026-06-13T07:47:22
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,33,I follow a schedule.,Conscientiousness,False,1,2026-06-13T07:47:23
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,34,I am exacting in my work.,Conscientiousness,False,1,2026-06-13T07:47:24
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,35,I waste my time.,Conscientiousness,True,1,2026-06-13T07:47:25
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,36,I find it difficult to get down to work.,Conscientiousness,True,2,2026-06-13T07:47:26
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,37,I get stressed out easily.,Neuroticism,False,2,2026-06-13T07:47:27
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,38,I am relaxed most of the time.,Neuroticism,True,2,2026-06-13T07:47:27
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,39,I worry about things.,Neuroticism,False,2,2026-06-13T07:47:28
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,40,I seldom feel blue.,Neuroticism,True,1,2026-06-13T07:47:29
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,41,I am easily disturbed.,Neuroticism,False,1,2026-06-13T07:47:30
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,42,I get upset easily.,Neuroticism,False,1,2026-06-13T07:47:31
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,43,I change my mood a lot.,Neuroticism,False,2,2026-06-13T07:47:32
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,44,I have frequent mood swings.,Neuroticism,False,2,2026-06-13T07:47:34
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,45,I get irritated easily.,Neuroticism,False,1,2026-06-13T07:47:34
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,46,I often feel blue.,Neuroticism,False,1,2026-06-13T07:47:36
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,47,I am emotionally stable.,Neuroticism,True,1,2026-06-13T07:47:37
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,48,I remain calm under pressure.,Neuroticism,True,2,2026-06-13T07:47:38
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,49,I have a rich vocabulary.,Openness,False,1,2026-06-13T07:47:39
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,50,I have difficulty understanding abstract ideas.,Openness,True,2,2026-06-13T07:47:40
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,51,I have a vivid imagination.,Openness,False,1,2026-06-13T07:47:41
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,52,I am not interested in abstract ideas.,Openness,True,1,2026-06-13T07:47:42
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,53,I have excellent ideas.,Openness,False,1,2026-06-13T07:47:43
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,54,I do not have a good imagination.,Openness,True,1,2026-06-13T07:47:44
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,55,I am quick to understand things.,Openness,False,2,2026-06-13T07:47:45
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,56,I use difficult words.,Openness,False,2,2026-06-13T07:47:47
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,57,I spend time reflecting on things.,Openness,False,2,2026-06-13T07:47:48
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,58,I am full of ideas.,Openness,False,1,2026-06-13T07:47:49
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,59,I avoid philosophical discussions.,Openness,True,1,2026-06-13T07:47:50
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,6,ipip_neo_60,60,I am not interested in theoretical discussions.,Openness,True,2,2026-06-13T07:47:52
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,1,I am the life of the party.,Extraversion,False,1,2026-06-13T07:47:52
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,2,I don't talk a lot.,Extraversion,True,1,2026-06-13T07:47:53
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,3,I feel comfortable around people.,Extraversion,False,1,2026-06-13T07:47:53
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,4,I keep in the background.,Extraversion,True,1,2026-06-13T07:47:54
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,5,I start conversations.,Extraversion,False,1,2026-06-13T07:47:54
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,6,I have little to say.,Extraversion,True,1,2026-06-13T07:47:55
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,7,I talk to a lot of different people at parties.,Extraversion,False,1,2026-06-13T07:47:55
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,8,I don't like to draw attention to myself.,Extraversion,True,1,2026-06-13T07:47:56
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,9,I don't mind being the center of attention.,Extraversion,False,1,2026-06-13T07:47:56
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,10,I am quiet around strangers.,Extraversion,True,1,2026-06-13T07:47:56
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,11,I am outgoing.,Extraversion,False,1,2026-06-13T07:47:57
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,12,I prefer to stay in the background.,Extraversion,True,1,2026-06-13T07:47:57
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,13,I sympathize with others' feelings.,Agreeableness,False,1,2026-06-13T07:47:58
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,14,I am not interested in other people's problems.,Agreeableness,True,1,2026-06-13T07:47:59
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,15,I have a soft heart.,Agreeableness,False,1,2026-06-13T07:47:59
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,16,I am not really interested in others.,Agreeableness,True,1,2026-06-13T07:48:00
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,17,I take time out for others.,Agreeableness,False,1,2026-06-13T07:48:01
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,18,I feel little concern for others.,Agreeableness,True,1,2026-06-13T07:48:02
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,19,I am interested in people.,Agreeableness,False,1,2026-06-13T07:48:02
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,20,I insult people.,Agreeableness,True,1,2026-06-13T07:48:03
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,21,I make people feel at ease.,Agreeableness,False,1,2026-06-13T07:48:04
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,22,I am not interested in others.,Agreeableness,True,1,2026-06-13T07:48:04
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,23,I am kind to almost everyone.,Agreeableness,False,1,2026-06-13T07:48:05
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,24,I am cold and aloof.,Agreeableness,True,1,2026-06-13T07:48:05
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,25,I am always prepared.,Conscientiousness,False,1,2026-06-13T07:48:06
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,26,I leave my belongings around.,Conscientiousness,True,1,2026-06-13T07:48:06
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,27,I pay attention to details.,Conscientiousness,False,1,2026-06-13T07:48:07
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,28,I make a mess of things.,Conscientiousness,True,1,2026-06-13T07:48:08
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,29,I get chores done right away.,Conscientiousness,False,1,2026-06-13T07:48:09
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,30,I often forget to put things back in their proper place.,Conscientiousness,True,1,2026-06-13T07:48:09
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,31,I like order.,Conscientiousness,False,1,2026-06-13T07:48:10
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,32,I shirk my duties.,Conscientiousness,True,1,2026-06-13T07:48:11
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,33,I follow a schedule.,Conscientiousness,False,2,2026-06-13T07:48:12
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,34,I am exacting in my work.,Conscientiousness,False,1,2026-06-13T07:48:13
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,35,I waste my time.,Conscientiousness,True,2,2026-06-13T07:48:14
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,36,I find it difficult to get down to work.,Conscientiousness,True,2,2026-06-13T07:48:15
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,37,I get stressed out easily.,Neuroticism,False,1,2026-06-13T07:48:15
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,38,I am relaxed most of the time.,Neuroticism,True,1,2026-06-13T07:48:16
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,39,I worry about things.,Neuroticism,False,1,2026-06-13T07:48:17
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,40,I seldom feel blue.,Neuroticism,True,1,2026-06-13T07:48:18
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,41,I am easily disturbed.,Neuroticism,False,1,2026-06-13T07:48:19
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,42,I get upset easily.,Neuroticism,False,1,2026-06-13T07:48:20
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,43,I change my mood a lot.,Neuroticism,False,1,2026-06-13T07:48:21
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,44,I have frequent mood swings.,Neuroticism,False,1,2026-06-13T07:48:22
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,45,I get irritated easily.,Neuroticism,False,1,2026-06-13T07:48:23
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,46,I often feel blue.,Neuroticism,False,1,2026-06-13T07:48:24
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,47,I am emotionally stable.,Neuroticism,True,1,2026-06-13T07:48:25
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,48,I remain calm under pressure.,Neuroticism,True,1,2026-06-13T07:48:26
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,49,I have a rich vocabulary.,Openness,False,1,2026-06-13T07:48:27
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,50,I have difficulty understanding abstract ideas.,Openness,True,1,2026-06-13T07:48:29
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,51,I have a vivid imagination.,Openness,False,1,2026-06-13T07:48:30
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,52,I am not interested in abstract ideas.,Openness,True,1,2026-06-13T07:48:31
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,53,I have excellent ideas.,Openness,False,2,2026-06-13T07:48:32
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,54,I do not have a good imagination.,Openness,True,2,2026-06-13T07:48:33
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,55,I am quick to understand things.,Openness,False,1,2026-06-13T07:48:34
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,56,I use difficult words.,Openness,False,1,2026-06-13T07:48:35
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,57,I spend time reflecting on things.,Openness,False,1,2026-06-13T07:48:37
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,58,I am full of ideas.,Openness,False,2,2026-06-13T07:48:38
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,59,I avoid philosophical discussions.,Openness,True,1,2026-06-13T07:48:39
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,7,ipip_neo_60,60,I am not interested in theoretical discussions.,Openness,True,1,2026-06-13T07:48:41
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,1,I am the life of the party.,Extraversion,False,3,2026-06-13T07:48:41
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,2,I don't talk a lot.,Extraversion,True,1,2026-06-13T07:48:42
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,3,I feel comfortable around people.,Extraversion,False,3,2026-06-13T07:48:42
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,4,I keep in the background.,Extraversion,True,3,2026-06-13T07:48:43
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,5,I start conversations.,Extraversion,False,3,2026-06-13T07:48:43
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,6,I have little to say.,Extraversion,True,3,2026-06-13T07:48:44
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,7,I talk to a lot of different people at parties.,Extraversion,False,3,2026-06-13T07:48:44
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,8,I don't like to draw attention to myself.,Extraversion,True,3,2026-06-13T07:48:45
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,9,I don't mind being the center of attention.,Extraversion,False,1,2026-06-13T07:48:46
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,10,I am quiet around strangers.,Extraversion,True,1,2026-06-13T07:48:46
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,11,I am outgoing.,Extraversion,False,3,2026-06-13T07:48:46
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,12,I prefer to stay in the background.,Extraversion,True,3,2026-06-13T07:48:47
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,13,I sympathize with others' feelings.,Agreeableness,False,3,2026-06-13T07:48:48
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,14,I am not interested in other people's problems.,Agreeableness,True,1,2026-06-13T07:48:48
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,15,I have a soft heart.,Agreeableness,False,1,2026-06-13T07:48:49
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,16,I am not really interested in others.,Agreeableness,True,3,2026-06-13T07:48:50
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,17,I take time out for others.,Agreeableness,False,3,2026-06-13T07:48:50
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,18,I feel little concern for others.,Agreeableness,True,3,2026-06-13T07:48:51
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,19,I am interested in people.,Agreeableness,False,3,2026-06-13T07:48:51
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,20,I insult people.,Agreeableness,True,1,2026-06-13T07:48:52
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,21,I make people feel at ease.,Agreeableness,False,3,2026-06-13T07:48:53
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,22,I am not interested in others.,Agreeableness,True,3,2026-06-13T07:48:54
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,23,I am kind to almost everyone.,Agreeableness,False,3,2026-06-13T07:48:54
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,24,I am cold and aloof.,Agreeableness,True,3,2026-06-13T07:48:55
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,25,I am always prepared.,Conscientiousness,False,3,2026-06-13T07:48:56
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,26,I leave my belongings around.,Conscientiousness,True,2,2026-06-13T07:48:57
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,27,I pay attention to details.,Conscientiousness,False,3,2026-06-13T07:48:58
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,28,I make a mess of things.,Conscientiousness,True,3,2026-06-13T07:48:58
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,29,I get chores done right away.,Conscientiousness,False,3,2026-06-13T07:48:59
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,30,I often forget to put things back in their proper place.,Conscientiousness,True,3,2026-06-13T07:49:00
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,31,I like order.,Conscientiousness,False,2,2026-06-13T07:49:01
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,32,I shirk my duties.,Conscientiousness,True,3,2026-06-13T07:49:01
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,33,I follow a schedule.,Conscientiousness,False,3,2026-06-13T07:49:02
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,34,I am exacting in my work.,Conscientiousness,False,3,2026-06-13T07:49:02
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,35,I waste my time.,Conscientiousness,True,2,2026-06-13T07:49:03
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,36,I find it difficult to get down to work.,Conscientiousness,True,3,2026-06-13T07:49:04
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,37,I get stressed out easily.,Neuroticism,False,3,2026-06-13T07:49:05
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,38,I am relaxed most of the time.,Neuroticism,True,3,2026-06-13T07:49:06
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,39,I worry about things.,Neuroticism,False,3,2026-06-13T07:49:07
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,40,I seldom feel blue.,Neuroticism,True,2,2026-06-13T07:49:07
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,41,I am easily disturbed.,Neuroticism,False,3,2026-06-13T07:49:08
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,42,I get upset easily.,Neuroticism,False,1,2026-06-13T07:49:10
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,43,I change my mood a lot.,Neuroticism,False,1,2026-06-13T07:49:11
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,44,I have frequent mood swings.,Neuroticism,False,3,2026-06-13T07:49:12
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,45,I get irritated easily.,Neuroticism,False,3,2026-06-13T07:49:13
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,46,I often feel blue.,Neuroticism,False,3,2026-06-13T07:49:14
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,47,I am emotionally stable.,Neuroticism,True,1,2026-06-13T07:49:15
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,48,I remain calm under pressure.,Neuroticism,True,1,2026-06-13T07:49:16
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,49,I have a rich vocabulary.,Openness,False,3,2026-06-13T07:49:17
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,50,I have difficulty understanding abstract ideas.,Openness,True,3,2026-06-13T07:49:18
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,51,I have a vivid imagination.,Openness,False,3,2026-06-13T07:49:19
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,52,I am not interested in abstract ideas.,Openness,True,1,2026-06-13T07:49:20
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,53,I have excellent ideas.,Openness,False,2,2026-06-13T07:49:21
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,54,I do not have a good imagination.,Openness,True,3,2026-06-13T07:49:22
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,55,I am quick to understand things.,Openness,False,3,2026-06-13T07:49:23
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,56,I use difficult words.,Openness,False,1,2026-06-13T07:49:24
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,57,I spend time reflecting on things.,Openness,False,1,2026-06-13T07:49:26
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,58,I am full of ideas.,Openness,False,2,2026-06-13T07:49:27
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,59,I avoid philosophical discussions.,Openness,True,2,2026-06-13T07:49:28
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,8,ipip_neo_60,60,I am not interested in theoretical discussions.,Openness,True,1,2026-06-13T07:49:29
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,1,I am the life of the party.,Extraversion,False,1,2026-06-13T07:49:29
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,2,I don't talk a lot.,Extraversion,True,1,2026-06-13T07:49:30
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,3,I feel comfortable around people.,Extraversion,False,1,2026-06-13T07:49:30
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,4,I keep in the background.,Extraversion,True,1,2026-06-13T07:49:31
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,5,I start conversations.,Extraversion,False,1,2026-06-13T07:49:31
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,6,I have little to say.,Extraversion,True,1,2026-06-13T07:49:32
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,7,I talk to a lot of different people at parties.,Extraversion,False,1,2026-06-13T07:49:32
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,8,I don't like to draw attention to myself.,Extraversion,True,1,2026-06-13T07:49:33
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,9,I don't mind being the center of attention.,Extraversion,False,1,2026-06-13T07:49:33
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,10,I am quiet around strangers.,Extraversion,True,1,2026-06-13T07:49:34
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,11,I am outgoing.,Extraversion,False,1,2026-06-13T07:49:34
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,12,I prefer to stay in the background.,Extraversion,True,1,2026-06-13T07:49:34
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,13,I sympathize with others' feelings.,Agreeableness,False,1,2026-06-13T07:49:35
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,14,I am not interested in other people's problems.,Agreeableness,True,1,2026-06-13T07:49:36
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,15,I have a soft heart.,Agreeableness,False,1,2026-06-13T07:49:36
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,16,I am not really interested in others.,Agreeableness,True,1,2026-06-13T07:49:37
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,17,I take time out for others.,Agreeableness,False,1,2026-06-13T07:49:38
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,18,I feel little concern for others.,Agreeableness,True,1,2026-06-13T07:49:39
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,19,I am interested in people.,Agreeableness,False,1,2026-06-13T07:49:39
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,20,I insult people.,Agreeableness,True,1,2026-06-13T07:49:39
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,21,I make people feel at ease.,Agreeableness,False,1,2026-06-13T07:49:40
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,22,I am not interested in others.,Agreeableness,True,1,2026-06-13T07:49:41
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,23,I am kind to almost everyone.,Agreeableness,False,1,2026-06-13T07:49:41
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,24,I am cold and aloof.,Agreeableness,True,1,2026-06-13T07:49:42
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,25,I am always prepared.,Conscientiousness,False,2,2026-06-13T07:49:43
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,26,I leave my belongings around.,Conscientiousness,True,1,2026-06-13T07:49:43
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,27,I pay attention to details.,Conscientiousness,False,2,2026-06-13T07:49:44
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,28,I make a mess of things.,Conscientiousness,True,1,2026-06-13T07:49:45
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,29,I get chores done right away.,Conscientiousness,False,1,2026-06-13T07:49:46
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,30,I often forget to put things back in their proper place.,Conscientiousness,True,1,2026-06-13T07:49:47
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,31,I like order.,Conscientiousness,False,2,2026-06-13T07:49:48
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,32,I shirk my duties.,Conscientiousness,True,2,2026-06-13T07:49:49
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,33,I follow a schedule.,Conscientiousness,False,3,2026-06-13T07:49:49
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,34,I am exacting in my work.,Conscientiousness,False,2,2026-06-13T07:49:50
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,35,I waste my time.,Conscientiousness,True,1,2026-06-13T07:49:51
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,36,I find it difficult to get down to work.,Conscientiousness,True,1,2026-06-13T07:49:52
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,37,I get stressed out easily.,Neuroticism,False,1,2026-06-13T07:49:53
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,38,I am relaxed most of the time.,Neuroticism,True,2,2026-06-13T07:49:54
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,39,I worry about things.,Neuroticism,False,1,2026-06-13T07:49:55
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,40,I seldom feel blue.,Neuroticism,True,2,2026-06-13T07:49:56
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,41,I am easily disturbed.,Neuroticism,False,1,2026-06-13T07:49:57
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,42,I get upset easily.,Neuroticism,False,3,2026-06-13T07:49:58
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,43,I change my mood a lot.,Neuroticism,False,2,2026-06-13T07:49:59
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,44,I have frequent mood swings.,Neuroticism,False,1,2026-06-13T07:50:00
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,45,I get irritated easily.,Neuroticism,False,2,2026-06-13T07:50:01
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,46,I often feel blue.,Neuroticism,False,1,2026-06-13T07:50:02
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,47,I am emotionally stable.,Neuroticism,True,2,2026-06-13T07:50:03
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,48,I remain calm under pressure.,Neuroticism,True,3,2026-06-13T07:50:04
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,49,I have a rich vocabulary.,Openness,False,2,2026-06-13T07:50:06
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,50,I have difficulty understanding abstract ideas.,Openness,True,1,2026-06-13T07:50:06
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,51,I have a vivid imagination.,Openness,False,3,2026-06-13T07:50:07
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,52,I am not interested in abstract ideas.,Openness,True,2,2026-06-13T07:50:08
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,53,I have excellent ideas.,Openness,False,2,2026-06-13T07:50:09
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,54,I do not have a good imagination.,Openness,True,3,2026-06-13T07:50:10
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,55,I am quick to understand things.,Openness,False,2,2026-06-13T07:50:12
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,56,I use difficult words.,Openness,False,1,2026-06-13T07:50:13
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,57,I spend time reflecting on things.,Openness,False,2,2026-06-13T07:50:14
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,58,I am full of ideas.,Openness,False,2,2026-06-13T07:50:15
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,59,I avoid philosophical discussions.,Openness,True,1,2026-06-13T07:50:17
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,9,ipip_neo_60,60,I am not interested in theoretical discussions.,Openness,True,1,2026-06-13T07:50:18
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,1,I am the life of the party.,Extraversion,False,1,2026-06-13T07:50:18
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,2,I don't talk a lot.,Extraversion,True,1,2026-06-13T07:50:19
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,3,I feel comfortable around people.,Extraversion,False,3,2026-06-13T07:50:19
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,4,I keep in the background.,Extraversion,True,3,2026-06-13T07:50:20
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,5,I start conversations.,Extraversion,False,1,2026-06-13T07:50:20
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,6,I have little to say.,Extraversion,True,1,2026-06-13T07:50:21
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,7,I talk to a lot of different people at parties.,Extraversion,False,1,2026-06-13T07:50:21
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,8,I don't like to draw attention to myself.,Extraversion,True,1,2026-06-13T07:50:22
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,9,I don't mind being the center of attention.,Extraversion,False,3,2026-06-13T07:50:22
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,10,I am quiet around strangers.,Extraversion,True,1,2026-06-13T07:50:22
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,11,I am outgoing.,Extraversion,False,1,2026-06-13T07:50:23
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,12,I prefer to stay in the background.,Extraversion,True,1,2026-06-13T07:50:24
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,13,I sympathize with others' feelings.,Agreeableness,False,1,2026-06-13T07:50:24
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,14,I am not interested in other people's problems.,Agreeableness,True,3,2026-06-13T07:50:25
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,15,I have a soft heart.,Agreeableness,False,3,2026-06-13T07:50:25
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,16,I am not really interested in others.,Agreeableness,True,1,2026-06-13T07:50:25
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,17,I take time out for others.,Agreeableness,False,1,2026-06-13T07:50:26
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,18,I feel little concern for others.,Agreeableness,True,1,2026-06-13T07:50:27
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,19,I am interested in people.,Agreeableness,False,3,2026-06-13T07:50:27
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,20,I insult people.,Agreeableness,True,1,2026-06-13T07:50:28
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,21,I make people feel at ease.,Agreeableness,False,1,2026-06-13T07:50:29
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,22,I am not interested in others.,Agreeableness,True,1,2026-06-13T07:50:29
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,23,I am kind to almost everyone.,Agreeableness,False,1,2026-06-13T07:50:30
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,24,I am cold and aloof.,Agreeableness,True,1,2026-06-13T07:50:31
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,25,I am always prepared.,Conscientiousness,False,3,2026-06-13T07:50:32
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,26,I leave my belongings around.,Conscientiousness,True,1,2026-06-13T07:50:33
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,27,I pay attention to details.,Conscientiousness,False,3,2026-06-13T07:50:33
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,28,I make a mess of things.,Conscientiousness,True,3,2026-06-13T07:50:34
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,29,I get chores done right away.,Conscientiousness,False,1,2026-06-13T07:50:35
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,30,I often forget to put things back in their proper place.,Conscientiousness,True,1,2026-06-13T07:50:36
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,31,I like order.,Conscientiousness,False,3,2026-06-13T07:50:36
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,32,I shirk my duties.,Conscientiousness,True,3,2026-06-13T07:50:37
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,33,I follow a schedule.,Conscientiousness,False,1,2026-06-13T07:50:38
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,34,I am exacting in my work.,Conscientiousness,False,1,2026-06-13T07:50:39
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,35,I waste my time.,Conscientiousness,True,3,2026-06-13T07:50:39
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,36,I find it difficult to get down to work.,Conscientiousness,True,3,2026-06-13T07:50:40
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,37,I get stressed out easily.,Neuroticism,False,1,2026-06-13T07:50:41
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,38,I am relaxed most of the time.,Neuroticism,True,1,2026-06-13T07:50:43
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,39,I worry about things.,Neuroticism,False,1,2026-06-13T07:50:43
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,40,I seldom feel blue.,Neuroticism,True,3,2026-06-13T07:50:44
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,41,I am easily disturbed.,Neuroticism,False,3,2026-06-13T07:50:45
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,42,I get upset easily.,Neuroticism,False,3,2026-06-13T07:50:46
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,43,I change my mood a lot.,Neuroticism,False,3,2026-06-13T07:50:47
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,44,I have frequent mood swings.,Neuroticism,False,3,2026-06-13T07:50:48
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,45,I get irritated easily.,Neuroticism,False,1,2026-06-13T07:50:49
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,46,I often feel blue.,Neuroticism,False,2,2026-06-13T07:50:50
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,47,I am emotionally stable.,Neuroticism,True,3,2026-06-13T07:50:51
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,48,I remain calm under pressure.,Neuroticism,True,3,2026-06-13T07:50:52
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,49,I have a rich vocabulary.,Openness,False,3,2026-06-13T07:50:53
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,50,I have difficulty understanding abstract ideas.,Openness,True,3,2026-06-13T07:50:54
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,51,I have a vivid imagination.,Openness,False,1,2026-06-13T07:50:55
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,52,I am not interested in abstract ideas.,Openness,True,3,2026-06-13T07:50:56
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,53,I have excellent ideas.,Openness,False,3,2026-06-13T07:50:57
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,54,I do not have a good imagination.,Openness,True,1,2026-06-13T07:50:58
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,55,I am quick to understand things.,Openness,False,2,2026-06-13T07:50:59
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,56,I use difficult words.,Openness,False,2,2026-06-13T07:51:00
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,57,I spend time reflecting on things.,Openness,False,1,2026-06-13T07:51:01
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,58,I am full of ideas.,Openness,False,1,2026-06-13T07:51:03
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,59,I avoid philosophical discussions.,Openness,True,1,2026-06-13T07:51:04
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,10,ipip_neo_60,60,I am not interested in theoretical discussions.,Openness,True,3,2026-06-13T07:51:05
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,1,I am the life of the party.,Extraversion,False,1,2026-06-13T07:51:06
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,2,I don't talk a lot.,Extraversion,True,2,2026-06-13T07:51:06
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,3,I feel comfortable around people.,Extraversion,False,1,2026-06-13T07:51:07
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,4,I keep in the background.,Extraversion,True,1,2026-06-13T07:51:07
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,5,I start conversations.,Extraversion,False,1,2026-06-13T07:51:08
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,6,I have little to say.,Extraversion,True,1,2026-06-13T07:51:08
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,7,I talk to a lot of different people at parties.,Extraversion,False,1,2026-06-13T07:51:09
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,8,I don't like to draw attention to myself.,Extraversion,True,1,2026-06-13T07:51:09
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,9,I don't mind being the center of attention.,Extraversion,False,1,2026-06-13T07:51:10
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,10,I am quiet around strangers.,Extraversion,True,2,2026-06-13T07:51:11
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,11,I am outgoing.,Extraversion,False,1,2026-06-13T07:51:11
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,12,I prefer to stay in the background.,Extraversion,True,2,2026-06-13T07:51:12
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,13,I sympathize with others' feelings.,Agreeableness,False,1,2026-06-13T07:51:13
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,14,I am not interested in other people's problems.,Agreeableness,True,2,2026-06-13T07:51:13
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,15,I have a soft heart.,Agreeableness,False,1,2026-06-13T07:51:13
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,16,I am not really interested in others.,Agreeableness,True,1,2026-06-13T07:51:14
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,17,I take time out for others.,Agreeableness,False,2,2026-06-13T07:51:15
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,18,I feel little concern for others.,Agreeableness,True,1,2026-06-13T07:51:15
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,19,I am interested in people.,Agreeableness,False,1,2026-06-13T07:51:16
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,20,I insult people.,Agreeableness,True,1,2026-06-13T07:51:17
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,21,I make people feel at ease.,Agreeableness,False,1,2026-06-13T07:51:17
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,22,I am not interested in others.,Agreeableness,True,1,2026-06-13T07:51:18
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,23,I am kind to almost everyone.,Agreeableness,False,2,2026-06-13T07:51:19
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,24,I am cold and aloof.,Agreeableness,True,1,2026-06-13T07:51:19
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,25,I am always prepared.,Conscientiousness,False,1,2026-06-13T07:51:20
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,26,I leave my belongings around.,Conscientiousness,True,2,2026-06-13T07:51:21
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,27,I pay attention to details.,Conscientiousness,False,1,2026-06-13T07:51:22
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,28,I make a mess of things.,Conscientiousness,True,1,2026-06-13T07:51:23
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,29,I get chores done right away.,Conscientiousness,False,2,2026-06-13T07:51:23
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,30,I often forget to put things back in their proper place.,Conscientiousness,True,2,2026-06-13T07:51:24
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,31,I like order.,Conscientiousness,False,1,2026-06-13T07:51:25
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,32,I shirk my duties.,Conscientiousness,True,1,2026-06-13T07:51:26
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,33,I follow a schedule.,Conscientiousness,False,1,2026-06-13T07:51:27
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,34,I am exacting in my work.,Conscientiousness,False,2,2026-06-13T07:51:28
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,35,I waste my time.,Conscientiousness,True,2,2026-06-13T07:51:29
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,36,I find it difficult to get down to work.,Conscientiousness,True,1,2026-06-13T07:51:30
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,37,I get stressed out easily.,Neuroticism,False,1,2026-06-13T07:51:31
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,38,I am relaxed most of the time.,Neuroticism,True,2,2026-06-13T07:51:31
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,39,I worry about things.,Neuroticism,False,2,2026-06-13T07:51:32
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,40,I seldom feel blue.,Neuroticism,True,1,2026-06-13T07:51:33
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,41,I am easily disturbed.,Neuroticism,False,1,2026-06-13T07:51:34
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,42,I get upset easily.,Neuroticism,False,1,2026-06-13T07:51:35
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,43,I change my mood a lot.,Neuroticism,False,1,2026-06-13T07:51:36
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,44,I have frequent mood swings.,Neuroticism,False,1,2026-06-13T07:51:37
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,45,I get irritated easily.,Neuroticism,False,2,2026-06-13T07:51:38
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,46,I often feel blue.,Neuroticism,False,1,2026-06-13T07:51:39
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,47,I am emotionally stable.,Neuroticism,True,2,2026-06-13T07:51:40
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,48,I remain calm under pressure.,Neuroticism,True,1,2026-06-13T07:51:41
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,49,I have a rich vocabulary.,Openness,False,1,2026-06-13T07:51:43
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,50,I have difficulty understanding abstract ideas.,Openness,True,1,2026-06-13T07:51:44
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,51,I have a vivid imagination.,Openness,False,1,2026-06-13T07:51:45
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,52,I am not interested in abstract ideas.,Openness,True,1,2026-06-13T07:51:46
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,53,I have excellent ideas.,Openness,False,1,2026-06-13T07:51:47
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,54,I do not have a good imagination.,Openness,True,1,2026-06-13T07:51:48
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,55,I am quick to understand things.,Openness,False,1,2026-06-13T07:51:49
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,56,I use difficult words.,Openness,False,1,2026-06-13T07:51:50
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,57,I spend time reflecting on things.,Openness,False,2,2026-06-13T07:51:52
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,58,I am full of ideas.,Openness,False,2,2026-06-13T07:51:53
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,59,I avoid philosophical discussions.,Openness,True,1,2026-06-13T07:51:54
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,11,ipip_neo_60,60,I am not interested in theoretical discussions.,Openness,True,1,2026-06-13T07:51:56
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,1,I am the life of the party.,Extraversion,False,5,2026-06-13T07:51:56
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,2,I don't talk a lot.,Extraversion,True,4,2026-06-13T07:51:56
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,3,I feel comfortable around people.,Extraversion,False,5,2026-06-13T07:51:57
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,4,I keep in the background.,Extraversion,True,4,2026-06-13T07:51:57
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,5,I start conversations.,Extraversion,False,5,2026-06-13T07:51:58
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,6,I have little to say.,Extraversion,True,5,2026-06-13T07:51:58
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,7,I talk to a lot of different people at parties.,Extraversion,False,5,2026-06-13T07:51:59
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,8,I don't like to draw attention to myself.,Extraversion,True,4,2026-06-13T07:51:59
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,9,I don't mind being the center of attention.,Extraversion,False,5,2026-06-13T07:52:00
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,10,I am quiet around strangers.,Extraversion,True,5,2026-06-13T07:52:01
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,11,I am outgoing.,Extraversion,False,5,2026-06-13T07:52:01
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,12,I prefer to stay in the background.,Extraversion,True,4,2026-06-13T07:52:02
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,13,I sympathize with others' feelings.,Agreeableness,False,4,2026-06-13T07:52:02
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,14,I am not interested in other people's problems.,Agreeableness,True,4,2026-06-13T07:52:03
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,15,I have a soft heart.,Agreeableness,False,4,2026-06-13T07:52:04
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,16,I am not really interested in others.,Agreeableness,True,4,2026-06-13T07:52:04
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,17,I take time out for others.,Agreeableness,False,4,2026-06-13T07:52:05
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,18,I feel little concern for others.,Agreeableness,True,5,2026-06-13T07:52:05
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,19,I am interested in people.,Agreeableness,False,4,2026-06-13T07:52:06
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,20,I insult people.,Agreeableness,True,4,2026-06-13T07:52:06
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,21,I make people feel at ease.,Agreeableness,False,4,2026-06-13T07:52:07
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,22,I am not interested in others.,Agreeableness,True,5,2026-06-13T07:52:07
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,23,I am kind to almost everyone.,Agreeableness,False,4,2026-06-13T07:52:08
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,24,I am cold and aloof.,Agreeableness,True,4,2026-06-13T07:52:09
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,25,I am always prepared.,Conscientiousness,False,4,2026-06-13T07:52:09
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,26,I leave my belongings around.,Conscientiousness,True,4,2026-06-13T07:52:10
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,27,I pay attention to details.,Conscientiousness,False,4,2026-06-13T07:52:11
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,28,I make a mess of things.,Conscientiousness,True,4,2026-06-13T07:52:12
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,29,I get chores done right away.,Conscientiousness,False,5,2026-06-13T07:52:13
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,30,I often forget to put things back in their proper place.,Conscientiousness,True,5,2026-06-13T07:52:13
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,31,I like order.,Conscientiousness,False,5,2026-06-13T07:52:14
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,32,I shirk my duties.,Conscientiousness,True,4,2026-06-13T07:52:15
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,33,I follow a schedule.,Conscientiousness,False,5,2026-06-13T07:52:16
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,34,I am exacting in my work.,Conscientiousness,False,4,2026-06-13T07:52:16
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,35,I waste my time.,Conscientiousness,True,4,2026-06-13T07:52:17
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,36,I find it difficult to get down to work.,Conscientiousness,True,4,2026-06-13T07:52:18
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,37,I get stressed out easily.,Neuroticism,False,4,2026-06-13T07:52:19
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,38,I am relaxed most of the time.,Neuroticism,True,4,2026-06-13T07:52:21
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,39,I worry about things.,Neuroticism,False,4,2026-06-13T07:52:22
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,40,I seldom feel blue.,Neuroticism,True,4,2026-06-13T07:52:23
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,41,I am easily disturbed.,Neuroticism,False,4,2026-06-13T07:52:23
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,42,I get upset easily.,Neuroticism,False,4,2026-06-13T07:52:24
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,43,I change my mood a lot.,Neuroticism,False,4,2026-06-13T07:52:26
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,44,I have frequent mood swings.,Neuroticism,False,5,2026-06-13T07:52:26
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,45,I get irritated easily.,Neuroticism,False,4,2026-06-13T07:52:28
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,46,I often feel blue.,Neuroticism,False,5,2026-06-13T07:52:28
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,47,I am emotionally stable.,Neuroticism,True,4,2026-06-13T07:52:29
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,48,I remain calm under pressure.,Neuroticism,True,5,2026-06-13T07:52:30
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,49,I have a rich vocabulary.,Openness,False,1,2026-06-13T07:52:31
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,50,I have difficulty understanding abstract ideas.,Openness,True,4,2026-06-13T07:52:32
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,51,I have a vivid imagination.,Openness,False,4,2026-06-13T07:52:33
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,52,I am not interested in abstract ideas.,Openness,True,4,2026-06-13T07:52:35
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,53,I have excellent ideas.,Openness,False,4,2026-06-13T07:52:36
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,54,I do not have a good imagination.,Openness,True,5,2026-06-13T07:52:37
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,55,I am quick to understand things.,Openness,False,1,2026-06-13T07:52:38
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,56,I use difficult words.,Openness,False,4,2026-06-13T07:52:39
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,57,I spend time reflecting on things.,Openness,False,1,2026-06-13T07:52:41
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,58,I am full of ideas.,Openness,False,1,2026-06-13T07:52:42
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,59,I avoid philosophical discussions.,Openness,True,1,2026-06-13T07:52:44
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,12,ipip_neo_60,60,I am not interested in theoretical discussions.,Openness,True,4,2026-06-13T07:52:45
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,1,I am the life of the party.,Extraversion,False,1,2026-06-13T07:52:46
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,2,I don't talk a lot.,Extraversion,True,1,2026-06-13T07:52:46
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,3,I feel comfortable around people.,Extraversion,False,1,2026-06-13T07:52:47
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,4,I keep in the background.,Extraversion,True,1,2026-06-13T07:52:47
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,5,I start conversations.,Extraversion,False,1,2026-06-13T07:52:48
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,6,I have little to say.,Extraversion,True,1,2026-06-13T07:52:49
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,7,I talk to a lot of different people at parties.,Extraversion,False,1,2026-06-13T07:52:49
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,8,I don't like to draw attention to myself.,Extraversion,True,1,2026-06-13T07:52:49
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,9,I don't mind being the center of attention.,Extraversion,False,1,2026-06-13T07:52:50
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,10,I am quiet around strangers.,Extraversion,True,1,2026-06-13T07:52:50
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,11,I am outgoing.,Extraversion,False,1,2026-06-13T07:52:51
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,12,I prefer to stay in the background.,Extraversion,True,1,2026-06-13T07:52:52
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,13,I sympathize with others' feelings.,Agreeableness,False,1,2026-06-13T07:52:52
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,14,I am not interested in other people's problems.,Agreeableness,True,1,2026-06-13T07:52:53
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,15,I have a soft heart.,Agreeableness,False,3,2026-06-13T07:52:54
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,16,I am not really interested in others.,Agreeableness,True,1,2026-06-13T07:52:54
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,17,I take time out for others.,Agreeableness,False,1,2026-06-13T07:52:55
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,18,I feel little concern for others.,Agreeableness,True,1,2026-06-13T07:52:55
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,19,I am interested in people.,Agreeableness,False,1,2026-06-13T07:52:56
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,20,I insult people.,Agreeableness,True,1,2026-06-13T07:52:57
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,21,I make people feel at ease.,Agreeableness,False,1,2026-06-13T07:52:57
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,22,I am not interested in others.,Agreeableness,True,1,2026-06-13T07:52:58
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,23,I am kind to almost everyone.,Agreeableness,False,1,2026-06-13T07:52:58
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,24,I am cold and aloof.,Agreeableness,True,3,2026-06-13T07:52:59
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,25,I am always prepared.,Conscientiousness,False,1,2026-06-13T07:53:00
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,26,I leave my belongings around.,Conscientiousness,True,1,2026-06-13T07:53:01
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,27,I pay attention to details.,Conscientiousness,False,1,2026-06-13T07:53:02
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,28,I make a mess of things.,Conscientiousness,True,1,2026-06-13T07:53:02
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,29,I get chores done right away.,Conscientiousness,False,2,2026-06-13T07:53:03
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,30,I often forget to put things back in their proper place.,Conscientiousness,True,1,2026-06-13T07:53:04
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,31,I like order.,Conscientiousness,False,3,2026-06-13T07:53:04
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,32,I shirk my duties.,Conscientiousness,True,2,2026-06-13T07:53:05
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,33,I follow a schedule.,Conscientiousness,False,1,2026-06-13T07:53:06
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,34,I am exacting in my work.,Conscientiousness,False,3,2026-06-13T07:53:06
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,35,I waste my time.,Conscientiousness,True,3,2026-06-13T07:53:07
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,36,I find it difficult to get down to work.,Conscientiousness,True,2,2026-06-13T07:53:08
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,37,I get stressed out easily.,Neuroticism,False,3,2026-06-13T07:53:09
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,38,I am relaxed most of the time.,Neuroticism,True,2,2026-06-13T07:53:10
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,39,I worry about things.,Neuroticism,False,1,2026-06-13T07:53:11
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,40,I seldom feel blue.,Neuroticism,True,1,2026-06-13T07:53:12
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,41,I am easily disturbed.,Neuroticism,False,3,2026-06-13T07:53:13
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,42,I get upset easily.,Neuroticism,False,3,2026-06-13T07:53:14
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,43,I change my mood a lot.,Neuroticism,False,1,2026-06-13T07:53:15
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,44,I have frequent mood swings.,Neuroticism,False,2,2026-06-13T07:53:16
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,45,I get irritated easily.,Neuroticism,False,1,2026-06-13T07:53:17
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,46,I often feel blue.,Neuroticism,False,3,2026-06-13T07:53:18
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,47,I am emotionally stable.,Neuroticism,True,3,2026-06-13T07:53:19
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,48,I remain calm under pressure.,Neuroticism,True,3,2026-06-13T07:53:20
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,49,I have a rich vocabulary.,Openness,False,3,2026-06-13T07:53:21
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,50,I have difficulty understanding abstract ideas.,Openness,True,2,2026-06-13T07:53:22
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,51,I have a vivid imagination.,Openness,False,1,2026-06-13T07:53:23
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,52,I am not interested in abstract ideas.,Openness,True,2,2026-06-13T07:53:24
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,53,I have excellent ideas.,Openness,False,2,2026-06-13T07:53:25
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,54,I do not have a good imagination.,Openness,True,2,2026-06-13T07:53:26
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,55,I am quick to understand things.,Openness,False,1,2026-06-13T07:53:27
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,56,I use difficult words.,Openness,False,1,2026-06-13T07:53:28
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,57,I spend time reflecting on things.,Openness,False,3,2026-06-13T07:53:30
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,58,I am full of ideas.,Openness,False,3,2026-06-13T07:53:31
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,59,I avoid philosophical discussions.,Openness,True,3,2026-06-13T07:53:32
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,13,ipip_neo_60,60,I am not interested in theoretical discussions.,Openness,True,3,2026-06-13T07:53:33
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,1,I am the life of the party.,Extraversion,False,1,2026-06-13T07:53:34
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,2,I don't talk a lot.,Extraversion,True,1,2026-06-13T07:53:34
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,3,I feel comfortable around people.,Extraversion,False,2,2026-06-13T07:53:35
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,4,I keep in the background.,Extraversion,True,2,2026-06-13T07:53:35
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,5,I start conversations.,Extraversion,False,2,2026-06-13T07:53:36
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,6,I have little to say.,Extraversion,True,1,2026-06-13T07:53:36
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,7,I talk to a lot of different people at parties.,Extraversion,False,2,2026-06-13T07:53:36
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,8,I don't like to draw attention to myself.,Extraversion,True,1,2026-06-13T07:53:37
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,9,I don't mind being the center of attention.,Extraversion,False,1,2026-06-13T07:53:37
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,10,I am quiet around strangers.,Extraversion,True,2,2026-06-13T07:53:38
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,11,I am outgoing.,Extraversion,False,1,2026-06-13T07:53:39
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,12,I prefer to stay in the background.,Extraversion,True,2,2026-06-13T07:53:39
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,13,I sympathize with others' feelings.,Agreeableness,False,1,2026-06-13T07:53:40
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,14,I am not interested in other people's problems.,Agreeableness,True,3,2026-06-13T07:53:40
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,15,I have a soft heart.,Agreeableness,False,2,2026-06-13T07:53:41
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,16,I am not really interested in others.,Agreeableness,True,1,2026-06-13T07:53:41
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,17,I take time out for others.,Agreeableness,False,2,2026-06-13T07:53:41
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,18,I feel little concern for others.,Agreeableness,True,2,2026-06-13T07:53:42
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,19,I am interested in people.,Agreeableness,False,2,2026-06-13T07:53:43
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,20,I insult people.,Agreeableness,True,1,2026-06-13T07:53:43
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,21,I make people feel at ease.,Agreeableness,False,1,2026-06-13T07:53:44
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,22,I am not interested in others.,Agreeableness,True,3,2026-06-13T07:53:44
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,23,I am kind to almost everyone.,Agreeableness,False,2,2026-06-13T07:53:45
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,24,I am cold and aloof.,Agreeableness,True,1,2026-06-13T07:53:46
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,25,I am always prepared.,Conscientiousness,False,2,2026-06-13T07:53:46
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,26,I leave my belongings around.,Conscientiousness,True,1,2026-06-13T07:53:47
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,27,I pay attention to details.,Conscientiousness,False,2,2026-06-13T07:53:48
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,28,I make a mess of things.,Conscientiousness,True,3,2026-06-13T07:53:48
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,29,I get chores done right away.,Conscientiousness,False,1,2026-06-13T07:53:49
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,30,I often forget to put things back in their proper place.,Conscientiousness,True,2,2026-06-13T07:53:50
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,31,I like order.,Conscientiousness,False,2,2026-06-13T07:53:51
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,32,I shirk my duties.,Conscientiousness,True,2,2026-06-13T07:53:52
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,33,I follow a schedule.,Conscientiousness,False,3,2026-06-13T07:53:53
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,34,I am exacting in my work.,Conscientiousness,False,2,2026-06-13T07:53:54
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,35,I waste my time.,Conscientiousness,True,2,2026-06-13T07:53:54
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,36,I find it difficult to get down to work.,Conscientiousness,True,2,2026-06-13T07:53:55
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,37,I get stressed out easily.,Neuroticism,False,3,2026-06-13T07:53:56
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,38,I am relaxed most of the time.,Neuroticism,True,2,2026-06-13T07:53:57
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,39,I worry about things.,Neuroticism,False,2,2026-06-13T07:53:58
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,40,I seldom feel blue.,Neuroticism,True,2,2026-06-13T07:53:59
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,41,I am easily disturbed.,Neuroticism,False,1,2026-06-13T07:54:00
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,42,I get upset easily.,Neuroticism,False,1,2026-06-13T07:54:01
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,43,I change my mood a lot.,Neuroticism,False,2,2026-06-13T07:54:02
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,44,I have frequent mood swings.,Neuroticism,False,1,2026-06-13T07:54:03
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,45,I get irritated easily.,Neuroticism,False,2,2026-06-13T07:54:04
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,46,I often feel blue.,Neuroticism,False,2,2026-06-13T07:54:05
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,47,I am emotionally stable.,Neuroticism,True,2,2026-06-13T07:54:06
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,48,I remain calm under pressure.,Neuroticism,True,1,2026-06-13T07:54:07
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,49,I have a rich vocabulary.,Openness,False,3,2026-06-13T07:54:08
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,50,I have difficulty understanding abstract ideas.,Openness,True,2,2026-06-13T07:54:09
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,51,I have a vivid imagination.,Openness,False,2,2026-06-13T07:54:10
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,52,I am not interested in abstract ideas.,Openness,True,2,2026-06-13T07:54:11
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,53,I have excellent ideas.,Openness,False,3,2026-06-13T07:54:12
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,54,I do not have a good imagination.,Openness,True,3,2026-06-13T07:54:13
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,55,I am quick to understand things.,Openness,False,1,2026-06-13T07:54:14
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,56,I use difficult words.,Openness,False,3,2026-06-13T07:54:16
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,57,I spend time reflecting on things.,Openness,False,1,2026-06-13T07:54:17
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,58,I am full of ideas.,Openness,False,2,2026-06-13T07:54:18
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,59,I avoid philosophical discussions.,Openness,True,1,2026-06-13T07:54:19
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,14,ipip_neo_60,60,I am not interested in theoretical discussions.,Openness,True,1,2026-06-13T07:54:21
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,1,I am the life of the party.,Extraversion,False,1,2026-06-13T07:54:21
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,2,I don't talk a lot.,Extraversion,True,1,2026-06-13T07:54:22
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,3,I feel comfortable around people.,Extraversion,False,1,2026-06-13T07:54:23
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,4,I keep in the background.,Extraversion,True,1,2026-06-13T07:54:23
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,5,I start conversations.,Extraversion,False,1,2026-06-13T07:54:24
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,6,I have little to say.,Extraversion,True,1,2026-06-13T07:54:24
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,7,I talk to a lot of different people at parties.,Extraversion,False,1,2026-06-13T07:54:24
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,8,I don't like to draw attention to myself.,Extraversion,True,1,2026-06-13T07:54:25
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,9,I don't mind being the center of attention.,Extraversion,False,1,2026-06-13T07:54:26
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,10,I am quiet around strangers.,Extraversion,True,1,2026-06-13T07:54:26
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,11,I am outgoing.,Extraversion,False,1,2026-06-13T07:54:27
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,12,I prefer to stay in the background.,Extraversion,True,1,2026-06-13T07:54:27
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,13,I sympathize with others' feelings.,Agreeableness,False,1,2026-06-13T07:54:28
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,14,I am not interested in other people's problems.,Agreeableness,True,1,2026-06-13T07:54:28
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,15,I have a soft heart.,Agreeableness,False,1,2026-06-13T07:54:29
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,16,I am not really interested in others.,Agreeableness,True,1,2026-06-13T07:54:29
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,17,I take time out for others.,Agreeableness,False,1,2026-06-13T07:54:30
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,18,I feel little concern for others.,Agreeableness,True,1,2026-06-13T07:54:31
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,19,I am interested in people.,Agreeableness,False,1,2026-06-13T07:54:31
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,20,I insult people.,Agreeableness,True,1,2026-06-13T07:54:32
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,21,I make people feel at ease.,Agreeableness,False,1,2026-06-13T07:54:33
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,22,I am not interested in others.,Agreeableness,True,1,2026-06-13T07:54:33
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,23,I am kind to almost everyone.,Agreeableness,False,1,2026-06-13T07:54:34
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,24,I am cold and aloof.,Agreeableness,True,1,2026-06-13T07:54:35
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,25,I am always prepared.,Conscientiousness,False,1,2026-06-13T07:54:36
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,26,I leave my belongings around.,Conscientiousness,True,1,2026-06-13T07:54:37
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,27,I pay attention to details.,Conscientiousness,False,1,2026-06-13T07:54:37
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,28,I make a mess of things.,Conscientiousness,True,1,2026-06-13T07:54:38
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,29,I get chores done right away.,Conscientiousness,False,1,2026-06-13T07:54:39
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,30,I often forget to put things back in their proper place.,Conscientiousness,True,1,2026-06-13T07:54:39
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,31,I like order.,Conscientiousness,False,1,2026-06-13T07:54:40
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,32,I shirk my duties.,Conscientiousness,True,1,2026-06-13T07:54:41
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,33,I follow a schedule.,Conscientiousness,False,1,2026-06-13T07:54:42
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,34,I am exacting in my work.,Conscientiousness,False,1,2026-06-13T07:54:42
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,35,I waste my time.,Conscientiousness,True,1,2026-06-13T07:54:43
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,36,I find it difficult to get down to work.,Conscientiousness,True,1,2026-06-13T07:54:44
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,37,I get stressed out easily.,Neuroticism,False,1,2026-06-13T07:54:45
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,38,I am relaxed most of the time.,Neuroticism,True,1,2026-06-13T07:54:46
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,39,I worry about things.,Neuroticism,False,1,2026-06-13T07:54:47
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,40,I seldom feel blue.,Neuroticism,True,1,2026-06-13T07:54:48
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,41,I am easily disturbed.,Neuroticism,False,1,2026-06-13T07:54:49
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,42,I get upset easily.,Neuroticism,False,1,2026-06-13T07:54:50
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,43,I change my mood a lot.,Neuroticism,False,1,2026-06-13T07:54:51
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,44,I have frequent mood swings.,Neuroticism,False,2,2026-06-13T07:54:52
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,45,I get irritated easily.,Neuroticism,False,2,2026-06-13T07:54:53
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,46,I often feel blue.,Neuroticism,False,1,2026-06-13T07:54:54
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,47,I am emotionally stable.,Neuroticism,True,1,2026-06-13T07:54:55
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,48,I remain calm under pressure.,Neuroticism,True,1,2026-06-13T07:54:55
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,49,I have a rich vocabulary.,Openness,False,1,2026-06-13T07:54:57
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,50,I have difficulty understanding abstract ideas.,Openness,True,1,2026-06-13T07:54:58
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,51,I have a vivid imagination.,Openness,False,1,2026-06-13T07:54:59
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,52,I am not interested in abstract ideas.,Openness,True,1,2026-06-13T07:55:00
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,53,I have excellent ideas.,Openness,False,1,2026-06-13T07:55:01
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,54,I do not have a good imagination.,Openness,True,1,2026-06-13T07:55:02
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,55,I am quick to understand things.,Openness,False,2,2026-06-13T07:55:04
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,56,I use difficult words.,Openness,False,1,2026-06-13T07:55:05
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,57,I spend time reflecting on things.,Openness,False,1,2026-06-13T07:55:06
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,58,I am full of ideas.,Openness,False,2,2026-06-13T07:55:08
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,59,I avoid philosophical discussions.,Openness,True,2,2026-06-13T07:55:09
+20260613T074249,tinyllama-1.1b,huggingface_local,neutral,15,ipip_neo_60,60,I am not interested in theoretical discussions.,Openness,True,2,2026-06-13T07:55:10
