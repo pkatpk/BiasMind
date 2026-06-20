@@ -1,5 +1,0 @@
-experiment_id,model,provider,persona_id,run_index,test_name,score_name,score_kind,score_value,score_normalized,summary_label
-20260609T055453,mistral-7b,huggingface_local,neutral,1,sdo7_16_en,SDO_Dominance,trait,1.0,,
-20260609T055453,mistral-7b,huggingface_local,neutral,1,sdo7_16_en,SDO_AntiEgalitarianism,trait,1.0,,
-20260609T055453,mistral-7b,huggingface_local,neutral,2,sdo7_16_en,SDO_Dominance,trait,1.0,,
-20260609T055453,mistral-7b,huggingface_local,neutral,2,sdo7_16_en,SDO_AntiEgalitarianism,trait,1.0,,
