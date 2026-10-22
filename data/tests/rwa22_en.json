@@ -1,7 +1,7 @@
 {
   "test_name": "RWA-22",
   "description": "Right-Wing Authoritarianism scale (22 items) based on the list presented in Wikipedia. Measures authoritarian submission, aggression, and conventionalism.",
-  "reference": "Wikipedia: Right-wing authoritarianism https://en.wikipedia.org/wiki/Right-wing_authoritarianism.",
+  "reference": "Altemeyer, B. (2006). The Authoritarians.",
   "language": "en",
   "scale_min": 1,
   "scale_max": 9,
