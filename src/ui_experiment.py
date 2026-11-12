@@ -492,7 +492,7 @@ def build_experiment_ui():
             interactive=True,
         )
 
-        btn_analyze = gr.Button("Analyze experiment")
+        btn_analyze = gr.Button("Analyze experiment", variant="primary")
 
         analysis_output = gr.Textbox(
             label="Analysis output",

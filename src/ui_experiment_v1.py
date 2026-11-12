@@ -1,4 +1,5 @@
 import json
+import re
 import sys
 import shlex
 import subprocess
@@ -249,6 +250,39 @@ def _run_experiment(
 
     out.append(f"\n(exit code: {proc.returncode})")
 
+    output_text = "".join(out)
+    experiment_id = ""
+
+    if proc.returncode == 0:
+        match = re.search(r"^Experiment ID:\s*(\S+)", proc.stdout or "", re.MULTILINE)
+        if match:
+            experiment_id = match.group(1)
+
+    return output_text, experiment_id
+
+
+def _analyze_experiment(experiment_id):
+    experiment_id = (experiment_id or "").strip()
+    if not experiment_id:
+        return "Δεν υπάρχει Experiment ID από επιτυχημένη εκτέλεση."
+
+    argv = [
+        sys.executable,
+        "src/analyze_experiment.py",
+        "--experiment-id",
+        experiment_id,
+        "--results-dir",
+        "results",
+    ]
+    proc = subprocess.run(argv, capture_output=True, text=True)
+    out = []
+    if proc.stdout:
+        out.append(proc.stdout)
+    if proc.stderr:
+        out.append("\n---- STDERR ----\n")
+        out.append(proc.stderr)
+    if proc.returncode != 0:
+        out.append(f"\n(exit code: {proc.returncode})")
     return "".join(out)
 
 
@@ -451,6 +485,27 @@ def build_experiment_ui():
             interactive=False,
         )
 
+        gr.Markdown("### Experiment Analysis")
+
+        experiment_id = gr.Textbox(
+            label="Experiment ID",
+            interactive=True,
+        )
+
+        btn_analyze = gr.Button("Analyze experiment")
+
+        analysis_output = gr.Textbox(
+            label="Analysis output",
+            lines=18,
+            interactive=False,
+        )
+
+        btn_analyze.click(
+            fn=_analyze_experiment,
+            inputs=[experiment_id],
+            outputs=[analysis_output],
+        )
+
         btn_preview.click(
             fn=_preview_command,
             inputs=[
@@ -474,7 +529,7 @@ def build_experiment_ui():
                 cfg_state,
                 order_state,
             ],
-            outputs=[output],
+            outputs=[output, experiment_id],
         )
 
     return experiment_ui
