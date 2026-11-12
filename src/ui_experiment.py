@@ -6,6 +6,7 @@ import subprocess
 from pathlib import Path
 
 import gradio as gr
+from analyze_experiment import summarize
 
 PERSONAS_DIR = Path("data/personas")
 TESTS_DIR = Path("data/tests")
@@ -264,26 +265,16 @@ def _run_experiment(
 def _analyze_experiment(experiment_id):
     experiment_id = (experiment_id or "").strip()
     if not experiment_id:
-        return "Δεν υπάρχει Experiment ID από επιτυχημένη εκτέλεση."
+        raise gr.Error("Συμπλήρωσε Experiment ID.")
 
-    argv = [
-        sys.executable,
-        "src/analyze_experiment.py",
-        "--experiment-id",
-        experiment_id,
-        "--results-dir",
-        "results",
-    ]
-    proc = subprocess.run(argv, capture_output=True, text=True)
-    out = []
-    if proc.stdout:
-        out.append(proc.stdout)
-    if proc.stderr:
-        out.append("\n---- STDERR ----\n")
-        out.append(proc.stderr)
-    if proc.returncode != 0:
-        out.append(f"\n(exit code: {proc.returncode})")
-    return "".join(out)
+    scored_csv = Path("results") / "scored" / f"scored_{experiment_id}.csv"
+    if not scored_csv.is_file():
+        raise gr.Error(f"Δεν βρέθηκε το αρχείο: {scored_csv}")
+
+    try:
+        return summarize(scored_csv)
+    except Exception as exc:
+        raise gr.Error(f"Αποτυχία ανάλυσης: {exc}") from exc
 
 
 # ---------- UI ----------
@@ -494,9 +485,8 @@ def build_experiment_ui():
 
         btn_analyze = gr.Button("Analyze experiment", variant="primary")
 
-        analysis_output = gr.Textbox(
+        analysis_output = gr.Dataframe(
             label="Analysis output",
-            lines=18,
             interactive=False,
         )
 
